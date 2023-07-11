@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
 
+    public Camera mainCam;
+
     private Rigidbody2D rb2d;
     private float xInput; // Variable for the x-input (a&d or left & right)
     private bool isGrounded; // If the player is on the ground 
@@ -94,14 +96,24 @@ public class PlayerController : MonoBehaviour
 
         rb2d.gravityScale = 0f;
 
-        Vector2 distance = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        Vector2 distance = mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         Vector2 direction = distance.normalized;    
 
         rb2d.AddForce(direction * dashAmount, ForceMode2D.Impulse);
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.2f);
+
+        float afterDashVelo = direction.x / Mathf.Abs(direction.x) * moveSpeed;
+
+        for(float t = 0.0f; t < 1f; t += Time.deltaTime / 0.1f)
+        {
+            rb2d.velocity = new Vector2(Mathf.Lerp(rb2d.velocity.x, afterDashVelo, t), Mathf.Lerp(rb2d.velocity.y, 0, t));
+            yield return null;
+        }
+
         isDashing = false;
         rb2d.gravityScale = 5f;
+        doubleJump = true;
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
@@ -122,7 +134,11 @@ public class PlayerController : MonoBehaviour
         if(col.gameObject.tag == "Kill")
         {
             transform.position = spawnPoint; // tp the player to the spawnpoint
+            
+            Invoke("moveCamera", 0.5f);
         }
     }
+
+    void moveCamera() => mainCam.transform.position = new Vector3(0, 0, -10f);
 
 }
