@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashCooldown;
 
     public Camera mainCam;
+    public GameObject deathEffect;
 
     private Rigidbody2D rb2d;
     private float xInput; // Variable for the x-input (a&d or left & right)
@@ -23,10 +24,10 @@ public class PlayerController : MonoBehaviour
     private bool canJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
     private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
-
     private bool doubleJump;
     private bool canDash;
     private bool isDashing;
+    private float lastFacing;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
         lastGrounded = 0f;
         canJump = true;
         canDash = true;
+        lastFacing = 1;
         
     }
 
@@ -54,11 +56,14 @@ public class PlayerController : MonoBehaviour
         }
         
         getInput();
+
+        transform.localScale = new Vector3(lastFacing * 0.5f, 0.5f, 0.5f);
     }
 
     void getInput()
     { 
         xInput = Input.GetAxisRaw("Horizontal");
+        if(xInput != 0) lastFacing = xInput;    
 
         if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (w) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
@@ -97,9 +102,11 @@ public class PlayerController : MonoBehaviour
         rb2d.gravityScale = 0f;
 
         Vector2 distance = mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        Vector2 direction = distance.normalized;    
+        Vector2 direction = distance.normalized;   
 
         rb2d.AddForce(direction * dashAmount, ForceMode2D.Impulse);
+
+        lastFacing = direction.x / Mathf.Abs(direction.x);
 
         yield return new WaitForSeconds(0.2f);
 
@@ -113,7 +120,6 @@ public class PlayerController : MonoBehaviour
 
         isDashing = false;
         rb2d.gravityScale = 5f;
-        doubleJump = true;
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
@@ -132,13 +138,27 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
-        {
-            transform.position = spawnPoint; // tp the player to the spawnpoint
-            
-            Invoke("moveCamera", 0.5f);
+        {   
+            StopAllCoroutines();
+            gameObject.SetActive(false);
+
+            GameObject deathParticles = Instantiate(deathEffect);
+            deathParticles.transform.position = col.contacts[0].point;
+
+            Destroy(deathParticles, 2f);
+
+            Invoke("respawn", 0.5f);
         }
     }
 
-    void moveCamera() => mainCam.transform.position = new Vector3(0, 0, -10f);
+    void respawn() 
+    {
+        canDash = true;
+        rb2d.gravityScale = 5f;
+        isDashing = false;
+        gameObject.SetActive(true);
+        transform.position = spawnPoint; // tp the player to the spawnpoint
+        mainCam.transform.position = new Vector3(0, 0, -10f);
 
+    } 
 }
