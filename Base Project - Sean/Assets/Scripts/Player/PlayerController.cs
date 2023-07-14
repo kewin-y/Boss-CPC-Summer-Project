@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float baseSpeed;
+    [SerializeField] private float slowSpeedMultiplier;
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
@@ -12,13 +13,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private LayerMask whatIsMud;
     [SerializeField] private Vector3 spawnPoint;
-    [SerializeField] private float normalSpeed;
-    [SerializeField] private float slowSpeed;
     [SerializeField] private float normalGravity;
     [SerializeField] private float lowGravity;
+    [SerializeField] private float waterDrag;
 
     private Rigidbody2D rb2d;
-    private float speedMultiplier; // Multiplier for move speed; initially 100
+    private float speedMultiplier = 1;  // LOCAL multiplier for move speed (i.e. slower in mud)
     private float xInput; // Variable for the x-input (a&d or left & right)
     private bool isGrounded; // If the player is on the ground 
     private float lastGrounded; // Or airtime; time since the player was last grounded
@@ -26,13 +26,19 @@ public class PlayerController : MonoBehaviour
     private bool isInMud; //If the player is in mud
     private bool canJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grounded will make the square jump as soon as it lands
-    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
-
+    private float playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
     private bool canDoubleJump;
+
+    //Getters and setters
+    public float BaseSpeed {
+        get { return baseSpeed; }
+        set { baseSpeed = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        playerSize = transform.localScale.x - 0.05f;
         rb2d = GetComponent<Rigidbody2D>();
         rb2d.gravityScale = normalGravity;
         lastGrounded = 0f;
@@ -59,12 +65,11 @@ public class PlayerController : MonoBehaviour
 
     private void terrainCheck() {
         if (isInMud) {
-            speedMultiplier = slowSpeed;
+            speedMultiplier = slowSpeedMultiplier;
         }
         else {
-            speedMultiplier = normalSpeed;
+            speedMultiplier = 1;
         }
-        Debug.Log("gravity is " + rb2d.gravityScale);
     }
 
     void getInput()
@@ -93,7 +98,7 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
-        rb2d.velocity = new Vector2(xInput * moveSpeed * speedMultiplier * Time.deltaTime, rb2d.velocity.y);
+        rb2d.velocity = new Vector2(xInput * baseSpeed * speedMultiplier * Time.deltaTime, rb2d.velocity.y);
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -105,15 +110,14 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Water")) {
-            speedMultiplier = slowSpeed;
-            rb2d.drag = 10f;
+            speedMultiplier = slowSpeedMultiplier;
+            rb2d.drag = waterDrag;
             isInWater = true;
-
-            //When the player reaches the ground, remove drag and change to low gravity
             StartCoroutine(WaitForGround());
         }
     }
 
+    //When the player reaches the ground, remove drag and change to low gravity
     IEnumerator WaitForGround() {
         yield return new WaitUntil(() => isGrounded);
         rb2d.drag = 0f;
@@ -122,7 +126,8 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Water")) {
-            speedMultiplier = normalSpeed;
+            rb2d.gravityScale = normalGravity;
+            speedMultiplier = 1;
             isInWater = false;
         }
     }
