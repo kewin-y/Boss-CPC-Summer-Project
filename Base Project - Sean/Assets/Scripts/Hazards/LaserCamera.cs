@@ -66,7 +66,6 @@ public class LaserCamera : MonoBehaviour
 
             //Restore "white tint" by turning up all r, g, and b values
             float newTint = Mathf.Lerp(cameraHiddenTint, 1, timeElapsed / duration);
-            Debug.Log(newTint);
             SetTint(obj, newTint);
 
             yield return null;  //Wait for next frame to pass
