@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private Color playerColor; // For death particles mainly 
 
     public Camera mainCam;
     public GameObject deathEffect;
@@ -27,6 +28,12 @@ public class PlayerController : MonoBehaviour
     private bool doubleJump;
     private bool canDash;
     private bool isDashing;
+
+    public bool IsDashing
+    {
+        get {return isDashing;}
+        set {isDashing = value;}
+    }
     private float lastFacing;
 
     // Start is called before the first frame update
@@ -80,7 +87,7 @@ public class PlayerController : MonoBehaviour
             Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
         }
 
-        if(Input.GetKey(dashKey) && canDash)
+        if(Input.GetKeyDown(dashKey) && canDash)
         {
             StartCoroutine(dash());
         } 
@@ -144,6 +151,11 @@ public class PlayerController : MonoBehaviour
 
             GameObject deathParticles = Instantiate(deathEffect);
             deathParticles.transform.position = col.contacts[0].point;
+
+            ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule dpMain = dpSystem.main;
+
+            dpMain.startColor = playerColor;
 
             Destroy(deathParticles, 2f);
 
