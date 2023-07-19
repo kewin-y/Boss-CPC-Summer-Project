@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class LaserCamera : MonoBehaviour
 {
-    [SerializeField] private float aimRadius;
     [SerializeField] private GameObject laserEye;
+    [SerializeField] private LineRenderer laserRenderer;
+    [SerializeField] private float aimRadius;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private LayerMask whatIsPlayer;
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
+    [SerializeField] private float laserFadeOutTime;
 
     private bool playerDetected;
     private bool openFire = true;
@@ -19,6 +21,7 @@ public class LaserCamera : MonoBehaviour
     void Start()
     {
         SetAlpha(laserEye, 0);
+        SetAlpha(laserRenderer, 0);
     }
 
     // Update is called once per frame
@@ -53,9 +56,24 @@ public class LaserCamera : MonoBehaviour
 
     private IEnumerator ShootSequence() {
         openFire = false;
+
+        //Wait, then shoot the laser
         yield return new WaitForSeconds(laserDelay);
-        
-        Debug.Log("Shoot");
+
+        //If the player is out of range now, don't shoot
+        if (!playerDetected) {
+            openFire = true;
+            yield break;
+        }
+
+        //Draw the laser from the camera to the player
+        laserRenderer.SetPosition(0, transform.position);
+        laserRenderer.SetPosition(1, playerTransform.position);
+
+        //Pulse effect: laser appears, then immediately starts fading out
+        SetAlpha(laserRenderer, 1);
+        yield return StartCoroutine(FadeOut(laserRenderer, laserFadeOutTime));
+
         openFire = true;
     }
 
@@ -92,6 +110,7 @@ public class LaserCamera : MonoBehaviour
 
     private IEnumerator FadeIn(GameObject obj, float duration) {
         float timeElapsed = 0f;
+
         while (timeElapsed < duration) {
             timeElapsed += Time.deltaTime;
             float newAlpha = Mathf.Lerp(0, 1, timeElapsed / duration);
@@ -101,8 +120,10 @@ public class LaserCamera : MonoBehaviour
         }
     }
 
+    //Fade out a GameObject over a specified duration
     private IEnumerator FadeOut(GameObject obj, float duration) {
         float timeElapsed = 0;
+
         while (timeElapsed < duration) {
             timeElapsed += Time.deltaTime;
             float newAlpha = Mathf.Lerp(1, 0, timeElapsed / duration);
@@ -112,10 +133,30 @@ public class LaserCamera : MonoBehaviour
         }
     }
 
+    //Fade out a LineRenderer over a specified duration (used exclusively for laser)
+    private IEnumerator FadeOut(LineRenderer laser, float duration) {
+        float timeElapsed = 0;
+
+        while (timeElapsed < duration) {
+            timeElapsed += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(1, 0, timeElapsed / duration);
+            SetAlpha(laser, newAlpha);
+
+            yield return null;  //Wait for next frame to pass
+        }
+    }
+
+    //Change the alpha value of the object's sprite renderer
     private void SetAlpha(GameObject obj, float alpha) {
         SpriteRenderer objRenderer = obj.GetComponent<SpriteRenderer>();
         Color spriteColor = objRenderer.material.color;
         objRenderer.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, alpha);
+    }
+
+    //Change the alpha value of a line renderer (used exclusively for laser)
+    private void SetAlpha(LineRenderer laser, float alpha) {
+        Color laserColor = laser.material.color;
+        laser.material.color = new Color(laserColor.r, laserColor.g, laserColor.b, alpha);
     }
 
     private float GetAlpha(GameObject obj) {
