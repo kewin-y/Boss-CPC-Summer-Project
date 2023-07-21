@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private enum TerrainState
+    {
+        Air,
+        Water
+    }
+    private TerrainState terrainState;
+
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
     [SerializeField] private KeyCode dashKey;
     [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
@@ -21,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb2d;
     private float xInput; // Variable for the x-input (a&d or left & right)
     private bool isGrounded; // If the player is on the ground 
+    private bool isInWater;
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
@@ -51,6 +60,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsWater);
+        Debug.Log(isInWater);   
+
+        if(isInWater)
+        {
+            terrainState = TerrainState.Water;
+        }
+        else
+        {
+            terrainState = TerrainState.Air;
+        }
 
         if(!isGrounded)
         {
@@ -70,34 +90,58 @@ public class PlayerController : MonoBehaviour
     void getInput()
     { 
         xInput = Input.GetAxisRaw("Horizontal");
-        if(xInput != 0) lastFacing = xInput;    
+        if(xInput != 0) lastFacing = xInput;
 
         if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (w) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
 
-        if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
-
-        if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump)) 
-        {
-            jump(); 
-            wishJump = false;
-            canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
-            doubleJump = !doubleJump;
-
-            Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
-        }
-
         if(Input.GetKeyDown(dashKey) && canDash)
         {
             StartCoroutine(dash());
-        } 
+        }
+
+        if(terrainState == TerrainState.Air) // Lol change this to a switch statement later
+        {
+            rb2d.gravityScale = 5f;
+            rb2d.drag = 0f;
+
+            if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
+
+            if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump)) 
+            {
+                jump(); 
+                wishJump = false;
+                canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
+                doubleJump = !doubleJump;
+
+                Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
+            }
+
+        }
+
+        else if (terrainState == TerrainState.Water)
+        {
+            rb2d.gravityScale = 1f;
+            rb2d.drag = 1f;
+
+            if(wishJump)
+            {
+                jump();
+            }
+        }    
+
+        
     }
 
     void resetJump() => canJump = true; // This is syntax for a one-line method
 
     void jump()
     {
-        rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity);
+        if(terrainState == TerrainState.Air)
+            rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity);
+
+        else if (terrainState == TerrainState.Water)
+            rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity * 0.25f);
     }
 
     IEnumerator dash()

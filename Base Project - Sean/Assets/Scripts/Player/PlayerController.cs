@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator WaitForGround() {
         yield return new WaitUntil(() => isGrounded);
         rb2d.drag = 0f;
-        rb2d.gravityScale = lowGravity;
+        rb2d.gravityScale = lowGravity; 
     }
 
     void OnTriggerExit2D(Collider2D other) {
