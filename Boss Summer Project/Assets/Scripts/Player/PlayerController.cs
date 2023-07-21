@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
-    [SerializeField] private KeyCode dashKey;
+    [SerializeField] private KeyCode dashKey = KeyCode.Mouse0;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private Vector3 spawnPoint;

@@ -448,12 +448,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8553c4f711594030ba7cdc845792f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Projectile: {fileID: 1845762212}
-  player: {fileID: 836604806}
-  attackRadius: 64
-  fireRate: 0.2
-  canShoot: 0
-  canCollide: 0
 --- !u!61 &701962413
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -529,26 +523,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 836604802}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c04b1b3a4c656484cbc7950e05fb90a9, type: 3}
+  m_Script: {fileID: 11500000, guid: b9df4f871f6fc684f9492fbf1d524bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpKey: 273
-  leftKey: 276
-  rightKey: 275
-  dashKey: 316
-  isGrounded: 0
-  canDash: 0
   jumpsRemaining: 0
-  lastGrounded: 0
-  coyoteTime: 0.5
-  moveSpeed: 10
-  dashForce: 30
-  jumpHeight: 6
-  boostDuration: 10
-  tripleJumpDuration: 10
+  dashForce: 0
+  jumpHeight: 0
+  boostDuration: 0
+  tripleJumpDuration: 0
+  moveSpeed: 0
+  jumpVelocity: 0
+  coyoteTime: 0
+  jumpKey: 0
+  dashKey: 0
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
+  whatIsWater:
+    serializedVersion: 2
+    m_Bits: 0
+  spawnPoint: {x: 0, y: 0, z: 0}
+  dashAmount: 0
+  dashCooldown: 0
+  playerColor: {r: 0, g: 0, b: 0, a: 0}
+  mainCam: {fileID: 0}
+  deathEffect: {fileID: 0}
 --- !u!50 &836604804
 Rigidbody2D:
   serializedVersion: 4
