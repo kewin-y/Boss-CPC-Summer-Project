@@ -23,6 +23,12 @@ public class PlayerController : MonoBehaviour
     private float boostFactor;
 
     [SerializeField] private float moveSpeed;
+
+    public float MoveSpeed {
+        get {return moveSpeed;}
+        set {moveSpeed = value;}
+    }
+
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;

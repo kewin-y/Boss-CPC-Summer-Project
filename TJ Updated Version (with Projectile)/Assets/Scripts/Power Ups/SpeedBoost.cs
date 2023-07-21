@@ -7,10 +7,10 @@ public class SpeedBoost : PowerUp
     [SerializeField] private float boostMultiplier;
 
     protected override void SummonEffect() {
-        playerScript.BaseSpeed = playerScript.BaseSpeed * boostMultiplier;
+        playerScript.MoveSpeed = playerScript.MoveSpeed * boostMultiplier;
     }
 
     protected override void RemoveEffect() {
-        playerScript.BaseSpeed = playerScript.BaseSpeed / boostMultiplier;
+        playerScript.MoveSpeed = playerScript.MoveSpeed / boostMultiplier;
     }
 }
