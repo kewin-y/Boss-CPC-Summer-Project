@@ -7,7 +7,7 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private GameObject laserEye;
     [SerializeField] private LineRenderer laserRenderer;
     [SerializeField] private float aimRadius;
-    [SerializeField] private Transform playerTransform;
+    [SerializeField] private GameObject player;
     [SerializeField] private LayerMask whatIsPlayer;
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
@@ -34,11 +34,11 @@ public class LaserCamera : MonoBehaviour
             //If the laser eye is hidden, reveal the camera and laser eye
             if (GetAlpha(laserEye) == 0) {
                 StartCoroutine(FadeIn(laserEye, laserEyeFadeInDuration));
-                StartCoroutine(FadeBrighten(gameObject, laserEyeFadeInDuration));
+                StartCoroutine(FadeToColor(gameObject, laserEyeFadeInDuration, Color.white));
             }
 
             //Make the laser point to the player
-            laserEye.transform.right = playerTransform.position - laserEye.transform.position;
+            laserEye.transform.right = player.transform.position - laserEye.transform.position;
             laserEye.transform.Rotate(new Vector3(0, 0, 90));    //offset 90 degrees in z axis (fix)
 
             if (openFire)
@@ -49,7 +49,7 @@ public class LaserCamera : MonoBehaviour
             //If the laser eye is revealed, hide the camera and laser eye
             if (GetAlpha(laserEye) == 1) {
                 StartCoroutine(FadeOut(laserEye, laserEyeFadeInDuration));
-                StartCoroutine(FadeDarken(gameObject, laserEyeFadeInDuration));
+                StartCoroutine(FadeToColor(gameObject, laserEyeFadeInDuration, Color.black));
             }
         }
     }
@@ -68,44 +68,35 @@ public class LaserCamera : MonoBehaviour
 
         //Draw the laser from the camera to the player
         laserRenderer.SetPosition(0, transform.position);
-        laserRenderer.SetPosition(1, playerTransform.position);
+        laserRenderer.SetPosition(1, player.transform.position);
 
-        //Pulse effect: laser appears, then immediately starts fading out
+        ///Laser appears while tinting the player red, then immediately starts fading out along with red tint
         SetAlpha(laserRenderer, 1);
-        yield return StartCoroutine(FadeOut(laserRenderer, laserFadeOutTime));
+        SetColor(player, Color.red);
+        StartCoroutine(FadeOut(laserRenderer, laserFadeOutTime));
+        yield return StartCoroutine(FadeToColor(player, laserFadeOutTime, Color.white));  //White tint = restore original color
 
         openFire = true;
     }
 
-    private IEnumerator FadeBrighten(GameObject obj, float duration) {
+    private IEnumerator FadeToColor(GameObject obj, float duration, Color reqColor) {
+        Color originalColor = obj.GetComponent<SpriteRenderer>().color;
+
         float timeElapsed = 0f;
         while (timeElapsed < duration) {
             timeElapsed += Time.deltaTime;
 
-            //Restore "white tint" by turning up all r, g, and b values
-            float newTint = Mathf.Lerp(cameraHiddenTint, 1, timeElapsed / duration);
-            SetTint(obj, newTint);
+            //Fade from the original color to the required color
+            Color newColor = Color.Lerp(originalColor, reqColor, timeElapsed / duration);
+            SetColor(obj, newColor);
 
             yield return null;  //Wait for next frame to pass
         }
     }
 
-    private IEnumerator FadeDarken(GameObject obj, float duration) {
-        float timeElapsed = 0f;
-        while (timeElapsed < duration) {
-            timeElapsed += Time.deltaTime;
-
-            //Add slight black tint by turning down all r, g, and b values
-            float newTint = Mathf.Lerp(1, cameraHiddenTint, timeElapsed / duration);
-            SetTint(obj, newTint);
-
-            yield return null;  //Wait for next frame to pass
-        }
-    }
-
-    private void SetTint(GameObject obj, float tint) {
+    private void SetColor(GameObject obj, Color newColor) {
         SpriteRenderer objRenderer = obj.GetComponent<SpriteRenderer>();
-        objRenderer.color = new Color(tint, tint, tint, 1);
+        objRenderer.color = newColor;
     }
 
     private IEnumerator FadeIn(GameObject obj, float duration) {
