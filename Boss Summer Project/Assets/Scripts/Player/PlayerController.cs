@@ -12,6 +12,12 @@ public class PlayerController : MonoBehaviour
     private TerrainState terrainState;
 
     [SerializeField] private float moveSpeed;
+
+    public float MoveSpeed
+    {
+        get{return moveSpeed;}
+        set{moveSpeed = value;}
+    } 
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
@@ -84,7 +90,7 @@ public class PlayerController : MonoBehaviour
         
         getInput();
 
-        transform.localScale = new Vector3(lastFacing * 0.5f, 0.5f, 0.5f);
+        transform.localScale = new Vector3(lastFacing * 1f, 1f, 1f);
     }
 
     void getInput()
