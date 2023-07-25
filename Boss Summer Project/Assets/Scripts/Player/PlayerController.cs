@@ -67,7 +67,6 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
         isInWater = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsWater);
-        Debug.Log(isInWater);   
 
         if(isInWater)
         {
