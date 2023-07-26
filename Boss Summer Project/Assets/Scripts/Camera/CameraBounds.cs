@@ -73,6 +73,7 @@ public class CameraBounds : MonoBehaviour
         while (timeElapsed < duration) {
             timeElapsed += Time.deltaTime;
             float newCamSize = Mathf.Lerp(originalCamSize, requiredCamSize, timeElapsed / duration);
+            Debug.Log(newCamSize);
             cam.orthographicSize = newCamSize;
 
             yield return null;  //Wait for the next frame to pass

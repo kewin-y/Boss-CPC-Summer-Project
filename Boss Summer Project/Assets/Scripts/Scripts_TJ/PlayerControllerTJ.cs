@@ -47,7 +47,7 @@ public class PlayerControllerTJ : MonoBehaviour
     {
         transform.rotation = neutralRotation;
 
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 1f, whatIsGround);
+        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize), 0f, Vector2.down, 1f, whatIsGround);
         
         if(!isGrounded){
             lastGrounded += Time.deltaTime;
