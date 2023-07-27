@@ -50,7 +50,8 @@ public class PlayerController : MonoBehaviour
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
-    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private bool doubleJump;
     private bool canDash;
     private bool isDashing;
@@ -66,6 +67,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        actualPlayerSize = transform.localScale.x;
+        playerSize = actualPlayerSize - 0.05f;
         lastGrounded = 0f;
         canJump = true;
         canDash = true;
@@ -78,7 +81,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsWater);
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
         {
@@ -102,7 +105,7 @@ public class PlayerController : MonoBehaviour
         
         getInput();
 
-        transform.localScale = new Vector3(lastFacing * 0.5f, 0.5f, 0.5f);
+        transform.localScale = new Vector3(lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
     }
 
     void getInput()
@@ -135,8 +138,8 @@ public class PlayerController : MonoBehaviour
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
             if(Input.GetKeyDown(jumpKey) && jumpsRemaining > 0 && lastGrounded < coyoteTime){
-            jumpsRemaining -= 1;
-            rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+                jumpsRemaining -= 1;
+                rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
             }
         }
 
