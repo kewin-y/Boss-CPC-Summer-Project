@@ -47,10 +47,12 @@ public class EnemyTJ : MonoBehaviour
     {
         Vector3 left = new Vector3(-1,0,0);
         canShoot = false;
-        Projectile.transform.position = (transform.position+left);
-        Projectile.SetActive(true);
+        GameObject bullet = Instantiate(Projectile) as GameObject;
+        bullet.transform.position = transform.position+left;
+        bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
-        Projectile.SetActive(false);
         canShoot = true;
+        yield return new WaitForSeconds(10 - 1/fireRate);
+        bullet.SetActive(false);
     }
 }

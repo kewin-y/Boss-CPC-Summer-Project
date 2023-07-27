@@ -4,6 +4,19 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public GameObject Projectile;
+
+    public Transform player;
+
+    public float attackRadius;
+    public float fireRate;
+
+    [SerializeField] private bool canShoot;
+
+    public static bool ProjectileTargeting;
+
+    public bool canCollide;
+
     [SerializeField] private LayerMask whatIsPlayer;
     public GameObject deathEffect; 
     private PlayerController playerController;
@@ -16,6 +29,18 @@ public class Enemy : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         bc2d = GetComponent<BoxCollider2D>();
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        canShoot = true;
+        ProjectileTargeting = false;
+    }
+    // Called every fixed timestep
+    // Used for physics
+    void FixedUpdate()
+    {
+        Vector2 dir = player.position - transform.position;
+
+        if(dir.sqrMagnitude <= attackRadius && canShoot){
+            StartCoroutine(shoot());
+        }
     }
 
     // Update is called once per frame
@@ -31,7 +56,16 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+    /*
+    void FixedUpdate()
+    {
+        Vector2 dir = player.position - transform.position;
 
+        if(dir.sqrMagnitude <= attackRadius && canShoot){
+            StartCoroutine(shoot());
+        }
+    }
+    */
     void OnCollisionEnter2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
@@ -53,5 +87,17 @@ public class Enemy : MonoBehaviour
         ParticleSystem.MainModule dpMain = dpSystem.main;
 
         dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
+    }
+     IEnumerator shoot()
+    {
+        Vector3 left = new Vector3(-1,0,0);
+        canShoot = false;
+        GameObject bullet = Instantiate(Projectile) as GameObject;
+        bullet.transform.position = transform.position+left;
+        bullet.SetActive(true);
+        yield return new WaitForSeconds(1/fireRate);
+        canShoot = true;
+        yield return new WaitForSeconds(10 - 1/fireRate);
+        bullet.SetActive(false);
     }
 }

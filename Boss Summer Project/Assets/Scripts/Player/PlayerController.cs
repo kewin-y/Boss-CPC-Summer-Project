@@ -11,17 +11,28 @@ public class PlayerController : MonoBehaviour
     }
     private TerrainState terrainState;
 
+    [SerializeField] private int jumpsRemaining;
+
+//Inspector input
+    [SerializeField] private float dashForce;
+    [SerializeField] private float jumpHeight;
+    [SerializeField] private float boostDuration;
+    [SerializeField] private float tripleJumpDuration;
+
+    private int jumpsAvailable;
+    private float boostFactor;
+
     [SerializeField] private float moveSpeed;
 
-    public float MoveSpeed
-    {
-        get{return moveSpeed;}
-        set{moveSpeed = value;}
-    } 
+    public float MoveSpeed {
+        get {return moveSpeed;}
+        set {moveSpeed = value;}
+    }
+
     [SerializeField] private float jumpVelocity;
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
-    [SerializeField] private KeyCode dashKey = KeyCode.Mouse0;
+    [SerializeField] private KeyCode dashKey;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private Vector3 spawnPoint;
@@ -39,7 +50,8 @@ public class PlayerController : MonoBehaviour
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
-    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private bool doubleJump;
     private bool canDash;
     private bool isDashing;
@@ -55,18 +67,21 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        actualPlayerSize = transform.localScale.x;
+        playerSize = actualPlayerSize - 0.05f;
         lastGrounded = 0f;
         canJump = true;
         canDash = true;
         lastFacing = 1;
-        
+        boostFactor = 1;
+        jumpsRemaining = jumpsAvailable = 2;     
     }
 
     // Update is called once per frame
     void Update()
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsWater);
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
         {
@@ -85,11 +100,12 @@ public class PlayerController : MonoBehaviour
         else
         {
             lastGrounded = 0f;
+            jumpsRemaining = jumpsAvailable;
         }
         
         getInput();
 
-        transform.localScale = new Vector3(lastFacing * 1f, 1f, 1f);
+        transform.localScale = new Vector3(lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
     }
 
     void getInput()
@@ -121,7 +137,10 @@ public class PlayerController : MonoBehaviour
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
-
+            if(Input.GetKeyDown(jumpKey) && jumpsRemaining > 0 && lastGrounded < coyoteTime){
+                jumpsRemaining -= 1;
+                rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            }
         }
 
         else if (terrainState == TerrainState.Water)
@@ -133,9 +152,7 @@ public class PlayerController : MonoBehaviour
             {
                 jump();
             }
-        }    
-
-        
+        }  
     }
 
     void resetJump() => canJump = true; // This is syntax for a one-line method
@@ -179,7 +196,6 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
-
         // TODO: make a dash animation where the square turns into some sort of wind thing and follows the direction of the dash
     }
     
@@ -209,6 +225,16 @@ public class PlayerController : MonoBehaviour
             Destroy(deathParticles, 2f);
 
             Invoke("respawn", 0.5f);
+
+            if(col.gameObject.tag == "Powerup"){
+                if(col.gameObject.name == "Boost"){
+                    boostFactor = 5;
+                    Invoke("deactivateBoost", boostDuration);
+                } else if(col.gameObject.name == "Triple Jump"){
+                    jumpsAvailable = 3;
+                    Invoke("deactivateTripleJump", tripleJumpDuration);
+                }
+            }
         }
     }
 
@@ -222,4 +248,10 @@ public class PlayerController : MonoBehaviour
         mainCam.transform.position = new Vector3(0, 0, -10f);
 
     } 
+    void deactivateBoost(){
+        boostFactor = 1;
+    }
+    void deactivateTripleJump(){
+        jumpsAvailable = 2;
+    }
 }
