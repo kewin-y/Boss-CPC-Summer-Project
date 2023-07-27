@@ -14,6 +14,7 @@ public class PlayerControllerTJ : MonoBehaviour
 
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool canDash;
+    [SerializeField] private bool isJumping;
     [SerializeField] private int jumpsRemaining;
     [SerializeField] private float lastGrounded;
 
@@ -29,7 +30,7 @@ public class PlayerControllerTJ : MonoBehaviour
 
     private int jumpsAvailable;
     private float boostFactor;
-    private float playerSize = 0.45f;
+    private float playerSize = 1f;
 
     private Rigidbody2D rb2d;
 
@@ -47,13 +48,12 @@ public class PlayerControllerTJ : MonoBehaviour
     {
         transform.rotation = neutralRotation;
 
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize), 0f, Vector2.down, 1f, whatIsGround);
+        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize-0.1f, playerSize), 0f, Vector2.down, 0.01f, whatIsGround);
         
         if(!isGrounded){
             lastGrounded += Time.deltaTime;
         } else {
             lastGrounded = 0f;
-            jumpsRemaining = jumpsAvailable;
         }
         getInput();
     }
@@ -63,12 +63,15 @@ public class PlayerControllerTJ : MonoBehaviour
         if(Input.GetKeyDown(dashKey) && canDash){
             StartCoroutine(dash()); 
         }
-        if(Input.GetKeyDown(jumpKey) && jumpsRemaining > 0 && lastGrounded < coyoteTime){
+        if(Input.GetKeyDown(jumpKey) && jumpsRemaining > 0){
             jumpsRemaining -= 1;
-            rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
-
+            if (lastGrounded < coyoteTime || isJumping){
+                isJumping = true;
+                rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            }
+        }
         //horizontal movement
-        } else if(Input.GetKey(leftKey)) {
+        if(Input.GetKey(leftKey)) {
             rb2d.AddForce(Vector2.left * moveSpeed * boostFactor * Time.deltaTime, ForceMode2D.Impulse);
         } else if(Input.GetKey(rightKey)){
             rb2d.AddForce(Vector2.right * moveSpeed * boostFactor * Time.deltaTime, ForceMode2D.Impulse);
@@ -88,6 +91,9 @@ public class PlayerControllerTJ : MonoBehaviour
         canDash = true;
     }
     void OnCollisionEnter2D(Collision2D col){
+        jumpsRemaining = jumpsAvailable;
+        isJumping = false;
+
         if(col.gameObject.tag == "Powerup"){
             if(col.gameObject.name == "Boost"){
                 boostFactor = 5;

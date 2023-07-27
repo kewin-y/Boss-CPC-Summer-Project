@@ -673,6 +673,7 @@ MonoBehaviour:
   dashKey: 316
   isGrounded: 0
   canDash: 0
+  isJumping: 0
   jumpsRemaining: 0
   lastGrounded: 0
   coyoteTime: 0.5
@@ -1769,6 +1770,41 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
   m_PrefabInstance: {fileID: 5057677968358339255}
   m_PrefabAsset: {fileID: 0}
+--- !u!58 &1845762213
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845762212}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.125
 --- !u!1 &1960178216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,10 +1901,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Projectile
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5128480763398274539, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1845762213}
   m_SourcePrefab: {fileID: 100100000, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
 --- !u!1001 &9016218966825848105
 PrefabInstance:
