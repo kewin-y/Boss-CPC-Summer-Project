@@ -5,6 +5,8 @@ using UnityEngine;
 public class CameraBounds : MonoBehaviour
 {
     [SerializeField] private float moveTime; 
+
+    private float bufferValue = 1f; // Moves the player this much to the left/right of the camera to fix a bug
     private Camera cam;
     private BoxCollider2D bc2d; // Camera's collider
 
@@ -36,14 +38,14 @@ public class CameraBounds : MonoBehaviour
             if(isRight)
             {
                 newPos = new Vector3(transform.position.x + sizeX, transform.position.y);
-                other.transform.position = new Vector2(other.transform.position.x + 1f, other.transform.position.y);
+                other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
 
             }
 
             else
             {
                 newPos = new Vector3(transform.position.x - sizeX, transform.position.y);
-                other.transform.position = new Vector2(other.transform.position.x - 1f, other.transform.position.y);
+                other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
             }
                     
             LeanTween.move(gameObject, newPos, moveTime);   
@@ -68,6 +70,8 @@ public class CameraBounds : MonoBehaviour
     private IEnumerator ZoomSequence(float zoom, float duration) {
         float originalCamSize = cam.orthographicSize;
         float requiredCamSize = originalCamSize - zoom;
+
+        bufferValue -= zoom * 0.5f;
 
         float timeElapsed = 0f;
         while (timeElapsed < duration) {

@@ -14,6 +14,8 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private float laserDelay;
     [SerializeField] private float laserFadeOutTime;
 
+    [SerializeField] private Transform laserStartPosition;
+
     private bool playerDetected;
     private bool openFire = true;
 
@@ -67,7 +69,8 @@ public class LaserCamera : MonoBehaviour
         }
 
         //Draw the laser from the camera to the player
-        laserRenderer.SetPosition(0, transform.position);
+        // laserRenderer.SetPosition(0, transform.position);
+        laserRenderer.SetPosition(0, laserStartPosition.position);
         laserRenderer.SetPosition(1, player.transform.position);
 
         ///Laser appears while tinting the player red, then immediately starts fading out along with red tint
