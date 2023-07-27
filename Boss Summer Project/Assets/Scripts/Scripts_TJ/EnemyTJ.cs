@@ -51,7 +51,8 @@ public class EnemyTJ : MonoBehaviour
         bullet.transform.position = transform.position+left;
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
-        //Projectile.SetActive(false);
         canShoot = true;
+        yield return new WaitForSeconds(10 - 1/fireRate);
+        bullet.SetActive(false);
     }
 }

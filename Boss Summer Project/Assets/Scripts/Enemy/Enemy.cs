@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    //public GameObject Projectile;
+    public GameObject Projectile;
 
-    //public Transform player;
+    public Transform player;
 
     public float attackRadius;
     public float fireRate;
@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     public static bool ProjectileTargeting;
 
-    public bool canCollide; 
+    public bool canCollide;
 
     [SerializeField] private LayerMask whatIsPlayer;
     public GameObject deathEffect; 
@@ -31,6 +31,16 @@ public class Enemy : MonoBehaviour
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         canShoot = true;
         ProjectileTargeting = false;
+    }
+    // Called every fixed timestep
+    // Used for physics
+    void FixedUpdate()
+    {
+        Vector2 dir = player.position - transform.position;
+
+        if(dir.sqrMagnitude <= attackRadius && canShoot){
+            StartCoroutine(shoot());
+        }
     }
 
     // Update is called once per frame
@@ -78,16 +88,16 @@ public class Enemy : MonoBehaviour
 
         dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
     }
-    /*
-    IEnumerator shoot()
+     IEnumerator shoot()
     {
         Vector3 left = new Vector3(-1,0,0);
         canShoot = false;
-        Projectile.transform.position = (transform.position+left);
-        Projectile.SetActive(true);
+        GameObject bullet = Instantiate(Projectile) as GameObject;
+        bullet.transform.position = transform.position+left;
+        bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
-        Projectile.SetActive(false);
         canShoot = true;
+        yield return new WaitForSeconds(10 - 1/fireRate);
+        bullet.SetActive(false);
     }
-    */
 }
