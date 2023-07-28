@@ -14,6 +14,10 @@ public class ShieldController : MonoBehaviour
         set { durability = value; }
     }
 
+    void Start() {
+        gameObject.SetActive(false);
+    }
+
     //
     void OnEnable()
     {
@@ -46,7 +50,7 @@ public class ShieldController : MonoBehaviour
         transform.right = mousePosition - transform.position;
     }
 
-    private void TakeDamage(int damage) {
+    public void TakeDamage(int damage) {
         durability -= damage;
     }
 }

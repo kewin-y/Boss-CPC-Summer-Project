@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
     [SerializeField] private Color playerColor; // For death particles mainly
-    [SerializeField] private ShieldController shield;
+    [SerializeField] private GameObject shield;
 
     public Camera mainCam;
     private CameraBounds cameraBounds;
@@ -228,7 +228,7 @@ public class PlayerController : MonoBehaviour
         StopAllCoroutines();
         gameObject.SetActive(false);  
 
-        shield.Durability = 0;
+        shield.SetActive(false);
 
         GameObject deathParticles = Instantiate(deathEffect);
         deathParticles.transform.position = transform.position;
@@ -270,8 +270,6 @@ public class PlayerController : MonoBehaviour
         healthBar.SetHealth(health);
 
         if(health <= 0)
-        {
             die();
-        }
     }
 }
