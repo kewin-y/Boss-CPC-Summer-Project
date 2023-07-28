@@ -11,9 +11,10 @@ public class PlayerController : MonoBehaviour
     }
     private TerrainState terrainState;
 
+    [SerializeField] private int maxHealth;
     [SerializeField] private int jumpsRemaining;
 
-//Inspector input
+    //Inspector input
     [SerializeField] private float dashForce;
     [SerializeField] private float jumpHeight;
     [SerializeField] private float boostDuration;
@@ -56,6 +57,9 @@ public class PlayerController : MonoBehaviour
     private bool canDash;
     private bool isDashing;
 
+    private int health;
+    [SerializeField] private HealthBar healthBar;
+
     public bool IsDashing
     {
         get {return isDashing;}
@@ -74,7 +78,10 @@ public class PlayerController : MonoBehaviour
         canDash = true;
         lastFacing = 1;
         boostFactor = 1;
-        jumpsRemaining = jumpsAvailable = 2;     
+        jumpsRemaining = jumpsAvailable = 2;
+
+        health = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
@@ -84,18 +91,12 @@ public class PlayerController : MonoBehaviour
         isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
-        {
             terrainState = TerrainState.Water;
-        }
         else
-        {
             terrainState = TerrainState.Air;
-        }
 
         if(!isGrounded)
-        {
             lastGrounded += Time.deltaTime;
-        }
 
         else
         {
@@ -253,5 +254,11 @@ public class PlayerController : MonoBehaviour
     }
     void deactivateTripleJump(){
         jumpsAvailable = 2;
+    }
+
+    //Depletes the player's health by a certain amount
+    public void TakeDamage(int damage) {
+        health -= damage;
+        healthBar.SetHealth(health);
     }
 }

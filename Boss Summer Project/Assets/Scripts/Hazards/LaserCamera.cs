@@ -7,21 +7,22 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private GameObject laserEye;
     [SerializeField] private LineRenderer laserRenderer;
     [SerializeField] private float aimRadius;
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject playerObj;
     [SerializeField] private LayerMask whatIsPlayer;
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
     [SerializeField] private float laserFadeOutTime;
-
     [SerializeField] private Transform laserStartPosition;
 
+    private PlayerController player;
     private bool playerDetected;
     private bool openFire = true;
 
     // Start is called before the first frame update
     void Start()
     {
+        player = playerObj.GetComponent<PlayerController>();
         SetAlpha(laserEye, 0);
         SetAlpha(laserRenderer, 0);
     }
@@ -40,7 +41,7 @@ public class LaserCamera : MonoBehaviour
             }
 
             //Make the laser point to the player
-            laserEye.transform.right = player.transform.position - laserEye.transform.position;
+            laserEye.transform.right = playerObj.transform.position - laserEye.transform.position;
             laserEye.transform.Rotate(new Vector3(0, 0, 90));    //offset 90 degrees in z axis (fix)
 
             if (openFire)
@@ -71,13 +72,16 @@ public class LaserCamera : MonoBehaviour
         //Draw the laser from the camera to the player
         // laserRenderer.SetPosition(0, transform.position);
         laserRenderer.SetPosition(0, laserStartPosition.position);
-        laserRenderer.SetPosition(1, player.transform.position);
+        laserRenderer.SetPosition(1, playerObj.transform.position);
 
-        ///Laser appears while tinting the player red, then immediately starts fading out along with red tint
+        ///Laser appears while tinting the player red, inflicting damage
         SetAlpha(laserRenderer, 1);
-        SetColor(player, Color.red);
+        SetColor(playerObj, Color.red);
+        player.TakeDamage(30);
+
+        //Laser immediately starts fading out along with red tint
         StartCoroutine(FadeOut(laserRenderer, laserFadeOutTime));
-        yield return StartCoroutine(FadeToColor(player, laserFadeOutTime, Color.white));  //White tint = restore original color
+        yield return StartCoroutine(FadeToColor(playerObj, laserFadeOutTime, Color.white));  //White tint = restore original color
 
         openFire = true;
     }
@@ -153,6 +157,7 @@ public class LaserCamera : MonoBehaviour
         laser.material.color = new Color(laserColor.r, laserColor.g, laserColor.b, alpha);
     }
 
+    //Get the alpha value of an object
     private float GetAlpha(GameObject obj) {
         Color spriteColor = obj.GetComponent<SpriteRenderer>().color;
         return spriteColor.a;
