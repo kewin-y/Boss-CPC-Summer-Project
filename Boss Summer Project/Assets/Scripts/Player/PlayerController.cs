@@ -42,9 +42,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Color playerColor; // For death particles mainly 
 
     public Camera mainCam;
+    private CameraBounds cameraBounds;
     public GameObject deathEffect;
 
     private Rigidbody2D rb2d;
+    private SpriteRenderer spriteRenderer;
     private float xInput; // Variable for the x-input (a&d or left & right)
     private bool isGrounded; // If the player is on the ground 
     private bool isInWater;
@@ -71,6 +73,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        cameraBounds = mainCam.GetComponent<CameraBounds>();
+
         actualPlayerSize = transform.localScale.x;
         playerSize = actualPlayerSize - 0.05f;
         lastGrounded = 0f;
@@ -114,7 +119,7 @@ public class PlayerController : MonoBehaviour
         xInput = Input.GetAxisRaw("Horizontal");
         if(xInput != 0) lastFacing = xInput;
 
-        if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (w) is held
+        if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SAPCE) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
 
         if(Input.GetKeyDown(dashKey) && canDash)
@@ -212,41 +217,41 @@ public class PlayerController : MonoBehaviour
     {
         if(col.gameObject.tag == "Kill")
         {   
-            StopAllCoroutines();
-            gameObject.SetActive(false);
-
-            GameObject deathParticles = Instantiate(deathEffect);
-            deathParticles.transform.position = col.contacts[0].point;
-
-            ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
-            ParticleSystem.MainModule dpMain = dpSystem.main;
-
-            dpMain.startColor = playerColor;
-
-            Destroy(deathParticles, 2f);
-
-            Invoke("respawn", 0.5f);
-
-            if(col.gameObject.tag == "Powerup"){
-                if(col.gameObject.name == "Boost"){
-                    boostFactor = 5;
-                    Invoke("deactivateBoost", boostDuration);
-                } else if(col.gameObject.name == "Triple Jump"){
-                    jumpsAvailable = 3;
-                    Invoke("deactivateTripleJump", tripleJumpDuration);
-                }
-            }
+            die();
         }
+    }
+
+    void die()
+    {
+        cameraBounds.CameraCanMove = false;
+        StopAllCoroutines();
+        gameObject.SetActive(false);   
+
+        GameObject deathParticles = Instantiate(deathEffect);
+        deathParticles.transform.position = transform.position;
+
+        ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule dpMain = dpSystem.main;
+
+        dpMain.startColor = playerColor;
+
+        Destroy(deathParticles, 2f);
+
+        Invoke("respawn", 0.5f);
     }
 
     void respawn() 
     {
+        health = maxHealth;
+        healthBar.SetHealth(health);
+        
         canDash = true;
         rb2d.gravityScale = 5f;
         isDashing = false;
         gameObject.SetActive(true);
         transform.position = spawnPoint; // tp the player to the spawnpoint
         mainCam.transform.position = new Vector3(0, 0, -10f);
+        cameraBounds.CameraCanMove = true;
 
     } 
     void deactivateBoost(){
@@ -260,5 +265,10 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage) {
         health -= damage;
         healthBar.SetHealth(health);
+
+        if(health < 0)
+        {
+            die();
+        }
     }
 }

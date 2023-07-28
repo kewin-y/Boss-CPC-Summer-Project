@@ -7,8 +7,18 @@ public class CameraBounds : MonoBehaviour
     [SerializeField] private float moveTime; 
 
     private float bufferValue = 1f; // Moves the player this much to the left/right of the camera to fix a bug
+    private bool cameraCanMove;
+    public bool CameraCanMove 
+    {
+        get{return cameraCanMove;}
+        set{cameraCanMove = value;}
+    }
+
     private Camera cam;
     private BoxCollider2D bc2d; // Camera's collider
+
+    private float moveAmountX;
+    private float moveAmountY;
 
     private float sizeY;
     private float ratio; 
@@ -17,8 +27,12 @@ public class CameraBounds : MonoBehaviour
     {
         cam = GetComponent<Camera>();
         bc2d = GetComponent<BoxCollider2D>();
+        cameraCanMove = true;
 
         AdjustBounds();
+
+        moveAmountX = sizeX;
+        moveAmountY = sizeY;
     }
 
     // Update is called once per frame
@@ -27,24 +41,24 @@ public class CameraBounds : MonoBehaviour
         
     }
     
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
 
-        if(other.tag == "Player")
+        if(other.tag == "Player" && cameraCanMove)
         {
             Vector2 newPos; 
             bool isRight = other.transform.position.x - transform.position.x > 0;
 
             if(isRight)
             {
-                newPos = new Vector3(transform.position.x + sizeX, transform.position.y);
+                newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y);
                 other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
 
             }
 
             else
             {
-                newPos = new Vector3(transform.position.x - sizeX, transform.position.y);
+                newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y);
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
             }
                     
