@@ -39,7 +39,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
-    [SerializeField] private Color playerColor; // For death particles mainly 
+    [SerializeField] private Color playerColor; // For death particles mainly
+    [SerializeField] private ShieldController shield;
 
     public Camera mainCam;
     private CameraBounds cameraBounds;
@@ -181,7 +182,7 @@ public class PlayerController : MonoBehaviour
         rb2d.gravityScale = 0f;
 
         Vector2 distance = mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        Vector2 direction = distance.normalized;   
+        Vector2 direction = distance.normalized;
 
         rb2d.AddForce(direction * dashAmount, ForceMode2D.Impulse);
 
@@ -225,7 +226,9 @@ public class PlayerController : MonoBehaviour
     {
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
-        gameObject.SetActive(false);   
+        gameObject.SetActive(false);  
+
+        shield.Durability = 0;
 
         GameObject deathParticles = Instantiate(deathEffect);
         deathParticles.transform.position = transform.position;
@@ -237,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
         Destroy(deathParticles, 2f);
 
-        Invoke("respawn", 0.5f);
+        Invoke("respawn", 1f);
     }
 
     void respawn() 
@@ -266,7 +269,7 @@ public class PlayerController : MonoBehaviour
         health -= damage;
         healthBar.SetHealth(health);
 
-        if(health < 0)
+        if(health <= 0)
         {
             die();
         }
