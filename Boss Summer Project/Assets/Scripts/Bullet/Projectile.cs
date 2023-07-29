@@ -35,7 +35,6 @@ public class Projectile : MonoBehaviour
     void OnCollisionEnter2D(Collision2D col) {
 
         GameObject target = col.gameObject;
-        Debug.Log("Hit " + target.tag);
         
         if (target.tag == "Player" || target.tag == "Shield") {
             Damageable targetScript = target.GetComponent<Damageable>();

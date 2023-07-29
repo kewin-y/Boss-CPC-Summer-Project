@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5034296391757265214
 SpriteRenderer:
@@ -171,14 +171,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9da9171fa5ddeb849b59750f90105df3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particles: {fileID: 0}
-  enemy: {fileID: 0}
-  projectile: {fileID: 0}
+  attackRadius: 49
+  fireRate: 2
+  particles: {fileID: 4355498331687486520, guid: ac55b8fcb840e466999e40e540d9d246, type: 3}
   spawnPoint: {x: 0, y: 0, z: 0}
-  Projectile: {fileID: 0}
+  Projectile: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
   player: {fileID: 0}
-  attackRadius: 0
-  fireRate: 0
   canShoot: 0
   whatIsPlayer:
     serializedVersion: 2
