@@ -2,26 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShieldController : MonoBehaviour
+public class ShieldController : Damageable
 {
-    [SerializeField] private int maxDurability;
     [SerializeField] private Camera mainCam;
     [SerializeField] private Transform player;
 
-    private int durability;
-    public int Durability {
-        get { return durability; }
-        set { durability = value; }
-    }
-
     void Start() {
-        gameObject.SetActive(false);
+        Die();
     }
 
     //
     void OnEnable()
     {
-        durability = maxDurability;
+        ResetHealth();
     }
 
     // 
@@ -29,10 +22,6 @@ public class ShieldController : MonoBehaviour
     {
         FollowPlayer();
         PointToMouse();
-
-        if (durability <= 0) {
-            gameObject.SetActive(false);
-        }
     }
 
     //Makes the shield follow the player
@@ -50,7 +39,14 @@ public class ShieldController : MonoBehaviour
         transform.right = mousePosition - transform.position;
     }
 
-    public void TakeDamage(int damage) {
-        durability -= damage;
+    public override void TakeDamage(int damage) {
+        health -= damage;
+
+        if (health <= 0)
+            Die();
+    }
+
+    public override void Die() {
+        gameObject.SetActive(false);
     }
 }

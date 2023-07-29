@@ -8,7 +8,7 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private GameObject laser;
     [SerializeField] private float aimRadius;
     [SerializeField] private GameObject playerObj;
-    [SerializeField] private LayerMask whatIsPlayer;
+    [SerializeField] private LayerMask whatIsPlayer;    //Layer mask that contains the player and shield
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
@@ -18,7 +18,6 @@ public class LaserCamera : MonoBehaviour
 
     private PlayerController player;
     private LineRenderer laserRenderer;
-    private Laser laserScript;
     private ShieldController shieldScript;
     private bool playerDetected;
     private bool openFire = true;
@@ -28,7 +27,6 @@ public class LaserCamera : MonoBehaviour
     {
         player = playerObj.GetComponent<PlayerController>();
         laserRenderer = laser.GetComponent<LineRenderer>();
-        laserScript = laser.GetComponent<Laser>();
         shieldScript = shield.GetComponent<ShieldController>();
 
         VisualEffects.SetAlpha(laserEye, 0);
@@ -89,43 +87,29 @@ public class LaserCamera : MonoBehaviour
 
         //Draw the laser from the laser eye to the player
         laserRenderer.SetPosition(0, laserStartPosition.position);
-        laserRenderer.SetPosition(1, playerObj.transform.position);
-        laserScript.SetEdgeCollider();
 
-        yield return null;
+        Vector2 direction = (Vector2) playerObj.transform.position - (Vector2) laserStartPosition.position;
+        RaycastHit2D hit = Physics2D.Raycast(laserStartPosition.position, direction.normalized, direction.magnitude, whatIsPlayer);
 
-        //If the laser is blocked by a shield, hit the shield instead
-        if (laserScript.IsBlockedByShield) {
-            laserRenderer.SetPosition(1, shield.transform.position);
-            yield return StartCoroutine(shootShield());
-        } 
-        else {
-            yield return StartCoroutine(shootPlayer());
+        if (hit) {
+
+            laserRenderer.SetPosition(1, hit.point);
+
+            GameObject target = hit.collider.gameObject;
+            Damageable targetScript = target.GetComponent<Damageable>();
+
+            //Laser appears while tinting the target red, inflicting damage
+            VisualEffects.SetAlpha(laserRenderer, 1);
+            VisualEffects.SetColor(target, Color.red);
+            targetScript.TakeDamage(30);
+
+            //Laser immediately starts fading out along with red tint (white tint = restore original colour)
+            StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
+            yield return StartCoroutine(VisualEffects.FadeToColor(target, laserFadeOutTime, Color.white));
+
         }
         
         laser.SetActive(false);
 
-    }
-
-    private IEnumerator shootShield() {
-        //Laser appears while tinting the shield grey, decreasing its durability
-        VisualEffects.SetAlpha(laserRenderer, 1);
-        VisualEffects.SetColor(shield, Color.grey);
-        shieldScript.TakeDamage(30);
-
-        //Laser immediately starts fading out along with red tint (white tint = restore original colour)
-        StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
-        yield return StartCoroutine(VisualEffects.FadeToColor(shield, laserFadeOutTime, Color.white));
-    }
-
-    private IEnumerator shootPlayer() {
-        //Laser appears while tinting the player red, inflicting damage
-        VisualEffects.SetAlpha(laserRenderer, 1);
-        VisualEffects.SetColor(playerObj, Color.red);
-        player.TakeDamage(30);
-
-        //Laser immediately starts fading out along with red tint (white tint = restore original colour)
-        StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
-        yield return StartCoroutine(VisualEffects.FadeToColor(playerObj, laserFadeOutTime, Color.white));
     }
 }
