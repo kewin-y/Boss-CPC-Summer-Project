@@ -6,6 +6,7 @@ public class ShieldController : Damageable
 {
     [SerializeField] private Camera mainCam;
     [SerializeField] private Transform player;
+    [SerializeField] private Transform pivotPoint;
 
     void Start() {
         Die();
@@ -26,7 +27,7 @@ public class ShieldController : Damageable
 
     //Makes the shield follow the player
     private void FollowPlayer() {
-        transform.position = player.position;
+        pivotPoint.position = player.position;
     }
 
     //Rotates the shield to face towards the mouse position
@@ -36,7 +37,7 @@ public class ShieldController : Damageable
         mousePosition.z = 0;
 
         //Point the shield to the mouse
-        transform.right = mousePosition - transform.position;
+        pivotPoint.transform.right = mousePosition - pivotPoint.position;
     }
 
     public override void TakeDamage(int damage) {
