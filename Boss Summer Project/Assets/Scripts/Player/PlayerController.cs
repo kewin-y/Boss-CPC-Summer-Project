@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Damageable
 {
     private enum TerrainState
     {
@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     }
     private TerrainState terrainState;
 
-    [SerializeField] private int maxHealth;
     [SerializeField] private int jumpsRemaining;
 
     //Inspector input
@@ -39,7 +38,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
-    [SerializeField] private Color playerColor; // For death particles mainly 
+    [SerializeField] private Color playerColor; // For death particles mainly
+    [SerializeField] private GameObject shield;
 
     public Camera mainCam;
     private CameraBounds cameraBounds;
@@ -59,7 +59,6 @@ public class PlayerController : MonoBehaviour
     private bool canDash;
     private bool isDashing;
 
-    private int health;
     [SerializeField] private HealthBar healthBar;
 
     public bool IsDashing
@@ -181,7 +180,7 @@ public class PlayerController : MonoBehaviour
         rb2d.gravityScale = 0f;
 
         Vector2 distance = mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        Vector2 direction = distance.normalized;   
+        Vector2 direction = distance.normalized;
 
         rb2d.AddForce(direction * dashAmount, ForceMode2D.Impulse);
 
@@ -217,15 +216,17 @@ public class PlayerController : MonoBehaviour
     {
         if(col.gameObject.tag == "Kill")
         {   
-            die();
+            Die();
         }
     }
 
-    void die()
+    public override void Die()
     {
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
-        gameObject.SetActive(false);   
+        gameObject.SetActive(false);  
+
+        shield.SetActive(false);
 
         GameObject deathParticles = Instantiate(deathEffect);
         deathParticles.transform.position = transform.position;
@@ -237,7 +238,7 @@ public class PlayerController : MonoBehaviour
 
         Destroy(deathParticles, 2f);
 
-        Invoke("respawn", 0.5f);
+        Invoke("respawn", 1f);
     }
 
     void respawn() 
@@ -262,13 +263,11 @@ public class PlayerController : MonoBehaviour
     }
 
     //Depletes the player's health by a certain amount
-    public void TakeDamage(int damage) {
+    public override void TakeDamage(int damage) {
         health -= damage;
         healthBar.SetHealth(health);
 
-        if(health < 0)
-        {
-            die();
-        }
+        if(health <= 0)
+            Die();
     }
 }

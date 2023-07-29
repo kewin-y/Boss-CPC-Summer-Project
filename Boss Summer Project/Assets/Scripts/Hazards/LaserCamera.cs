@@ -5,17 +5,20 @@ using UnityEngine;
 public class LaserCamera : MonoBehaviour
 {
     [SerializeField] private GameObject laserEye;
-    [SerializeField] private LineRenderer laserRenderer;
+    [SerializeField] private GameObject laser;
     [SerializeField] private float aimRadius;
     [SerializeField] private GameObject playerObj;
-    [SerializeField] private LayerMask whatIsPlayer;
+    [SerializeField] private LayerMask whatIsPlayer;    //Layer mask that contains the player and shield
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
     [SerializeField] private float laserFadeOutTime;
     [SerializeField] private Transform laserStartPosition;
+    [SerializeField] private GameObject shield;
 
     private PlayerController player;
+    private LineRenderer laserRenderer;
+    private ShieldController shieldScript;
     private bool playerDetected;
     private bool openFire = true;
 
@@ -23,8 +26,11 @@ public class LaserCamera : MonoBehaviour
     void Start()
     {
         player = playerObj.GetComponent<PlayerController>();
-        SetAlpha(laserEye, 0);
-        SetAlpha(laserRenderer, 0);
+        laserRenderer = laser.GetComponent<LineRenderer>();
+        shieldScript = shield.GetComponent<ShieldController>();
+
+        VisualEffects.SetAlpha(laserEye, 0);
+        VisualEffects.SetAlpha(laserRenderer, 0);
     }
 
     // Update is called once per frame
@@ -35,9 +41,9 @@ public class LaserCamera : MonoBehaviour
         if (playerDetected) {
 
             //If the laser eye is hidden, reveal the camera and laser eye
-            if (GetAlpha(laserEye) == 0) {
-                StartCoroutine(FadeIn(laserEye, laserEyeFadeInDuration));
-                StartCoroutine(FadeToColor(gameObject, laserEyeFadeInDuration, Color.white));
+            if (VisualEffects.GetAlpha(laserEye) == 0) {
+                StartCoroutine(VisualEffects.FadeIn(laserEye, laserEyeFadeInDuration));
+                StartCoroutine(VisualEffects.FadeToColor(gameObject, laserEyeFadeInDuration, Color.white));
             }
 
             //Make the laser point to the player
@@ -50,9 +56,9 @@ public class LaserCamera : MonoBehaviour
         else {
 
             //If the laser eye is revealed, hide the camera and laser eye
-            if (GetAlpha(laserEye) == 1) {
-                StartCoroutine(FadeOut(laserEye, laserEyeFadeInDuration));
-                StartCoroutine(FadeToColor(gameObject, laserEyeFadeInDuration, Color.black));
+            if (VisualEffects.GetAlpha(laserEye) == 1) {
+                StartCoroutine(VisualEffects.FadeOut(laserEye, laserEyeFadeInDuration));
+                StartCoroutine(VisualEffects.FadeToColor(gameObject, laserEyeFadeInDuration, Color.black));
             }
         }
     }
@@ -69,97 +75,41 @@ public class LaserCamera : MonoBehaviour
             yield break;
         }
 
-        //Draw the laser from the camera to the player
-        // laserRenderer.SetPosition(0, transform.position);
-        laserRenderer.SetPosition(0, laserStartPosition.position);
-        laserRenderer.SetPosition(1, playerObj.transform.position);
-
-        ///Laser appears while tinting the player red, inflicting damage
-        SetAlpha(laserRenderer, 1);
-        SetColor(playerObj, Color.red);
-        player.TakeDamage(30);
-
-        //Laser immediately starts fading out along with red tint
-        StartCoroutine(FadeOut(laserRenderer, laserFadeOutTime));
-        yield return StartCoroutine(FadeToColor(playerObj, laserFadeOutTime, Color.white));  //White tint = restore original color
+        //Fire a laser at the player or shield, whichever comes first
+        StartCoroutine(FireLaser());
 
         openFire = true;
     }
 
-    private IEnumerator FadeToColor(GameObject obj, float duration, Color reqColor) {
-        Color originalColor = obj.GetComponent<SpriteRenderer>().color;
+    private IEnumerator FireLaser() {
 
-        float timeElapsed = 0f;
-        while (timeElapsed < duration) {
-            timeElapsed += Time.deltaTime;
+        laser.SetActive(true);
 
-            //Fade from the original color to the required color
-            Color newColor = Color.Lerp(originalColor, reqColor, timeElapsed / duration);
-            SetColor(obj, newColor);
+        //Draw the laser from the laser eye to the player
+        laserRenderer.SetPosition(0, laserStartPosition.position);
 
-            yield return null;  //Wait for next frame to pass
+        Vector2 direction = (Vector2) playerObj.transform.position - (Vector2) laserStartPosition.position;
+        RaycastHit2D hit = Physics2D.Raycast(laserStartPosition.position, direction.normalized, direction.magnitude, whatIsPlayer);
+
+        if (hit) {
+
+            laserRenderer.SetPosition(1, hit.point);
+
+            GameObject target = hit.collider.gameObject;
+            Damageable targetScript = target.GetComponent<Damageable>();
+
+            //Laser appears while tinting the target red, inflicting damage
+            VisualEffects.SetAlpha(laserRenderer, 1);
+            VisualEffects.SetColor(target, Color.red);
+            targetScript.TakeDamage(30);
+
+            //Laser immediately starts fading out along with red tint (white tint = restore original colour)
+            StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
+            yield return StartCoroutine(VisualEffects.FadeToColor(target, laserFadeOutTime, Color.white));
+
         }
-    }
+        
+        laser.SetActive(false);
 
-    private void SetColor(GameObject obj, Color newColor) {
-        SpriteRenderer objRenderer = obj.GetComponent<SpriteRenderer>();
-        objRenderer.color = newColor;
-    }
-
-    private IEnumerator FadeIn(GameObject obj, float duration) {
-        float timeElapsed = 0f;
-
-        while (timeElapsed < duration) {
-            timeElapsed += Time.deltaTime;
-            float newAlpha = Mathf.Lerp(0, 1, timeElapsed / duration);
-            SetAlpha(obj, newAlpha);
-
-            yield return null;  //Wait for next frame to pass
-        }
-    }
-
-    //Fade out a GameObject over a specified duration
-    private IEnumerator FadeOut(GameObject obj, float duration) {
-        float timeElapsed = 0;
-
-        while (timeElapsed < duration) {
-            timeElapsed += Time.deltaTime;
-            float newAlpha = Mathf.Lerp(1, 0, timeElapsed / duration);
-            SetAlpha(obj, newAlpha);
-
-            yield return null;  //Wait for next frame to pass
-        }
-    }
-
-    //Fade out a LineRenderer over a specified duration (used exclusively for laser)
-    private IEnumerator FadeOut(LineRenderer laser, float duration) {
-        float timeElapsed = 0;
-
-        while (timeElapsed < duration) {
-            timeElapsed += Time.deltaTime;
-            float newAlpha = Mathf.Lerp(1, 0, timeElapsed / duration);
-            SetAlpha(laser, newAlpha);
-
-            yield return null;  //Wait for next frame to pass
-        }
-    }
-
-    //Change the alpha value of the object's sprite renderer
-    private void SetAlpha(GameObject obj, float alpha) {
-        SpriteRenderer objRenderer = obj.GetComponent<SpriteRenderer>();
-        Color spriteColor = objRenderer.material.color;
-        objRenderer.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, alpha);
-    }
-
-    //Change the alpha value of a line renderer (used exclusively for laser)
-    private void SetAlpha(LineRenderer laser, float alpha) {
-        Color laserColor = laser.material.color;
-        laser.material.color = new Color(laserColor.r, laserColor.g, laserColor.b, alpha);
-    }
-
-    //Get the alpha value of an object
-    private float GetAlpha(GameObject obj) {
-        Color spriteColor = obj.GetComponent<SpriteRenderer>().color;
-        return spriteColor.a;
     }
 }
