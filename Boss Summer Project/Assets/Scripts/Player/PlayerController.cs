@@ -224,7 +224,7 @@ public class PlayerController : Damageable
     {
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
-        gameObject.SetActive(false);  
+        gameObject.SetActive(false); 
 
         shield.SetActive(false);
 
@@ -254,6 +254,8 @@ public class PlayerController : Damageable
         mainCam.transform.position = new Vector3(0, 0, -10f);
         cameraBounds.CameraCanMove = true;
 
+        VisualEffects.SetColor(gameObject, Color.white);
+
     } 
     void deactivateBoost(){
         boostFactor = 1;
@@ -266,6 +268,9 @@ public class PlayerController : Damageable
     public override void TakeDamage(int damage) {
         health -= damage;
         healthBar.SetHealth(health);
+
+        VisualEffects.SetColor(gameObject, Color.red);
+        StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
 
         if(health <= 0)
             Die();

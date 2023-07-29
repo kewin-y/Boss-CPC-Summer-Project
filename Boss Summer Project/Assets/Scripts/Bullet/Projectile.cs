@@ -15,6 +15,7 @@ public class Projectile : MonoBehaviour
     private Vector2 motion;
 
     private Rigidbody2D rb2d;
+    private bool targetDetected;
 
     void Start(){
         rb2d = GetComponent<Rigidbody2D>();
@@ -25,7 +26,22 @@ public class Projectile : MonoBehaviour
         Vector2 motion = new Vector2(-1,0);
 
         if(gameObject.activeSelf){
-            rb2d.AddForce(motion * moveSpeed * Time.deltaTime, ForceMode2D.Impulse);
+            rb2d.velocity = motion * moveSpeed * Time.deltaTime * 100;
+        }
+    }
+
+    //MAKE ABSTRACT CLASS FOR HEALTH BAR
+    //IN DAMAGEABLE SCRIPT: EXTRACT TAKEDAMAGE() SO THAT IT CHANGES A UNIQUE HEALTH BAR FOR EACH POWER UP
+    void OnCollisionEnter2D(Collision2D col) {
+
+        GameObject target = col.gameObject;
+        Debug.Log("Hit " + target.tag);
+        
+        if (target.tag == "Player" || target.tag == "Shield") {
+            Damageable targetScript = target.GetComponent<Damageable>();
+            targetScript.TakeDamage(20);
+
+            Destroy(gameObject);
         }
     }
 }

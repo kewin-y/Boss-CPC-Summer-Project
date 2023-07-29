@@ -43,6 +43,9 @@ public class ShieldController : Damageable
     public override void TakeDamage(int damage) {
         health -= damage;
 
+        VisualEffects.SetColor(gameObject, Color.red);
+        StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
+
         if (health <= 0)
             Die();
     }
