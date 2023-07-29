@@ -11,15 +11,14 @@ public class PlayerController : Damageable
     }
     private TerrainState terrainState;
 
-    [SerializeField] private int jumpsRemaining;
-
     //Inspector input
     [SerializeField] private float dashForce;
     [SerializeField] private float jumpHeight;
     [SerializeField] private float boostDuration;
     [SerializeField] private float tripleJumpDuration;
 
-    private int jumpsAvailable;
+    public int jumpsRemaining;
+    public int jumpsAvailable;
     private float boostFactor;
 
     [SerializeField] private float moveSpeed;
@@ -52,10 +51,10 @@ public class PlayerController : Damageable
     private bool isInWater;
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
+    private bool isJumping;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
     private float playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
     private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
-    private bool doubleJump;
     private bool canDash;
     private bool isDashing;
 
@@ -104,8 +103,8 @@ public class PlayerController : Damageable
 
         else
         {
+            isJumping = false;
             lastGrounded = 0f;
-            jumpsRemaining = jumpsAvailable;
         }
         
         getInput();
@@ -131,20 +130,18 @@ public class PlayerController : Damageable
             rb2d.gravityScale = 5f;
             rb2d.drag = 0f;
 
-            if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
-
-            if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump)) 
+            if(wishJump && canJump && jumpsRemaining > 0) 
             {
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
-                doubleJump = !doubleJump;
+                jumpsRemaining -= 1;
+                if (lastGrounded < coyoteTime || isJumping){
+                    isJumping = true;
+                    jump();
+                }
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
-            }
-            if(Input.GetKeyDown(jumpKey) && jumpsRemaining > 0 && lastGrounded < coyoteTime){
-                jumpsRemaining -= 1;
-                rb2d.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
             }
         }
 
@@ -218,6 +215,7 @@ public class PlayerController : Damageable
         {   
             Die();
         }
+        jumpsRemaining = jumpsAvailable;
     }
 
     public override void Die()
