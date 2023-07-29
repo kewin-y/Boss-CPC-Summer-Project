@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public GameObject particles;
+    public Enemy enemy;
+    public GameObject projectile;
+
+    [SerializeField] private Vector3 spawnPoint;
+
+    private bool canCollide = true;
+    public bool CanCollide{
+        get{return canCollide;}
+        set{canCollide = value;}
+    }
     public GameObject Projectile;
 
     public Transform player;
@@ -15,8 +26,6 @@ public class Enemy : MonoBehaviour
 
     public static bool ProjectileTargeting;
 
-    public bool canCollide;
-
     [SerializeField] private LayerMask whatIsPlayer;
     public GameObject deathEffect; 
     private PlayerController playerController;
@@ -26,6 +35,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canCollide = true;
         rb2d = GetComponent<Rigidbody2D>();
         bc2d = GetComponent<BoxCollider2D>();
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
@@ -66,14 +76,6 @@ public class Enemy : MonoBehaviour
         }
     }
     */
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if(col.gameObject.tag == "Kill")
-        {
-            Destroy(gameObject);
-        }
-
-    }
 
     void die()
     {
@@ -88,7 +90,7 @@ public class Enemy : MonoBehaviour
 
         dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
     }
-     IEnumerator shoot()
+    IEnumerator shoot()
     {
         Vector3 left = new Vector3(-1,0,0);
         canShoot = false;
@@ -99,5 +101,38 @@ public class Enemy : MonoBehaviour
         canShoot = true;
         yield return new WaitForSeconds(10 - 1/fireRate);
         bullet.SetActive(false);
+    }
+
+    //This method will run when the player collides with something
+    void OnCollisionEnter2D(Collision2D col) {
+        if(col.gameObject.tag == "Kill")
+        {
+            Destroy(gameObject);
+        }
+        if(gameObject.tag == "Enemy" && col.gameObject.layer == 6){
+            return;
+        } else if(col.gameObject.tag == "Kill" && canCollide){
+            GameObject deathParticles = Instantiate(particles) as GameObject;
+            deathParticles.transform.position = col.GetContact(0).point;
+
+            //Set the colour of the particles to the player's colour
+            ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule dpMain = dpSystem.main;
+            dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
+            
+            gameObject.SetActive(false);
+
+            //Destroy the particles after 2 seconds
+            Destroy(deathParticles, 2);
+
+            //Respawn the Player
+            if(gameObject.name == "Player"){
+                Invoke("respawn", 2.0f);
+            }
+        }
+    }
+    void respawn(){
+        gameObject.SetActive(true);
+        transform.position = spawnPoint;
     }
 }

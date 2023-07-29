@@ -4,6 +4,18 @@ using UnityEngine;
 
 public class PlayerControllerTJ : MonoBehaviour
 {
+    public GameObject particles;
+    public Enemy enemy;
+    public GameObject projectile;
+
+    [SerializeField] private Vector3 spawnPoint;
+
+    private bool canCollide = true;
+    public bool CanCollide{
+        get{return canCollide;}
+        set{canCollide = value;}
+    }
+
     [SerializeField] private KeyCode jumpKey = KeyCode.UpArrow;
     [SerializeField] private KeyCode leftKey = KeyCode.LeftArrow;
     [SerializeField] private KeyCode rightKey = KeyCode.RightArrow;
@@ -23,11 +35,13 @@ public class PlayerControllerTJ : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float dashForce;
     [SerializeField] private float jumpHeight;
+    [SerializeField] private float shieldDuration;
     [SerializeField] private float boostDuration;
     [SerializeField] private float tripleJumpDuration;
 
     [SerializeField] private LayerMask whatIsGround;
 
+    [SerializeField] private bool shieldActive;
     private int jumpsAvailable;
     private float boostFactor;
     private float playerSize = 1f;
@@ -37,9 +51,11 @@ public class PlayerControllerTJ : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        canCollide = true;
         boostFactor = 1;
         jumpsRemaining = jumpsAvailable = 2;
         canDash = true;
+        shieldActive = false;
         rb2d = GetComponent<Rigidbody2D>();
     }
 
@@ -77,7 +93,44 @@ public class PlayerControllerTJ : MonoBehaviour
             rb2d.AddForce(Vector2.right * moveSpeed * boostFactor * Time.deltaTime, ForceMode2D.Impulse);
         }
     }
+    //This method will run when the player collides with something
+    void OnCollisionEnter2D(Collision2D col) {
+        jumpsRemaining = jumpsAvailable;
+        isJumping = false;
 
+        if(col.gameObject.tag == "Powerup"){
+            if(col.gameObject.name == "Speed Boost"){
+                boostFactor = 5;
+                Invoke("deactivateBoost", boostDuration);
+            } else if(col.gameObject.name == "Triple Jump"){
+                jumpsRemaining = jumpsAvailable = 3;
+                Invoke("deactivateTripleJump", tripleJumpDuration);
+            }
+            if(col.gameObject.name == "Shield"){
+                shieldActive = true;
+                Invoke("deactivateShield", shieldDuration);
+            }
+            col.gameObject.SetActive(false);
+        } else if(col.gameObject.layer == 9 && shieldActive){
+            return;
+        } else if(col.gameObject.tag == "Kill" && canCollide){
+            GameObject deathParticles = Instantiate(particles) as GameObject;
+            deathParticles.transform.position = col.GetContact(0).point;
+
+            //Set the colour of the particles to the player's colour
+            ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule dpMain = dpSystem.main;
+            dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
+            
+            gameObject.SetActive(false);
+
+            //Destroy the particles after 2 seconds
+            Destroy(deathParticles, 2);
+
+            //Respawn the Player
+            Invoke("respawn", 2.0f);
+        }
+    }
     IEnumerator dash(){
         Vector2 dir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         Vector2 dirNormalized = dir.normalized;
@@ -90,24 +143,21 @@ public class PlayerControllerTJ : MonoBehaviour
         yield return new WaitForSeconds(4f);
         canDash = true;
     }
-    void OnCollisionEnter2D(Collision2D col){
-        jumpsRemaining = jumpsAvailable;
-        isJumping = false;
-
-        if(col.gameObject.tag == "Powerup"){
-            if(col.gameObject.name == "Boost"){
-                boostFactor = 5;
-                Invoke("deactivateBoost", boostDuration);
-            } else if(col.gameObject.name == "Triple Jump"){
-                jumpsAvailable = 3;
-                Invoke("deactivateTripleJump", tripleJumpDuration);
-            }
-        }
-    }
     void deactivateBoost(){
         boostFactor = 1;
     }
     void deactivateTripleJump(){
-        jumpsAvailable = 2;
+        if(isJumping){
+            jumpsAvailable = 2;
+        } else {
+            jumpsRemaining = jumpsAvailable = 2;
+        }
+    }
+    void deactivateShield(){
+        shieldActive = false;
+    }
+    void respawn(){
+        gameObject.SetActive(true);
+        transform.position = spawnPoint;
     }
 }
