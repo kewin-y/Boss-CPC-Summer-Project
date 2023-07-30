@@ -82,29 +82,9 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter2D(Collision2D col) {
         if(col.gameObject.tag == "Kill")
         {
-            Destroy(gameObject);
+            die();
         }
-        if(gameObject.tag == "Enemy" && col.gameObject.layer == 6){
-            return;
-        } else if(col.gameObject.tag == "Kill" && canCollide){
-            GameObject deathParticles = Instantiate(particles) as GameObject;
-            deathParticles.transform.position = col.GetContact(0).point;
 
-            //Set the colour of the particles to the player's colour
-            ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
-            ParticleSystem.MainModule dpMain = dpSystem.main;
-            dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
-            
-            gameObject.SetActive(false);
-
-            //Destroy the particles after 2 seconds
-            Destroy(deathParticles, 2);
-
-            //Respawn the Player
-            if(gameObject.name == "Player"){
-                Invoke("respawn", 2.0f);
-            }
-        }
     }
     void respawn(){
         gameObject.SetActive(true);
@@ -112,10 +92,9 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator shoot()
     {
-        Vector3 left = new Vector3(-1,0,0);
         canShoot = false;
         GameObject bullet = Instantiate(Projectile) as GameObject;
-        bullet.transform.position = transform.position+left;
+        bullet.transform.position = transform.position + Vector3.left;
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;

@@ -44,7 +44,7 @@ public class ShieldController : Damageable
         health -= damage;
 
         VisualEffects.SetColor(gameObject, Color.red);
-        StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
+        if(isActiveAndEnabled) StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
 
         if (health <= 0)
             Die();

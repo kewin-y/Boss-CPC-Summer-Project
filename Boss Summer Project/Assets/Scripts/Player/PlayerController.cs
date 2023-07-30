@@ -11,16 +11,8 @@ public class PlayerController : Damageable
     }
     private TerrainState terrainState;
 
-    //Inspector input
-    [SerializeField] private float dashForce;
-    [SerializeField] private float jumpHeight;
-    [SerializeField] private float boostDuration;
-    [SerializeField] private float tripleJumpDuration;
-
     public int jumpsRemaining;
     public int jumpsAvailable;
-    private float boostFactor;
-
     [SerializeField] private float moveSpeed;
 
     public float MoveSpeed {
@@ -52,8 +44,9 @@ public class PlayerController : Damageable
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool isJumping;
+    private bool doubleJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
-    private float playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
     private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private bool canDash;
     private bool isDashing;
@@ -75,12 +68,11 @@ public class PlayerController : Damageable
         cameraBounds = mainCam.GetComponent<CameraBounds>();
 
         actualPlayerSize = transform.localScale.x;
-        playerSize = actualPlayerSize - 0.05f;
+        
         lastGrounded = 0f;
         canJump = true;
         canDash = true;
         lastFacing = 1;
-        boostFactor = 1;
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
@@ -90,7 +82,7 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
+        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0.1f, whatIsGround);
         isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
@@ -130,16 +122,14 @@ public class PlayerController : Damageable
             rb2d.gravityScale = 5f;
             rb2d.drag = 0f;
 
-            if(wishJump && canJump && jumpsRemaining > 0) 
+            if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
+
+            if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump)) 
             {
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
-                jumpsRemaining -= 1;
-                if (lastGrounded < coyoteTime || isJumping){
-                    isJumping = true;
-                    jump();
-                }
+                doubleJump = !doubleJump;
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
@@ -255,12 +245,6 @@ public class PlayerController : Damageable
         VisualEffects.SetColor(gameObject, Color.white);
 
     } 
-    void deactivateBoost(){
-        boostFactor = 1;
-    }
-    void deactivateTripleJump(){
-        jumpsAvailable = 2;
-    }
 
     //Depletes the player's health by a certain amount
     public override void TakeDamage(int damage) {
@@ -268,7 +252,7 @@ public class PlayerController : Damageable
         healthBar.SetHealth(health);
 
         VisualEffects.SetColor(gameObject, Color.red);
-        StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
+        if(isActiveAndEnabled) StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
 
         if(health <= 0)
             Die();
