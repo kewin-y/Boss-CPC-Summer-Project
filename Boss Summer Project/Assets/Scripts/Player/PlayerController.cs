@@ -14,12 +14,9 @@ public class PlayerController : Damageable
     //Inspector input
     [SerializeField] private float dashForce;
     [SerializeField] private float jumpHeight;
-    [SerializeField] private float boostDuration;
-    [SerializeField] private float tripleJumpDuration;
 
     public int jumpsRemaining;
     public int jumpsAvailable;
-    private float boostFactor;
 
     [SerializeField] private float moveSpeed;
 
@@ -80,7 +77,6 @@ public class PlayerController : Damageable
         canJump = true;
         canDash = true;
         lastFacing = 1;
-        boostFactor = 1;
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
@@ -209,13 +205,21 @@ public class PlayerController : Damageable
         rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
+    void OnCollisionStay2D(Collision2D col)
+    {
+        bool isCollidingWithWall = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.left, 0f, whatIsGround) || Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.right, 0f, whatIsGround);
+        print(isCollidingWithWall);
+        
+        if(col.gameObject.layer == 6 && gameObject.transform.position[1] - col.GetContact(0).point[1] > 0 && (isGrounded || isCollidingWithWall)){
+            jumpsRemaining = jumpsAvailable;
+        }
+    }
     void OnCollisionEnter2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
         {   
             Die();
         }
-        jumpsRemaining = jumpsAvailable;
     }
 
     public override void Die()
@@ -254,12 +258,6 @@ public class PlayerController : Damageable
 
         VisualEffects.SetColor(gameObject, Color.white);
 
-    } 
-    void deactivateBoost(){
-        boostFactor = 1;
-    }
-    void deactivateTripleJump(){
-        jumpsAvailable = 2;
     }
 
     //Depletes the player's health by a certain amount

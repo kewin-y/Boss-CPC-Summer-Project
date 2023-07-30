@@ -120,6 +120,6 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
         yield return new WaitForSeconds(10 - 1/fireRate);
-        bullet.SetActive(false);
+        Destroy(bullet);
     }
 }
