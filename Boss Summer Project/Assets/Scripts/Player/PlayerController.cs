@@ -50,6 +50,11 @@ public class PlayerController : Damageable
     private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private bool canDash;
     private bool isDashing;
+    private int gravityCoefficient = 1; //If 1, gravity goes down. If -1, gravity goes up.
+    public int GravityCoefficient {
+        get { return gravityCoefficient; }
+        set { gravityCoefficient = value; }
+    }
 
     [SerializeField] private HealthBar healthBar;
 
@@ -58,7 +63,8 @@ public class PlayerController : Damageable
         get {return isDashing;}
         set {isDashing = value;}
     }
-    private float lastFacing;
+    private float lastFacing = 1;   //If 1, facing right. If -1, facing left.
+    private float horizontalFlip = 1;    //If -1, player is upside down; must flip horizontally.
 
     // Start is called before the first frame update
     void Start()
@@ -72,7 +78,6 @@ public class PlayerController : Damageable
         lastGrounded = 0f;
         canJump = true;
         canDash = true;
-        lastFacing = 1;
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
@@ -82,8 +87,8 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0.1f, whatIsGround);
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
+        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
             terrainState = TerrainState.Water;
@@ -101,7 +106,7 @@ public class PlayerController : Damageable
         
         getInput();
 
-        transform.localScale = new Vector3(lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
+        transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
     }
 
     void getInput()
@@ -119,7 +124,7 @@ public class PlayerController : Damageable
 
         if(terrainState == TerrainState.Air) // Lol change this to a switch statement later
         {
-            rb2d.gravityScale = 5f;
+            SetGravityScale(5f);
             rb2d.drag = 0f;
 
             if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
@@ -137,7 +142,7 @@ public class PlayerController : Damageable
 
         else if (terrainState == TerrainState.Water)
         {
-            rb2d.gravityScale = 1f;
+            SetGravityScale(1f);
             rb2d.drag = 1f;
 
             if(wishJump)
@@ -147,15 +152,19 @@ public class PlayerController : Damageable
         }  
     }
 
+    public void flipHorizontal() {
+        horizontalFlip *= -1;
+    }
+
     void resetJump() => canJump = true; // This is syntax for a one-line method
 
     void jump()
     {
         if(terrainState == TerrainState.Air)
-            rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity);
+            rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
 
         else if (terrainState == TerrainState.Water)
-            rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity * 0.25f);
+            rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity * 0.25f);
     }
 
     IEnumerator dash()
@@ -164,7 +173,7 @@ public class PlayerController : Damageable
         isDashing = true;
         canDash = false;
 
-        rb2d.gravityScale = 0f;
+        SetGravityScale(0f);
 
         Vector2 distance = mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         Vector2 direction = distance.normalized;
@@ -184,7 +193,7 @@ public class PlayerController : Damageable
         }
 
         isDashing = false;
-        rb2d.gravityScale = 5f;
+        SetGravityScale(5f);
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
@@ -235,7 +244,12 @@ public class PlayerController : Damageable
         healthBar.SetHealth(health);
         
         canDash = true;
-        rb2d.gravityScale = 5f;
+
+        gravityCoefficient = 1;
+        transform.eulerAngles = Vector3.zero;
+        flipHorizontal();
+        SetGravityScale(5f);
+
         isDashing = false;
         gameObject.SetActive(true);
         transform.position = spawnPoint; // tp the player to the spawnpoint
@@ -256,5 +270,10 @@ public class PlayerController : Damageable
 
         if(health <= 0)
             Die();
+    }
+
+    //Sets the player's gravity scale while taking the gravity coefficient into account
+    private void SetGravityScale(float newGravityScale) {
+        rb2d.gravityScale = gravityCoefficient * newGravityScale;
     }
 }

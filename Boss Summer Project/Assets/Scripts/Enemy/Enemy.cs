@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Vector3 spawnPoint;
 
     private bool canCollide = true;
-    public bool CanCollide{
+    public bool CanCollide {
         get{return canCollide;}
         set{canCollide = value;}
     }
@@ -98,7 +98,8 @@ public class Enemy : MonoBehaviour
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
-        yield return new WaitForSeconds(10 - 1/fireRate);
-        bullet.SetActive(false);
+        yield return new WaitForSeconds(2);
+        if (bullet != null)
+            Destroy(bullet);
     }
 }

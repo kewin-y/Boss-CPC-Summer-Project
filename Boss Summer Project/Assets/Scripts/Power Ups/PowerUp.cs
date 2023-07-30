@@ -4,8 +4,9 @@ using UnityEngine;
 
 public abstract class PowerUp : MonoBehaviour
 {
-    [SerializeField] private GameObject player; //The player object
-    [SerializeField] private float duration;    //How long the boost lasts in seconds
+    [SerializeField] protected GameObject player; //The player object
+    [SerializeField] private bool isInfinite;
+    [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
 
     protected PlayerController playerScript;
 
@@ -32,9 +33,12 @@ public abstract class PowerUp : MonoBehaviour
 
     protected IEnumerator AddEffect() {
         SummonEffect();
-        yield return new WaitForSeconds(duration);
-        gameObject.SetActive(false);
-        RemoveEffect();
+
+        if (!isInfinite) {
+            yield return new WaitForSeconds(duration);
+            gameObject.SetActive(false);
+            RemoveEffect();
+        }
     }
 
     protected abstract void SummonEffect();
