@@ -89,7 +89,7 @@ public class PlayerController : Damageable
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+            healthBar.SetMaxHealth(maxHealth);
 
         SetupRespawnEvent();
     }
@@ -280,6 +280,7 @@ public class PlayerController : Damageable
         gravityCoefficient = 1;
         transform.eulerAngles = Vector3.zero;
         SetGravityScale(5f);
+        rb2d.velocity = Vector2.zero;
 
         canDash = true;
         isDashing = false;
