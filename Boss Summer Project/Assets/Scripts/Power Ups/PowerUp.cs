@@ -9,6 +9,7 @@ public abstract class PowerUp : MonoBehaviour
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
 
     protected PlayerController playerScript;
+    protected bool effectInProgress = false;
 
     protected void Start() {
         playerScript = player.GetComponent<PlayerController>();
@@ -33,11 +34,13 @@ public abstract class PowerUp : MonoBehaviour
 
     protected IEnumerator AddEffect() {
         SummonEffect();
+        effectInProgress = true;
 
         if (!isInfinite) {
             yield return new WaitForSeconds(duration);
             gameObject.SetActive(false);
             RemoveEffect();
+            effectInProgress = false;
         }
     }
 
@@ -46,7 +49,12 @@ public abstract class PowerUp : MonoBehaviour
 
     public void Respawn() {
         StopAllCoroutines();
-        RemoveEffect();
+        
+        if (effectInProgress) {
+            RemoveEffect();
+            effectInProgress = false;
+        }
+
         gameObject.SetActive(true);
 
         gameObject.GetComponent<Renderer>().enabled = true;
