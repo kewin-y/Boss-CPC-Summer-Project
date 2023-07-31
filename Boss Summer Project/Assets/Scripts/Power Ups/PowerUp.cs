@@ -43,4 +43,13 @@ public abstract class PowerUp : MonoBehaviour
 
     protected abstract void SummonEffect();
     protected abstract void RemoveEffect();
+
+    public void Respawn() {
+        StopAllCoroutines();
+        RemoveEffect();
+        gameObject.SetActive(true);
+
+        gameObject.GetComponent<Renderer>().enabled = true;
+        gameObject.GetComponent<BoxCollider2D>().enabled = true;
+    }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : Damageable
 {
@@ -68,6 +69,8 @@ public class PlayerController : Damageable
     }
     private float lastFacing = 1;   //If 1, facing right. If -1, facing left.
     private float horizontalFlip = 1;    //If -1, player is upside down; must flip horizontally.
+    public UnityEvent respawnEvent; //Called when the player respawns
+    [SerializeField] private Transform powerUps;    //Parent object for all power ups
 
     // Start is called before the first frame update
     void Start()
@@ -86,6 +89,16 @@ public class PlayerController : Damageable
 
         health = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+
+        SetupRespawnEvent();
+    }
+
+    //Add all power ups as listeners for the respawn event
+    private void SetupRespawnEvent() {
+        for (int i = 0; i < powerUps.childCount; i++) {
+            PowerUp powerUpScript = powerUps.GetChild(i).GetComponent<PowerUp>();
+            respawnEvent.AddListener(powerUpScript.Respawn);
+        }
     }
 
     // Update is called once per frame
@@ -251,8 +264,9 @@ public class PlayerController : Damageable
     {
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
-        gameObject.SetActive(false); 
 
+        spriteRenderer.enabled = false;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
         shield.SetActive(false);
 
         GameObject deathParticles = Instantiate(deathEffect);
@@ -264,27 +278,33 @@ public class PlayerController : Damageable
         dpMain.startColor = playerColor;
 
         Destroy(deathParticles, 2f);
-
-        Invoke("respawn", 1f);
+        StartCoroutine(RespawnAfterSeconds(1f));
     }
 
-    void respawn() 
+    private IEnumerator RespawnAfterSeconds(float seconds) {
+        yield return new WaitForSeconds(seconds);
+        respawnEvent.Invoke();
+    }
+
+    //Called by respawn UnityEvent; resets all player settings
+    public void Respawn() 
     {
         health = maxHealth;
         healthBar.SetHealth(health);
-        
-        canDash = true;
 
+        spriteRenderer.enabled = true;
+        gameObject.GetComponent<BoxCollider2D>().enabled = true;
+        
         gravityCoefficient = 1;
         transform.eulerAngles = Vector3.zero;
-        flipHorizontal();
         SetGravityScale(5f);
 
+        canDash = true;
         isDashing = false;
-        gameObject.SetActive(true);
         transform.position = spawnPoint; // tp the player to the spawnpoint
         mainCam.transform.position = new Vector3(0, 0, -10f);
         cameraBounds.CameraCanMove = true;
+        wishJump = false;
 
         VisualEffects.SetColor(gameObject, Color.white);
 

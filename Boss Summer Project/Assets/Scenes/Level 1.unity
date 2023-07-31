@@ -15299,7 +15299,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 157, y: -41.6}
+  m_AnchoredPosition: {x: 157, y: 0}
   m_SizeDelta: {x: 200, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1423545344
@@ -15626,6 +15626,10 @@ MonoBehaviour:
   mainCam: {fileID: 519420031}
   deathEffect: {fileID: 7798169576231770195, guid: 37d127b182e9b25479fa5e8445749133, type: 3}
   healthBar: {fileID: 1423545345}
+  respawnEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  powerUps: {fileID: 1819153779}
 --- !u!61 &1431990596
 BoxCollider2D:
   m_ObjectHideFlags: 0
