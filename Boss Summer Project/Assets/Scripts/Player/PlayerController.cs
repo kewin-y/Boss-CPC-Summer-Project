@@ -59,6 +59,7 @@ public class PlayerController : Damageable
     }
     private bool isCollidingWithWall;
     private int contactsWithGround = 0;
+    private const int GROUND_LAYER = 6;
 
     [SerializeField] private HealthBar healthBar;
 
@@ -232,32 +233,11 @@ public class PlayerController : Damageable
     void OnCollisionEnter2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
-        {   
             Die();
-        }
-    }
-    void OnCollisionStay2D(Collision2D col) {
-        contactsWithGround = 0;
-        ContactPoint2D[] contactPoints = new ContactPoint2D[100];
-        col.GetContacts(contactPoints);
-        
-        foreach (ContactPoint2D contactPoint in contactPoints) {
-            Vector2 point = contactPoint.point;
-            if(point[1] < 0 ) {
-                contactsWithGround++;
-            }
-        }
-
-        bool isCollidingWithWall = Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2), 0f, Vector2.left, 0.1f, whatIsGround) || Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2 - 0.1f), 0f, Vector2.right, 0.1f, whatIsGround);
-        if(isCollidingWithWall && col.gameObject.layer == 6 && contactsWithGround > 0){
-            jumpsRemaining = jumpsAvailable - 2;
-        } else if(col.gameObject.layer == 6 && contactsWithGround > 0) {
-            jumpsRemaining = jumpsAvailable - 1;
-        }
-    }
-    void OnCollisionExit2D(Collision2D col) {
-        if(col.gameObject.layer == 6 && contactsWithGround > 0 && isGrounded && !coyoteJump) {
-            jumpsRemaining -= 1;
+        else if (col.gameObject.layer == GROUND_LAYER) {
+            bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+            if (touchingGround)
+                jumpsRemaining = jumpsAvailable;
         }
     }
     public override void Die()
