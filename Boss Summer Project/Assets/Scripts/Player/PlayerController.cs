@@ -133,12 +133,13 @@ public class PlayerController : Damageable
 
             if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
 
-            if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump)) 
+            if(wishJump && canJump && (lastGrounded < coyoteTime || jumpsRemaining > 0)) 
             {
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
                 doubleJump = !doubleJump;
+                jumpsRemaining -= 1;
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
@@ -241,8 +242,6 @@ public class PlayerController : Damageable
     void OnCollisionExit2D(Collision2D col) {
         if(col.gameObject.layer == 6 && contactsWithGround > 0 && !isCollidingWithWall) {
             jumpsRemaining -= 1;
-        } else if(isCollidingWithWall){
-            jumpsRemaining = 2;
         }
     }
     public override void Die()
