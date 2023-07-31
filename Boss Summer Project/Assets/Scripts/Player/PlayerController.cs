@@ -144,9 +144,10 @@ public class PlayerController : Damageable
             SetGravityScale(5f);
             rb2d.drag = 0f;
 
-            if(isGrounded && !Input.GetKey(jumpKey)) doubleJump = false;
-
-            if(wishJump && canJump && (lastGrounded < coyoteTime || jumpsRemaining > 0)) 
+            if(isGrounded && !Input.GetKey(jumpKey)) {
+                doubleJump = false;
+            }
+            if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump) && jumpsRemaining > 0)
             {
                 coyoteJump = false;
                 if(lastGrounded > 0){
