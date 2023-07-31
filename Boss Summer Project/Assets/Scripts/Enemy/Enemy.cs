@@ -98,7 +98,7 @@ public class Enemy : MonoBehaviour
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2 - 1/fireRate);
         if (bullet != null)
             Destroy(bullet);
     }
