@@ -230,12 +230,13 @@ public class PlayerController : Damageable
         rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
-    void OnCollisionEnter2D(Collision2D col)
+    void OnCollisionStay2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
             Die();
+
         else if (col.gameObject.layer == GROUND_LAYER) {
-            bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+            bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
             if (touchingGround)
                 jumpsRemaining = jumpsAvailable;
         }
