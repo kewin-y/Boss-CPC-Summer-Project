@@ -41,6 +41,7 @@ public class PlayerController : Damageable
     private CameraBounds cameraBounds;
     public GameObject deathEffect;
 
+    private BoxCollider2D bc2d;
     private Rigidbody2D rb2d;
     private SpriteRenderer spriteRenderer;
     private float xInput; // Variable for the x-input (a&d or left & right)
@@ -54,6 +55,8 @@ public class PlayerController : Damageable
     private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private bool canDash;
     private bool isDashing;
+    private bool isCollidingWithWall;
+    private int contactsWithGround = 0;
 
     [SerializeField] private HealthBar healthBar;
 
@@ -67,6 +70,7 @@ public class PlayerController : Damageable
     // Start is called before the first frame update
     void Start()
     {
+        bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         cameraBounds = mainCam.GetComponent<CameraBounds>();
@@ -86,8 +90,8 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize), 0f, Vector2.down, 0.1f, whatIsGround);
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
+        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize/2 - 0.1f, playerSize/2), 0f, Vector2.down, 0.1f, whatIsGround);
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize/2 - 0.1f, playerSize/2 - 0.1f), 0f, Vector2.down, 0f, whatIsWater);
 
         if(isInWater)
             terrainState = TerrainState.Water;
@@ -205,15 +209,6 @@ public class PlayerController : Damageable
         rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
-    void OnCollisionStay2D(Collision2D col)
-    {
-        bool isCollidingWithWall = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.left, 0f, whatIsGround) || Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, Vector2.right, 0f, whatIsGround);
-        print(isCollidingWithWall);
-        
-        if(col.gameObject.layer == 6 && gameObject.transform.position[1] - col.GetContact(0).point[1] > 0 && (isGrounded || isCollidingWithWall)){
-            jumpsRemaining = jumpsAvailable;
-        }
-    }
     void OnCollisionEnter2D(Collision2D col)
     {
         if(col.gameObject.tag == "Kill")
@@ -221,7 +216,32 @@ public class PlayerController : Damageable
             Die();
         }
     }
+    void OnCollisionStay2D(Collision2D col) {
+        contactsWithGround = 0;
+        ContactPoint2D[] contactPoints = new ContactPoint2D[100];
+        col.GetContacts(contactPoints);
+        
+        foreach (ContactPoint2D contactPoint in contactPoints) {
+            Vector2 point = contactPoint.point;
+            if(point[1] < 0 ) {
+                contactsWithGround++;
+            }
+        }
 
+        bool isCollidingWithWall = Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2), 0f, Vector2.left, 0.1f, whatIsGround) || Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2 - 0.1f), 0f, Vector2.right, 0.1f, whatIsGround);
+        if(isCollidingWithWall && col.gameObject.layer == 6 && contactsWithGround > 0){
+            jumpsRemaining = jumpsAvailable - 1;
+        } else if(col.gameObject.layer == 6 && contactsWithGround > 0) {
+            jumpsRemaining = jumpsAvailable;
+        }
+    }
+    void OnCollisionExit2D(Collision2D col) {
+        if(col.gameObject.layer == 6 && contactsWithGround > 0 && !isCollidingWithWall) {
+            jumpsRemaining -= 1;
+        } else if(isCollidingWithWall){
+            jumpsRemaining = 2;
+        }
+    }
     public override void Die()
     {
         cameraBounds.CameraCanMove = false;
