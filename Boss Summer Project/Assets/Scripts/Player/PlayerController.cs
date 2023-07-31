@@ -44,7 +44,7 @@ public class PlayerController : Damageable
     private bool isInWater;
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
-    private bool isJumping;
+    private bool coyoteJump;
     private bool doubleJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
     private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
@@ -104,7 +104,6 @@ public class PlayerController : Damageable
 
         else
         {
-            isJumping = false;
             lastGrounded = 0f;
         }
         
@@ -135,6 +134,10 @@ public class PlayerController : Damageable
 
             if(wishJump && canJump && (lastGrounded < coyoteTime || jumpsRemaining > 0)) 
             {
+                coyoteJump = false;
+                if(lastGrounded > 0){
+                    coyoteJump = true;
+                }
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
@@ -234,13 +237,13 @@ public class PlayerController : Damageable
 
         bool isCollidingWithWall = Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2), 0f, Vector2.left, 0.1f, whatIsGround) || Physics2D.BoxCast(transform.position, new Vector2(playerSize/2, playerSize/2 - 0.1f), 0f, Vector2.right, 0.1f, whatIsGround);
         if(isCollidingWithWall && col.gameObject.layer == 6 && contactsWithGround > 0){
-            jumpsRemaining = jumpsAvailable - 1;
+            jumpsRemaining = jumpsAvailable - 2;
         } else if(col.gameObject.layer == 6 && contactsWithGround > 0) {
-            jumpsRemaining = jumpsAvailable;
+            jumpsRemaining = jumpsAvailable - 1;
         }
     }
     void OnCollisionExit2D(Collision2D col) {
-        if(col.gameObject.layer == 6 && contactsWithGround > 0 && !isCollidingWithWall) {
+        if(col.gameObject.layer == 6 && contactsWithGround > 0 && isGrounded && !coyoteJump) {
             jumpsRemaining -= 1;
         }
     }
