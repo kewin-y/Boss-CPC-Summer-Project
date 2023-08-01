@@ -90,7 +90,7 @@ public class PlayerController : Damageable
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
-            healthBar.SetMaxHealth(maxHealth);
+        healthBar.SetMaxHealth(maxHealth);
 
         SetupRespawnEvent();
     }
@@ -163,7 +163,7 @@ public class PlayerController : Damageable
 
         else if (terrainState == TerrainState.Water)
         {
-            StartCoroutine(createWaterParticles());
+            createWaterParticles();
 
             SetGravityScale(1f);
             rb2d.drag = 1f;
@@ -262,13 +262,10 @@ public class PlayerController : Damageable
         dpMain.startColor = playerColor;
 
         Destroy(deathParticles, 2f);
-        StartCoroutine(RespawnAfterSeconds(1f));
+        Invoke("InvokeRespawnEvent", 1f);
     }
 
-    private IEnumerator RespawnAfterSeconds(float seconds) {
-        yield return new WaitForSeconds(seconds);
-        respawnEvent.Invoke();
-    }
+    private void InvokeRespawnEvent() => respawnEvent.Invoke();
 
     //Called by respawn UnityEvent; resets all player settings
     public void Respawn() 
@@ -311,10 +308,10 @@ public class PlayerController : Damageable
     private void SetGravityScale(float newGravityScale) {
         rb2d.gravityScale = gravityCoefficient * newGravityScale;
     }
-    IEnumerator createWaterParticles(){
+
+    private void createWaterParticles(){
         GameObject particles = Instantiate(waterParticles) as GameObject;
         particles.transform.position = transform.position;
-        yield return new WaitForSeconds(2f);
-        Destroy(particles);
+        Destroy(particles, 2f);
     }
 }
