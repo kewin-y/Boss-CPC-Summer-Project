@@ -145,9 +145,6 @@ public class PlayerController : Damageable
             SetGravityScale(5f);
             rb2d.drag = 0f;
 
-            if(isGrounded && !Input.GetKey(jumpKey)) {
-                doubleJump = false;
-            }
             if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump) && jumpsRemaining > 0)
             {
                 coyoteJump = false;
@@ -157,7 +154,7 @@ public class PlayerController : Damageable
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
-                doubleJump = !doubleJump;
+                doubleJump = true;
                 jumpsRemaining -= 1;
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
@@ -241,8 +238,10 @@ public class PlayerController : Damageable
 
         else if (col.gameObject.layer == GROUND_LAYER) {
             bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
-            if (touchingGround)
+            if (touchingGround) {
                 jumpsRemaining = jumpsAvailable;
+                doubleJump = false;
+            }
         }
     }
     public override void Die()
