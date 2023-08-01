@@ -46,19 +46,19 @@ public class CameraBounds : MonoBehaviour
 
         if(other.tag == "Player" && cameraCanMove)
         {
-            Vector2 newPos; 
+            Vector3 newPos; 
             bool isRight = other.transform.position.x - transform.position.x > 0;
 
             if(isRight)
             {
-                newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y);
+                newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
 
             }
 
             else
             {
-                newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y);
+                newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
             }
                     
