@@ -36,6 +36,7 @@ public class PlayerController : Damageable
     public Camera mainCam;
     private CameraBounds cameraBounds;
     public GameObject deathEffect;
+    public GameObject waterParticles;
 
     private BoxCollider2D bc2d;
     private Rigidbody2D rb2d;
@@ -73,8 +74,6 @@ public class PlayerController : Damageable
     public UnityEvent respawnEvent; //Called when the player respawns
     [SerializeField] private Transform powerUps;    //Parent object for all power ups
 
-    public static bool isAffectedByFan;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -107,9 +106,6 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
-        if(isAffectedByFan) {
-            rb2d.AddForce(Vector2.up * 100f * Time.deltaTime, ForceMode2D.Force);
-        }
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
         isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
 
@@ -170,6 +166,8 @@ public class PlayerController : Damageable
 
         else if (terrainState == TerrainState.Water)
         {
+            StartCoroutine(createWaterParticles());
+
             SetGravityScale(1f);
             rb2d.drag = 1f;
 
@@ -313,5 +311,11 @@ public class PlayerController : Damageable
     //Sets the player's gravity scale while taking the gravity coefficient into account
     private void SetGravityScale(float newGravityScale) {
         rb2d.gravityScale = gravityCoefficient * newGravityScale;
+    }
+    IEnumerator createWaterParticles(){
+        GameObject particles = Instantiate(waterParticles) as GameObject;
+        particles.transform.position = transform.position;
+        yield return new WaitForSeconds(2f);
+        Destroy(particles);
     }
 }
