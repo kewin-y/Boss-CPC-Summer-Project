@@ -9,7 +9,10 @@ public class Enemy : MonoBehaviour
 {
     [Header("Projectile Firing")]
     [SerializeField] private float fireRate;
-    public GameObject Projectile;
+    [SerializeField] private float attackRadius;
+    [SerializeField] private float projectileMoveSpeed;
+    public GameObject player;
+    public GameObject projectile;
 
     [Header("Enemy Movement")]
     [SerializeField] private float moveSpeed;
@@ -23,6 +26,7 @@ public class Enemy : MonoBehaviour
     public GameObject deathEffect; 
     private PlayerController playerController;
     private Rigidbody2D rb2d;
+    private Rigidbody2D player_rb2d;
     private BoxCollider2D bc2d;
     private bool canShoot;
     private bool isGrounded;
@@ -43,6 +47,7 @@ public class Enemy : MonoBehaviour
         // canCollide = true;
         rb2d = GetComponent<Rigidbody2D>();
         bc2d = GetComponent<BoxCollider2D>();
+        player_rb2d = player.GetComponent<Rigidbody2D>();
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         canShoot = true;
 
@@ -52,14 +57,14 @@ public class Enemy : MonoBehaviour
     // Used for physics
     void FixedUpdate()
     {
-        // Vector2 dir = player.position - transform.position; 
+        float distanceFromPlayer = (transform.position - player.transform.position).magnitude;
 
-        // if(dir.sqrMagnitude <= attackRadius && canShoot){
-        //     StartCoroutine(shoot());
-        // }
+        if(distanceFromPlayer <= attackRadius && canShoot){
+            StartCoroutine(shoot());
+        }
 
         // Temporarily disable the shooting so that I can easily work on the movement - kevin
-
+        // Temporarily enable the shooting so that I can easily work on the aim - TJ
         if(isGrounded)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
 
@@ -120,9 +125,18 @@ public class Enemy : MonoBehaviour
 
     IEnumerator shoot()
     {
+        float distanceFromPlayer = (transform.position - player.transform.position).magnitude;
+        float timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
+        Vector2 futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
+        Vector2 projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized;
+
         canShoot = false;
-        GameObject bullet = Instantiate(Projectile) as GameObject;
-        bullet.transform.position = transform.position + Vector3.left;
+        GameObject bullet = Instantiate(projectile) as GameObject;
+        Rigidbody2D bullet_rb2d = bullet.GetComponent<Rigidbody2D>();
+
+        bullet.transform.position = (Vector2)transform.position + projectileDirection;
+        bullet_rb2d.velocity = projectileDirection * projectileMoveSpeed * Time.deltaTime;
+
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;

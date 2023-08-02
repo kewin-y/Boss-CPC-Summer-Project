@@ -23,11 +23,7 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        Vector2 motion = new Vector2(-1,0);
-
-        if(gameObject.activeSelf){
-            rb2d.velocity = motion * moveSpeed * Time.deltaTime * 100;
-        }
+        
     }
 
     //MAKE ABSTRACT CLASS FOR HEALTH BAR
@@ -39,7 +35,7 @@ public class Projectile : MonoBehaviour
         
         if (target.tag == "Player" || target.tag == "Shield") {
             Damageable targetScript = target.GetComponent<Damageable>();
-            targetScript.TakeDamage(20);
+            targetScript.TakeDamage(5);
         }
     }
 }

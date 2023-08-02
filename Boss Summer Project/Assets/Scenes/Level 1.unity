@@ -16381,7 +16381,7 @@ PrefabInstance:
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 1431990591}
+      objectReference: {fileID: 1431990589}
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: fireRate
       value: 2
@@ -16395,12 +16395,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: projectile
+      value: 
+      objectReference: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: attackRadius
-      value: 49
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: gravityCoefficient
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: projectileMoveSpeed
+      value: 500
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
