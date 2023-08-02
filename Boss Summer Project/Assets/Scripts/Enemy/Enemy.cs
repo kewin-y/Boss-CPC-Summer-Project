@@ -38,6 +38,12 @@ public class Enemy : MonoBehaviour
     // }
 
     // Why do we need canCollide here - Kevin
+    private float distanceFromPlayer;
+    private float timeFromPlayer;
+    private Vector2 futurePlayerPosition;
+    private Vector2 projectileDirection;
+
+    private bool obstructedLineOfSight;
 
     private float direction;
 
@@ -57,9 +63,14 @@ public class Enemy : MonoBehaviour
     // Used for physics
     void FixedUpdate()
     {
-        float distanceFromPlayer = (transform.position - player.transform.position).magnitude;
-
-        if(distanceFromPlayer <= attackRadius && canShoot){
+        distanceFromPlayer = (transform.position - player.transform.position).magnitude;
+        timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
+        futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
+        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized;
+        
+        obstructedLineOfSight = Physics2D.CircleCast(transform.position, 0.01f, projectileDirection, distanceFromPlayer, whatIsGround);
+        
+        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight){
             StartCoroutine(shoot());
         }
 
@@ -125,11 +136,6 @@ public class Enemy : MonoBehaviour
 
     IEnumerator shoot()
     {
-        float distanceFromPlayer = (transform.position - player.transform.position).magnitude;
-        float timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
-        Vector2 futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
-        Vector2 projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized;
-
         canShoot = false;
         GameObject bullet = Instantiate(projectile) as GameObject;
         Rigidbody2D bullet_rb2d = bullet.GetComponent<Rigidbody2D>();

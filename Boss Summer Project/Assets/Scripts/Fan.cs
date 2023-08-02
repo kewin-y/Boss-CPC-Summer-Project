@@ -10,11 +10,14 @@ public class Fan : MonoBehaviour
 
     [SerializeField] private GameObject particles;
 
+    private float rotation;
+
     private Rigidbody2D rb2d;
 
     // Start is called before the first frame update
     void Start()
     {
+        rotation = 0f;
         rb2d = player.GetComponent<Rigidbody2D>();
     }
 
@@ -28,6 +31,11 @@ public class Fan : MonoBehaviour
             StartCoroutine(createParticles());
             
         }
+    }
+    void FixedUpdate()
+    {
+        rotation += 1440f * Time.fixedDeltaTime;
+        transform.Rotate(0f, 0f, rotation, Space.Self);
     }
     IEnumerator createParticles(){
         GameObject steamParticles = Instantiate(particles) as GameObject;

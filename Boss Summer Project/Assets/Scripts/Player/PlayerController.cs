@@ -46,7 +46,6 @@ public class PlayerController : Damageable
     private bool isInWater;
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
-    private bool coyoteJump;
     private bool doubleJump;
     private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
     private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
@@ -59,7 +58,6 @@ public class PlayerController : Damageable
         set { gravityCoefficient = value; }
     }
     private bool isCollidingWithWall;
-    private int contactsWithGround = 0;
     private const int GROUND_LAYER = 6;
 
     [SerializeField] private HealthBar healthBar;
@@ -158,11 +156,6 @@ public class PlayerController : Damageable
 
             if(wishJump && canJump && (lastGrounded < coyoteTime || doubleJump) && jumpsRemaining > 0)
             {
-                coyoteJump = false;
-                if(lastGrounded > 0){
-                    coyoteJump = true;
-                }
-
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
