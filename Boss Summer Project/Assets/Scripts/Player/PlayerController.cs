@@ -36,7 +36,7 @@ public class PlayerController : Damageable
     public Camera mainCam;
     private CameraBounds cameraBounds;
     public GameObject deathEffect;
-    public GameObject waterParticles;
+    public ParticleSystem waterParticles;
 
     private BoxCollider2D bc2d;
     private Rigidbody2D rb2d;
@@ -73,6 +73,8 @@ public class PlayerController : Damageable
     private float horizontalFlip = 1;    //If -1, player is upside down; must flip horizontally.
     public UnityEvent respawnEvent; //Called when the player respawns
     [SerializeField] private Transform powerUps;    //Parent object for all power ups
+
+    // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
 
     // Start is called before the first frame update
     void Start()
@@ -130,7 +132,14 @@ public class PlayerController : Damageable
     void getInput()
     { 
         xInput = Input.GetAxisRaw("Horizontal");
-        if(xInput != 0) lastFacing = xInput;
+        if(xInput != 0)
+        {
+            if(terrainState == TerrainState.Water)
+                if(!waterParticles.isPlaying) waterParticles.Play();
+                
+            lastFacing = xInput;
+        }
+         
 
         if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SAPCE) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
@@ -142,6 +151,8 @@ public class PlayerController : Damageable
 
         if(terrainState == TerrainState.Air) // Lol change this to a switch statement later
         {
+            if(waterParticles.isPlaying) waterParticles.Stop();
+
             SetGravityScale(5f);
             rb2d.drag = 0f;
 
@@ -151,6 +162,7 @@ public class PlayerController : Damageable
                 if(lastGrounded > 0){
                     coyoteJump = true;
                 }
+
                 jump(); 
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
@@ -163,7 +175,6 @@ public class PlayerController : Damageable
 
         else if (terrainState == TerrainState.Water)
         {
-            createWaterParticles();
 
             SetGravityScale(1f);
             rb2d.drag = 1f;
@@ -171,8 +182,17 @@ public class PlayerController : Damageable
             if(wishJump)
             {
                 jump();
+
+                if(!waterParticles.isPlaying) waterParticles.Play();
+            }
+
+            else if (!wishJump && xInput == 0)
+            {
+                if(waterParticles.isPlaying) waterParticles.Stop();
             }
         }  
+
+        
     }
 
     public void flipHorizontal() {
@@ -309,9 +329,4 @@ public class PlayerController : Damageable
         rb2d.gravityScale = gravityCoefficient * newGravityScale;
     }
 
-    private void createWaterParticles(){
-        GameObject particles = Instantiate(waterParticles) as GameObject;
-        particles.transform.position = transform.position;
-        Destroy(particles, 2f);
-    }
 }
