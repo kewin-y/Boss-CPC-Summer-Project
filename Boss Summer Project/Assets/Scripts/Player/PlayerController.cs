@@ -57,7 +57,6 @@ public class PlayerController : Damageable
         get { return gravityCoefficient; }
         set { gravityCoefficient = value; }
     }
-    private bool isCollidingWithWall;
     private const int GROUND_LAYER = 6;
 
     [SerializeField] private HealthBar healthBar;
@@ -256,7 +255,9 @@ public class PlayerController : Damageable
                 doubleJump = false;
             }
         }
-    }
+    } // I jus realized why is there a touchingGround variable and an isGrounded variable - kevin
+
+    
     public override void Die()
     {
         cameraBounds.CameraCanMove = false;

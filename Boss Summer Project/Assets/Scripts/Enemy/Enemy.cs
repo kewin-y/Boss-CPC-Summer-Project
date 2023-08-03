@@ -24,6 +24,11 @@ public class Enemy : MonoBehaviour
 
     [Header("Dying")]
     public GameObject deathEffect; 
+
+    [Header("Indicator")]
+    public GameObject angerVein;
+
+
     private PlayerController playerController;
     private Rigidbody2D rb2d;
     private Rigidbody2D player_rb2d;
@@ -63,20 +68,7 @@ public class Enemy : MonoBehaviour
     // Used for physics
     void FixedUpdate()
     {
-        distanceFromPlayer = (transform.position - player.transform.position).magnitude;
-        timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
-        futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
-        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized;
-        
-        obstructedLineOfSight = Physics2D.CircleCast(transform.position, 0.01f, projectileDirection, distanceFromPlayer, whatIsGround);
-        
-        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight){
-            StartCoroutine(shoot());
-        }
-
-        // Temporarily disable the shooting so that I can easily work on the movement - kevin
-        // Temporarily enable the shooting so that I can easily work on the aim - TJ
-        if(isGrounded)
+        if(isGrounded && obstructedLineOfSight)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
 
 
@@ -85,6 +77,22 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        distanceFromPlayer = (transform.position - player.transform.position).magnitude;
+        timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
+        futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
+        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized; // That's clever -kevin
+
+        Ray2D ray2D = new Ray2D(transform.position, projectileDirection);
+        Debug.DrawRay(transform.position, ray2D.direction * attackRadius);
+
+        obstructedLineOfSight = !Physics2D.Raycast(ray2D.origin, projectileDirection, attackRadius, whatIsPlayer);
+        if (!obstructedLineOfSight) angerVein.SetActive(true);
+        else angerVein.SetActive(false);
+        
+        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight){
+            StartCoroutine(Shoot());
+        }
+
         bool collideWithPlayer = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsPlayer);
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(0.45f - 0.1f, 0.45f - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
 
@@ -92,12 +100,12 @@ public class Enemy : MonoBehaviour
         {
             if(playerController.IsDashing)
             {
-                die();
+                Die();
             }
         }
     }
 
-    void die()
+    void Die()
     {
         GameObject deathParticles = Instantiate(deathEffect);   
         deathParticles.transform.position = transform.position;
@@ -113,11 +121,11 @@ public class Enemy : MonoBehaviour
         Destroy(deathParticles, 2f);
     }
 
-    //This method will run when the player collides with something (THIS IS THE ENEMY SCRIPT??? LOL)
+
     void OnCollisionEnter2D(Collision2D col) {
         if(col.gameObject.tag == "Kill")
         {
-            die();
+            Die();
         }
 
         if(col.gameObject.tag == "DirectionChange")
@@ -134,20 +142,21 @@ public class Enemy : MonoBehaviour
 
     // Commented this out since I don't think enemies should respawn - kevin
 
-    IEnumerator shoot()
+    IEnumerator Shoot()
     {
         canShoot = false;
         GameObject bullet = Instantiate(projectile) as GameObject;
-        Rigidbody2D bullet_rb2d = bullet.GetComponent<Rigidbody2D>();
+        Rigidbody2D bulletRb2d = bullet.GetComponent<Rigidbody2D>();
 
-        bullet.transform.position = (Vector2)transform.position + projectileDirection;
-        bullet_rb2d.velocity = projectileDirection * projectileMoveSpeed * Time.deltaTime;
+        bullet.transform.position = (Vector2)transform.position + projectileDirection.normalized;
+        bulletRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 
 
         bullet.SetActive(true);
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
         yield return new WaitForSeconds(2 - 1/fireRate);
-        if (bullet != null)
+
+        if (bullet)
             Destroy(bullet);
     }
 }
