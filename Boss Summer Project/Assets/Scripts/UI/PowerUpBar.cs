@@ -5,25 +5,40 @@ using UnityEngine.UI;
 
 public class PowerUpBar : MonoBehaviour
 {
-    [SerializeField] private GameObject powerUpBar;
     [SerializeField] private Slider slider;
-    [SerializeField] private Image fill;
 
     private PowerUp powerUp;
 
-    public PowerUpBar(PowerUp powerUp) {
+    //Acts as a constructor method: receives the power up, sets the icon, sets max duration
+    public void Setup(PowerUp powerUp) {
         this.powerUp = powerUp;
+        SetPowerUpIcon();
+        SetMaxDuration(powerUp.Duration);
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        powerUpBar.GetComponent<Image>().sprite = powerUp.gameObject.GetComponent<SpriteRenderer>().sprite;
+    //Sets the sprite of the power up bar to the power up icon
+    private void SetPowerUpIcon() {
+        GameObject background = gameObject.transform.GetChild(0).gameObject;
+        GameObject fill = gameObject.transform.GetChild(1).gameObject;
+        Sprite powerUpIcon = powerUp.gameObject.GetComponent<SpriteRenderer>().sprite;
+
+        background.GetComponent<Image>().sprite = powerUpIcon;
+        fill.GetComponent<Image>().sprite = powerUpIcon;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    //Sets the max value of the power up slider, then initializes the length to 1
+    private void SetMaxDuration(float maxDuration) {
+        if (powerUp.IsInfinite) {
+            slider.maxValue = 1;
+            slider.value = 1;
+        } else {
+            slider.maxValue = maxDuration;
+            slider.value = maxDuration;
+        }
+    }
+
+    //Updates the length of the power up bar based on the new duration left
+    public void SetDurationLeft(float durationleft) {
+        slider.value = durationleft;
     }
 }
