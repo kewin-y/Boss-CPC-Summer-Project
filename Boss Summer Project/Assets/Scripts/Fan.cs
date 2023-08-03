@@ -6,6 +6,7 @@ public class Fan : MonoBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] private float fanRange;
+    [SerializeField] private float fanSpeed;
     [SerializeField] private Vector2 fanDirection;
 
     [SerializeField] private GameObject particles;
@@ -34,7 +35,7 @@ public class Fan : MonoBehaviour
     }
     void FixedUpdate()
     {
-        rotation += 1440f * Time.fixedDeltaTime;
+        rotation += 360f * fanSpeed * Time.fixedDeltaTime;
         transform.Rotate(0f, 0f, rotation, Space.Self);
     }
     IEnumerator createParticles(){
