@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private LayerMask whatIsGround;
-    private Vector2 motion;
+    [SerializeField] private GameObject enemy;
 
+    private LayerMask whatIsGround;
     private Rigidbody2D rb2d;
 
-    private bool targetDetected;
-
+    public float ProjectileMoveSpeed;
+    
     public int damage;
-    public float projectileMoveSpeed;
+
+    public Enemy enemyScript;
 
     void Start(){
         rb2d = GetComponent<Rigidbody2D>();
-        Enemy.ProjectileMoveSpeed = projectileMoveSpeed;
+        enemyScript = enemy.GetComponent<Enemy>();
     }
     //MAKE ABSTRACT CLASS FOR HEALTH BAR
     //IN DAMAGEABLE SCRIPT: EXTRACT TAKEDAMAGE() SO THAT IT CHANGES A UNIQUE HEALTH BAR FOR EACH POWER UP
@@ -30,5 +31,14 @@ public class Projectile : MonoBehaviour
             Damageable targetScript = target.GetComponent<Damageable>();
             targetScript.TakeDamage(damage);
         }
+    }
+    public void shoot(){
+        enemyScript.distanceFromPlayer = (enemyScript.transform.position - enemyScript.player.transform.position).magnitude;
+        enemyScript.timeFromPlayer = enemyScript.distanceFromPlayer/ProjectileMoveSpeed;
+        enemyScript.futurePlayerPosition = (Vector2)enemyScript.player.transform.position + enemyScript.timeFromPlayer * enemyScript.player_rb2d.velocity;
+        enemyScript.projectileDirection = (enemyScript.futurePlayerPosition - (Vector2)enemy.transform.position).normalized; // That's clever -kevin
+        
+        transform.position = (Vector2)transform.position + enemyScript.projectileDirection;
+        rb2d.velocity = enemyScript.projectileDirection * ProjectileMoveSpeed * Time.deltaTime;
     }
 }
