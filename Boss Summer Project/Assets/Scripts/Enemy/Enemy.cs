@@ -10,7 +10,6 @@ public class Enemy : MonoBehaviour
     [Header("Projectile Firing")]
     [SerializeField] private float fireRate;
     [SerializeField] private float attackRadius;
-    [SerializeField] private float projectileMoveSpeed;
     public GameObject player;
     public GameObject projectile;
 
@@ -31,10 +30,25 @@ public class Enemy : MonoBehaviour
 
     private PlayerController playerController;
     private Rigidbody2D rb2d;
-    private Rigidbody2D player_rb2d;
+    [HideInInspector] public Rigidbody2D player_rb2d;
     private BoxCollider2D bc2d;
     private bool canShoot;
     private bool isGrounded;
+
+    private bool targetDetected;
+
+    private float projectileMoveSpeed;
+
+    public float ProjectileMoveSpeed {
+        get { return projectileMoveSpeed;}
+        set { projectileMoveSpeed = value;}
+    }
+    public float distanceFromPlayer;
+    public float timeFromPlayer;
+    public Vector2 futurePlayerPosition;
+    public Vector2 projectileDirection;
+
+    public bool obstructedLineOfSight;
 
     // private bool canCollide = true;
     // public bool CanCollide {
@@ -43,12 +57,6 @@ public class Enemy : MonoBehaviour
     // }
 
     // Why do we need canCollide here - Kevin
-    private float distanceFromPlayer;
-    private float timeFromPlayer;
-    private Vector2 futurePlayerPosition;
-    private Vector2 projectileDirection;
-
-    private bool obstructedLineOfSight;
 
     private float direction;
 
@@ -68,20 +76,16 @@ public class Enemy : MonoBehaviour
     // Used for physics
     void FixedUpdate()
     {
+        // Temporarily disable the shooting so that I can easily work on the movement - kevin
+        // Temporarily enable the shooting so that I can easily work on the aim - TJ
         if(isGrounded && obstructedLineOfSight)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        distanceFromPlayer = (transform.position - player.transform.position).magnitude;
-        timeFromPlayer = distanceFromPlayer/projectileMoveSpeed;
-        futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
-        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized; // That's clever -kevin
-
+        
         Ray2D ray2D = new Ray2D(transform.position, projectileDirection);
         Debug.DrawRay(transform.position, ray2D.direction * attackRadius);
 
@@ -145,18 +149,16 @@ public class Enemy : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
-        GameObject bullet = Instantiate(projectile) as GameObject;
-        Rigidbody2D bulletRb2d = bullet.GetComponent<Rigidbody2D>();
-
-        bullet.transform.position = (Vector2)transform.position + projectileDirection.normalized;
-        bulletRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 
-
-        bullet.SetActive(true);
+        GameObject Projectile = Instantiate(projectile) as GameObject;
+        Rigidbody2D projectileRb2d = Projectile.GetComponent<Rigidbody2D>();
+        Projectile projectileScript = Projectile.GetComponent<Projectile>();
+        Projectile.SetActive(true);
+        projectileScript.shoot();
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
         yield return new WaitForSeconds(2 - 1/fireRate);
-
-        if (bullet)
-            Destroy(bullet);
+        if (Projectile != null){
+            Destroy(gameObject);
+        }
     }
 }
