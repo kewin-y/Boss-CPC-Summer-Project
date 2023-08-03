@@ -16,6 +16,7 @@ public class ShieldController : Damageable
     void OnEnable()
     {
         ResetHealth();
+        VisualEffects.SetColor(gameObject, Color.white);
     }
 
     // 
