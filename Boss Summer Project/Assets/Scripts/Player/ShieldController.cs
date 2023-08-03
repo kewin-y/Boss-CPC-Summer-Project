@@ -9,7 +9,7 @@ public class ShieldController : Damageable
     [SerializeField] private Transform pivotPoint;
 
     void Start() {
-        Die();
+        
     }
 
     //
@@ -52,5 +52,6 @@ public class ShieldController : Damageable
 
     public override void Die() {
         gameObject.SetActive(false);
+        VisualEffects.SetColor(gameObject, Color.white);
     }
 }

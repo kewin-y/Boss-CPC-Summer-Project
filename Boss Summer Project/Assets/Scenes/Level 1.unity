@@ -15166,7 +15166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2642698895251383255, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 47.25
+      value: 47.112
       objectReference: {fileID: 0}
     - target: {fileID: 2642698895251383255, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_LocalPosition.y
@@ -17629,14 +17629,14 @@ GameObject:
   - component: {fileID: 2108654033}
   - component: {fileID: 2108654034}
   - component: {fileID: 2108654039}
-  - component: {fileID: 2108654038}
+  - component: {fileID: 2108654040}
   m_Layer: 9
   m_Name: Shield
   m_TagString: Shield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2108654033
 Transform:
   m_ObjectHideFlags: 0
@@ -17644,14 +17644,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2108654032}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.68, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
+  m_LocalPosition: {x: 0.7, y: 0, z: 0}
+  m_LocalScale: {x: 0.98, y: 0.98, z: 0.98}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 233345546}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
 --- !u!212 &2108654034
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -17704,8 +17704,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &2108654038
-BoxCollider2D:
+--- !u!114 &2108654039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108654032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ecf4b11c6032444b0d044d4b0b1942, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 50
+  mainCam: {fileID: 519420031}
+  player: {fileID: 1431990591}
+  pivotPoint: {fileID: 233345546}
+--- !u!60 &2108654040
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -17716,7 +17732,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 1015
@@ -17736,7 +17752,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.03}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -17746,25 +17762,19 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.4, y: 0.82}
-  m_EdgeRadius: 0
---- !u!114 &2108654039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2108654032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3ecf4b11c6032444b0d044d4b0b1942, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 50
-  mainCam: {fileID: 519420031}
-  player: {fileID: 1431990591}
-  pivotPoint: {fileID: 233345546}
+  m_Points:
+    m_Paths:
+    - - {x: 0, y: 0.4375}
+      - {x: -0.5, y: 0.5}
+      - {x: -0.5, y: 0.1875}
+      - {x: -0.4375, y: 0.1875}
+      - {x: -0.1875, y: 0.3125}
+      - {x: 0.3125, y: -0.1875}
+      - {x: 0.1875, y: -0.4375}
+      - {x: 0.1875, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.375, y: 0.0625}
+  m_UseDelaunayMesh: 0
 --- !u!1 &2114606179
 GameObject:
   m_ObjectHideFlags: 0
@@ -18159,7 +18169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2642698895251383255, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 43.75
+      value: 43.902
       objectReference: {fileID: 0}
     - target: {fileID: 2642698895251383255, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_LocalPosition.y
