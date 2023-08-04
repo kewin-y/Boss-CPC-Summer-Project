@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private GameObject enemy;
+    [SerializeField] private Transform enemy;
 
     private LayerMask whatIsGround;
     private Rigidbody2D rb2d;
@@ -36,7 +36,7 @@ public class Projectile : MonoBehaviour
         enemyScript.distanceFromPlayer = (enemyScript.transform.position - enemyScript.player.transform.position).magnitude;
         enemyScript.timeFromPlayer = enemyScript.distanceFromPlayer/ProjectileMoveSpeed;
         enemyScript.futurePlayerPosition = (Vector2)enemyScript.player.transform.position + enemyScript.timeFromPlayer * enemyScript.player_rb2d.velocity;
-        enemyScript.projectileDirection = (enemyScript.futurePlayerPosition - (Vector2)enemy.transform.position).normalized; // That's clever -kevin
+        enemyScript.projectileDirection = (enemyScript.futurePlayerPosition - (Vector2)enemy.position).normalized; // That's clever -kevin
         
         transform.position = (Vector2)transform.position + enemyScript.projectileDirection;
         rb2d.velocity = enemyScript.projectileDirection * ProjectileMoveSpeed * Time.deltaTime;
