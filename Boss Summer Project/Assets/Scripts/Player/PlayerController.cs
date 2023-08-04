@@ -71,6 +71,12 @@ public class PlayerController : Damageable
     public UnityEvent respawnEvent; //Called when the player respawns
     [SerializeField] private Transform powerUps;    //Parent object for all power ups
 
+    private bool isFlipped;
+    public bool IsFlipped {
+        get { return isFlipped; }
+        set { isFlipped = value; }
+    }
+
     // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
 
     // Start is called before the first frame update
@@ -291,6 +297,7 @@ public class PlayerController : Damageable
         gameObject.GetComponent<BoxCollider2D>().enabled = true;
         
         gravityCoefficient = 1;
+        isFlipped = false;
         transform.eulerAngles = Vector3.zero;
         SetGravityScale(5f);
         rb2d.velocity = Vector2.zero;

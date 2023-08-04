@@ -91,11 +91,6 @@ public class Enemy : MonoBehaviour
         RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.12f, projectileDirection, attackRadius - 0.12f, excludeColliders);
 
         obstructedLineOfSight = !raycastHit2D || raycastHit2D.collider.tag != "Player";
-
-        if(raycastHit2D)
-        {
-            Debug.Log(raycastHit2D.collider.name);
-        } 
          
         if (!obstructedLineOfSight) angerVein.SetActive(true);
         else angerVein.SetActive(false);

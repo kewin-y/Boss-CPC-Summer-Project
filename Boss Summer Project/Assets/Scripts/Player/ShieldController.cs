@@ -7,19 +7,16 @@ public class ShieldController : Damageable
     [SerializeField] private Camera mainCam;
     [SerializeField] private Transform player;
     [SerializeField] private Transform pivotPoint;
+    [SerializeField] private ShieldBoost shieldBoost;
 
-    void Start() {
-        
-    }
-
-    //
+    //When the shield is summoned, reset to max health and restore normal colour
     void OnEnable()
     {
         ResetHealth();
         VisualEffects.SetColor(gameObject, Color.white);
     }
 
-    // 
+    //For every frame that the shield is alive, follow the player and rotate towards the mouse
     private void Update()
     {
         FollowPlayer();
@@ -41,8 +38,12 @@ public class ShieldController : Damageable
         pivotPoint.transform.right = mousePosition - pivotPoint.position;
     }
 
+    //Take damage from any type of hit while pulsing red
     public override void TakeDamage(int damage) {
+
+        //Subtract damage from health and update the shield "health bar"
         health -= damage;
+        shieldBoost.SetDurationLeft((float) health / maxHealth);
 
         VisualEffects.SetColor(gameObject, Color.red);
         if(isActiveAndEnabled) StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
@@ -51,7 +52,9 @@ public class ShieldController : Damageable
             Die();
     }
 
+    //
     public override void Die() {
+        shieldBoost.RemoveEffectFully();
         gameObject.SetActive(false);
         VisualEffects.SetColor(gameObject, Color.white);
     }

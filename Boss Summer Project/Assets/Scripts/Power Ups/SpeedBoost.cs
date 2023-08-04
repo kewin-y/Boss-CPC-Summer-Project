@@ -12,7 +12,7 @@ public class SpeedBoost : PowerUp
         cameraBounds.Zoom(-0.5f, 0.5f); // Makes the camera zoom out and it seems fast
     }
 
-    protected override void RemoveEffect() {
+    public override void RemoveEffect() {
         playerScript.MoveSpeed = playerScript.MoveSpeed / boostMultiplier;
         cameraBounds.Zoom(0.5f, 0.5f); // Lerp this camera thing somehow
     }

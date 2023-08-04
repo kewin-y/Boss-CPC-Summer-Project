@@ -6,17 +6,24 @@ public class InvertedGravity : PowerUp
 {
     protected override void SummonEffect() {
 
-        //If player's gravity was already flipped, remove this effect now)
-        if (playerScript.GravityCoefficient == -1)
-            RemoveEffect();
-        else {
-            playerScript.GravityCoefficient = -1;
-            player.transform.eulerAngles = new Vector3(0, 0, 180f);
-            playerScript.flipHorizontal();
-        }
+        //Toggle the player's IsFlipped flag. If the flag was previously true,
+        //this will signal the previous inverted gravity power up to remove its effect.
+        playerScript.IsFlipped = !playerScript.IsFlipped;
+
+        playerScript.GravityCoefficient = -1;
+        player.transform.eulerAngles = new Vector3(0, 0, 180f);
+        playerScript.flipHorizontal();
+        StartCoroutine(RemoveOnNextCollect());
+
     }
 
-    protected override void RemoveEffect() {
+    //Waits until another inverted gravity power up is collected, then removes the effect
+    private IEnumerator RemoveOnNextCollect() {
+        yield return new WaitUntil(() => !playerScript.IsFlipped);
+        RemoveEffectFully();
+    }
+
+    public override void RemoveEffect() {
         playerScript.GravityCoefficient = 1;
         player.transform.eulerAngles = Vector3.zero;
         playerScript.flipHorizontal();

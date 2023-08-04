@@ -4,10 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(SpriteRenderer))]
+
+//Abstract class from which all power up scripts inherit.
+//Every power up must have a duration (if not permanent), a reference to the player,
+//and a reference to the power up "health bar"
 public abstract class PowerUp : MonoBehaviour
 {
     [SerializeField] protected GameObject player; //The player object
-    [SerializeField] private bool isInfinite;
+    [SerializeField] private bool isInfinite;   //Whether the power up is permanent or not
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
     [SerializeField] private GameObject powerUpBar;
     [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
@@ -37,7 +41,7 @@ public abstract class PowerUp : MonoBehaviour
     protected void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag == "Player") {
             Collect();
-            StartCoroutine(AddEffect());
+            StartCoroutine(EffectSequence());
         }
     }
 
@@ -49,20 +53,21 @@ public abstract class PowerUp : MonoBehaviour
         //TODO: particle effects
     }
 
-    protected IEnumerator AddEffect() {
+    //Runs when the power up is collected. Summons the effect, then removes it after the duration
+    //has passed IF the effect is not infinite/permanent.
+    protected IEnumerator EffectSequence() {
         SummonEffect();
         AddToUI();
         effectInProgress = true;
 
         if (!isInfinite) {
             yield return StartCoroutine(WaitUntilWearsOff(duration));
-            gameObject.SetActive(false);
-            RemoveFromUI();
-            RemoveEffect();
-            effectInProgress = false;
+            RemoveEffectFully();
         }
     }
 
+    //For timed power ups: this method waits the appropriate duration while
+    //updating the state of the power up bar every 0.1 seconds.
     protected IEnumerator WaitUntilWearsOff(float maxDuration) {
         float timeElapsed = 0;
 
@@ -75,17 +80,33 @@ public abstract class PowerUp : MonoBehaviour
         }
     }
 
+    //Method that allows direct changes to the state of the power up bar
+    public void SetDurationLeft(float durationLeft) => powerUpBarScript.SetDurationLeft(durationLeft);
+
+    /*
+    Calls the abstract RemoveEffect() method plus common features:
+    - Remove the power up bar from the UI
+    - Disable the effectInProgress flag
+    - Set active to false
+    */
+    public void RemoveEffectFully() {
+        RemoveEffect();
+        RemoveFromUI();
+        effectInProgress = false;
+        gameObject.SetActive(false);
+    }
+
+    //Abstract method that adds the effect to the player
     protected abstract void SummonEffect();
-    protected abstract void RemoveEffect();
+
+    //Abstract method that removes the effect from the player
+    public abstract void RemoveEffect();
 
     public void Respawn() {
         StopAllCoroutines();
         
-        if (effectInProgress) {
-            RemoveFromUI();
-            RemoveEffect();
-            effectInProgress = false;
-        }
+        if (effectInProgress)
+            RemoveEffectFully();
 
         gameObject.SetActive(true);
 
@@ -102,7 +123,7 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Removes the "health bar" for this power up from the UI
-    private void RemoveFromUI() {
+    protected void RemoveFromUI() {
         Destroy(powerUpBarObj);
     }
 }

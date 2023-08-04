@@ -8,7 +8,7 @@ public class TripleJump : PowerUp
         playerScript.jumpsAvailable = playerScript.jumpsRemaining = 3;
     }
 
-    protected override void RemoveEffect() {
+    public override void RemoveEffect() {
         playerScript.jumpsAvailable = playerScript.jumpsRemaining = 2;
     }
 }

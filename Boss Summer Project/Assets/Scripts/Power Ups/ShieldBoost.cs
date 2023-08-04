@@ -10,7 +10,7 @@ public class ShieldBoost : PowerUp
         shield.SetActive(true);
     }
 
-    protected override void RemoveEffect() {
+    public override void RemoveEffect() {
         shield.SetActive(false);
     }
 }
