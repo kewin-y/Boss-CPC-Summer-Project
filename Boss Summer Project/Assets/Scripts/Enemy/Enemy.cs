@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     [Header("Projectile Firing")]
     [SerializeField] private float fireRate;
     [SerializeField] private float attackRadius;
+    [SerializeField] private float projectileMoveSpeed;
     public GameObject player;
     public GameObject projectile;
 
@@ -20,6 +21,8 @@ public class Enemy : MonoBehaviour
     [Header("Collision Checking - Layer Masks")]
     [SerializeField] private LayerMask whatIsPlayer;
     [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsCamera;
+    [SerializeField] private LayerMask excludeColliders;
 
     [Header("Dying")]
     public GameObject deathEffect; 
@@ -27,28 +30,21 @@ public class Enemy : MonoBehaviour
     [Header("Indicator")]
     public GameObject angerVein;
 
-
+    
     private PlayerController playerController;
     private Rigidbody2D rb2d;
-    [HideInInspector] public Rigidbody2D player_rb2d;
-    private BoxCollider2D bc2d;
+    private Rigidbody2D player_rb2d;
     private bool canShoot;
     private bool isGrounded;
+    
+    private float distanceFromPlayer;
+    private float timeFromPlayer;
+    private Vector2 futurePlayerPosition;
+    private Vector2 projectileDirection;
 
-    private bool targetDetected;
+    private bool obstructedLineOfSight;
 
-    private float projectileMoveSpeed;
-
-    public float ProjectileMoveSpeed {
-        get { return projectileMoveSpeed;}
-        set { projectileMoveSpeed = value;}
-    }
-    public float distanceFromPlayer;
-    public float timeFromPlayer;
-    public Vector2 futurePlayerPosition;
-    public Vector2 projectileDirection;
-
-    public bool obstructedLineOfSight;
+    private bool isInCamera;
 
     // private bool canCollide = true;
     // public bool CanCollide {
@@ -65,9 +61,9 @@ public class Enemy : MonoBehaviour
     {
         // canCollide = true;
         rb2d = GetComponent<Rigidbody2D>();
-        bc2d = GetComponent<BoxCollider2D>();
         player_rb2d = player.GetComponent<Rigidbody2D>();
-        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+
+        playerController = player.GetComponent<PlayerController>();
         canShoot = true;
 
         direction = 1f;
@@ -78,22 +74,33 @@ public class Enemy : MonoBehaviour
     {
         // Temporarily disable the shooting so that I can easily work on the movement - kevin
         // Temporarily enable the shooting so that I can easily work on the aim - TJ
-        if(isGrounded && obstructedLineOfSight)
+        if(isGrounded && obstructedLineOfSight && isInCamera)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        Ray2D ray2D = new Ray2D(transform.position, projectileDirection);
-        Debug.DrawRay(transform.position, ray2D.direction * attackRadius);
+        isInCamera = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsCamera);
 
-        obstructedLineOfSight = !Physics2D.Raycast(ray2D.origin, projectileDirection, attackRadius, whatIsPlayer);
+        distanceFromPlayer = (transform.position - player.transform.position).magnitude;
+        timeFromPlayer = distanceFromPlayer / projectileMoveSpeed;
+        futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
+        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized; // That's clever -kevin
+
+        RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.12f, projectileDirection, attackRadius - 0.12f, excludeColliders);
+
+        obstructedLineOfSight = !raycastHit2D || raycastHit2D.collider.tag != "Player";
+
+        if(raycastHit2D)
+        {
+            Debug.Log(raycastHit2D.collider.name);
+        } 
+         
         if (!obstructedLineOfSight) angerVein.SetActive(true);
         else angerVein.SetActive(false);
         
-        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight){
+        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight && isInCamera){
             StartCoroutine(Shoot());
         }
 
@@ -135,6 +142,9 @@ public class Enemy : MonoBehaviour
         if(col.gameObject.tag == "DirectionChange")
         {
             direction *= -1;
+
+            if(!obstructedLineOfSight)
+                transform.localScale = new Vector3(0.5f * direction, 0.5f, 0.5f);
         }
 
     }
@@ -149,16 +159,19 @@ public class Enemy : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
-        GameObject Projectile = Instantiate(projectile) as GameObject;
-        Rigidbody2D projectileRb2d = Projectile.GetComponent<Rigidbody2D>();
-        Projectile projectileScript = Projectile.GetComponent<Projectile>();
-        Projectile.SetActive(true);
-        projectileScript.shoot();
+        GameObject projectileObject = Instantiate(projectile);
+        Rigidbody2D projectileRb2d = projectileObject.GetComponent<Rigidbody2D>();
+        projectileObject.SetActive(true);
+        
+        projectileObject.transform.position = (Vector2)transform.position;
+        projectileRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 
+
         yield return new WaitForSeconds(1/fireRate);
         canShoot = true;
         yield return new WaitForSeconds(2 - 1/fireRate);
-        if (Projectile != null){
-            Destroy(gameObject);
+
+        if (projectileObject != null){
+            Destroy(projectileObject);
         }
     }
 }
