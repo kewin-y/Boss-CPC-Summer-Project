@@ -39,7 +39,7 @@ public class ShieldController : Damageable
     }
 
     //Take damage from any type of hit while pulsing red
-    public override void TakeDamage(int damage) {
+    public override void TakeDamage(float damage) {
 
         //Subtract damage from health and update the shield "health bar"
         health -= damage;

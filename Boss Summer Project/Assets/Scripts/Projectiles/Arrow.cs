@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class Arrow : Projectile
 {
-
+    void Start(){
+        isBomb = false;
+    }
 }

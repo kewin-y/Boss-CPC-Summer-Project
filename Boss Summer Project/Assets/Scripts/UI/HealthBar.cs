@@ -10,7 +10,7 @@ public class HealthBar : MonoBehaviour
     [SerializeField] private Image fill;
 
     //Sets the max value of the health slider, then initializes the colour and length
-    public void SetMaxHealth(int health) {
+    public void SetMaxHealth(float health) {
         slider.maxValue = health;
         slider.value = health;
 
@@ -19,7 +19,7 @@ public class HealthBar : MonoBehaviour
     }
 
     //Updates the colour and length of the health bar based on the new health
-    public void SetHealth(int health) {
+    public void SetHealth(float health) {
         slider.value = health;
         fill.color = healthGradient.Evaluate(slider.normalizedValue);
     }

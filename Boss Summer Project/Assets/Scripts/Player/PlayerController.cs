@@ -314,7 +314,7 @@ public class PlayerController : Damageable
     } 
 
     //Depletes the player's health by a certain amount
-    public override void TakeDamage(int damage) {
+    public override void TakeDamage(float damage) {
         health -= damage;
         healthBar.SetHealth(health);
 

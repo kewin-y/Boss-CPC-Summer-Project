@@ -129,12 +129,11 @@ public class Enemy : MonoBehaviour
 
 
     void OnCollisionEnter2D(Collision2D col) {
-        if(col.gameObject.tag == "Kill")
-        {
+        if(col.gameObject.layer == 9) {
+            return;
+        } else if(col.gameObject.tag == "Kill"){
             Die();
-        }
-
-        if(col.gameObject.tag == "DirectionChange")
+        } else if(col.gameObject.tag == "DirectionChange")
         {
             direction *= -1;
 
@@ -157,6 +156,35 @@ public class Enemy : MonoBehaviour
         GameObject projectileObject = Instantiate(projectile);
         Rigidbody2D projectileRb2d = projectileObject.GetComponent<Rigidbody2D>();
         projectileObject.SetActive(true);
+
+        float angle = 0;
+        float refAngle = Mathf.Atan(projectileDirection[1]/projectileDirection[0]) * Mathf.Rad2Deg;            
+            
+        if(projectileDirection[1] > 0 && projectileDirection[0] > 0){
+            angle = refAngle;
+        } else if(projectileDirection[1] < 0 && projectileDirection[0] > 0){
+            angle = 360 + refAngle;
+        } else if(projectileDirection[1] > 0 && projectileDirection[0] < 0){
+            angle = 180 + refAngle;
+        } else if(projectileDirection[1] < 0 && projectileDirection[0] < 0){
+            angle = 180 + refAngle;
+        } else if(projectileDirection[1] == 0) {
+            if(projectileDirection[0] > 0){
+                angle = 0;
+            } else {
+                angle = 180;
+            }
+        } else if(projectileDirection[0] == 0){
+            if(projectileDirection[1] > 0) {
+                angle = 90;
+            } else {
+                angle = 270;
+            }
+        }
+
+        Quaternion orientation = Quaternion.Euler(0, 0, angle);
+        projectileObject.transform.rotation = orientation;
+        //projectileObject.transform.rotation = Quaternion.LookRotation(projectileDirection);
         
         projectileObject.transform.position = (Vector2)transform.position;
         projectileRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 

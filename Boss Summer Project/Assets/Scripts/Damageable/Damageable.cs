@@ -5,13 +5,13 @@ using UnityEngine;
 //An abstract class for anything that has a form of HP, and a way to get damaged
 public abstract class Damageable : MonoBehaviour
 {
-    [SerializeField] protected int maxHealth;
+    [SerializeField] protected float maxHealth;
 
-    protected int health;
+    protected float health;
 
-    public abstract void TakeDamage(int damage);
+    public abstract void TakeDamage(float damage);
 
-    public void Heal(int healAmount) {
+    public void Heal(float healAmount) {
         health += healAmount;
     }
 
