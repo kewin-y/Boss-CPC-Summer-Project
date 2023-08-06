@@ -5,7 +5,7 @@ using UnityEngine;
 //An abstract class for anything that has a form of HP, and a way to get damaged
 public abstract class Damageable : MonoBehaviour
 {
-    [SerializeField] protected float maxHealth;
+    [SerializeField] public float maxHealth;
 
     protected float health;
 
