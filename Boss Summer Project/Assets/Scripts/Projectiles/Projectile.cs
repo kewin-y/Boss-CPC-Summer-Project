@@ -29,19 +29,22 @@ public class Projectile : MonoBehaviour
             if (directHitScript != null) {
                 directHitScript.TakeDamage(damage);
             }
+
             //The bomb also applies damage to all entities within its 2 unit range depending on the distance
             RaycastHit2D[] allEntitiesInRange = Physics2D.CircleCastAll(transform.position, bombRange, new Vector2(0,0), 0f);
 
             foreach (RaycastHit2D entity in allEntitiesInRange) {
+
                 Damageable targetScript = entity.collider.gameObject.GetComponent<Damageable>();
                 if(targetScript != null && targetScript != directHitScript) {
-                    float distanceBetweenBombAndTarget= (target.transform.position - transform.position).magnitude;
+
+                    float distanceBetweenBombAndTarget = (entity.transform.position - transform.position).magnitude;
                     float damagePercentage = (bombRange-distanceBetweenBombAndTarget)/bombRange;
-                    if (damagePercentage < 0) {
+
+                    if (damagePercentage < 0)
                         damagePercentage = 0;
-                    }
+                    
                     targetScript.TakeDamage(damagePercentage * damage);
-                    print(damagePercentage * damage);
                 }
             }
             GameObject explosionParticles = Instantiate(explosion) as GameObject;
