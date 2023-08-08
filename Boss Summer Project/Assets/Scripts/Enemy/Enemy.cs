@@ -53,8 +53,8 @@ public class Enemy : MonoBehaviour
     // }
 
     // Why do we need canCollide here - Kevin
-
     private float direction;
+    private float appearedDirection;
 
     // Start is called before the first frame update
     void Start()
@@ -72,8 +72,6 @@ public class Enemy : MonoBehaviour
     // Used for physics
     void FixedUpdate()
     {
-        // Temporarily disable the shooting so that I can easily work on the movement - kevin
-        // Temporarily enable the shooting so that I can easily work on the aim - TJ
         if(isGrounded && obstructedLineOfSight && isInCamera)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
@@ -92,7 +90,11 @@ public class Enemy : MonoBehaviour
 
         obstructedLineOfSight = !raycastHit2D || raycastHit2D.collider.tag != "Player";
          
-        if (!obstructedLineOfSight) angerVein.SetActive(true);
+        if (!obstructedLineOfSight)
+        {
+            angerVein.SetActive(true);
+        }
+
         else angerVein.SetActive(false);
         
         if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight && isInCamera){
@@ -134,10 +136,11 @@ public class Enemy : MonoBehaviour
         } else if(col.gameObject.tag == "Kill"){
             Die();
         } else if(col.gameObject.tag == "DirectionChange")
+
         {
             direction *= -1;
 
-            if(!obstructedLineOfSight)
+            if(obstructedLineOfSight)
                 transform.localScale = new Vector3(0.5f * direction, 0.5f, 0.5f);
         }
 
@@ -158,32 +161,55 @@ public class Enemy : MonoBehaviour
         projectileObject.SetActive(true);
 
         float angle = 0;
-        float refAngle = Mathf.Atan(projectileDirection[1]/projectileDirection[0]) * Mathf.Rad2Deg;            
+        float refAngle = Mathf.Atan(projectileDirection.y/projectileDirection.x) * Mathf.Rad2Deg;            
             
-        if(projectileDirection[1] > 0 && projectileDirection[0] > 0){
+        if(projectileDirection.y > 0 && projectileDirection.x > 0)
+        {
             angle = refAngle;
-        } else if(projectileDirection[1] < 0 && projectileDirection[0] > 0){
+        } 
+
+        else if(projectileDirection.y < 0 && projectileDirection.x > 0)
+        {
             angle = 360 + refAngle;
-        } else if(projectileDirection[1] > 0 && projectileDirection[0] < 0){
+        } 
+
+        else if(projectileDirection.y > 0 && projectileDirection.x < 0)
+        {
             angle = 180 + refAngle;
-        } else if(projectileDirection[1] < 0 && projectileDirection[0] < 0){
+        }
+
+        else if(projectileDirection.y < 0 && projectileDirection.x < 0)
+        {
             angle = 180 + refAngle;
-        } else if(projectileDirection[1] == 0) {
-            if(projectileDirection[0] > 0){
+        } 
+
+        else if(projectileDirection.y == 0) {
+
+            if(projectileDirection.x > 0)
+            {
                 angle = 0;
-            } else {
+            } 
+            else 
+            {
                 angle = 180;
             }
-        } else if(projectileDirection[0] == 0){
-            if(projectileDirection[1] > 0) {
+        } 
+        
+        else if(projectileDirection.x == 0)
+        {
+            if(projectileDirection.y > 0) 
+            {
                 angle = 90;
-            } else {
+            } 
+            else 
+            {
                 angle = 270;
             }
         }
 
         Quaternion orientation = Quaternion.Euler(0, 0, angle);
         projectileObject.transform.rotation = orientation;
+        
         //projectileObject.transform.rotation = Quaternion.LookRotation(projectileDirection);
         
         projectileObject.transform.position = (Vector2)transform.position;

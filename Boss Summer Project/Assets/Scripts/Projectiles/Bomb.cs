@@ -11,9 +11,12 @@ public class Bomb : Projectile
     {
 
     }
-    void OnCollisionEnter2D(Collision2D col) {
+    protected override void OnCollisionEnter2D(Collision2D col) {
+        Destroy(gameObject);
+
+
         target = col.gameObject;
-        //If the bomb directly hits a damageable entity, it applies the full 100 damage
+        //If the bomb directly hits a damageable entity, it applies the full damage
         Damageable directHitScript = target.GetComponent<Damageable>();
         if (directHitScript != null) {
             directHitScript.TakeDamage(damage);
@@ -37,6 +40,7 @@ public class Bomb : Projectile
                 print(damagePercentage * damage);
             }
         }
+
         GameObject explosionParticles = Instantiate(explosion) as GameObject;
         explosionParticles.transform.position = transform.position;
         Destroy(explosionParticles, 2f);
