@@ -99,7 +99,7 @@ public class PlayerController : Damageable
         regularHealthBar.SetMaxHealth(maxHealth);
 
         extraHealthBar.SetMaxHealth(maxAbsorptionHealth);
-        absorptionHealth = 0.0f;
+        absorptionHealth = 0f;
         extraHealthBar.SetHealth(absorptionHealth);
 
         SetupRespawnEvent();
@@ -326,7 +326,7 @@ public class PlayerController : Damageable
             absorptionHealth -= damage;
             extraHealthBar.SetHealth(absorptionHealth);
         } else if (absorptionHealth > 0){
-            health -= (damage - absorptionHealth);
+            health -= damage - absorptionHealth;
             regularHealthBar.SetHealth(health);
             absorptionHealth = 0;
             extraHealthBar.SetHealth(absorptionHealth);

@@ -27,9 +27,9 @@ public abstract class PowerUp : MonoBehaviour
 
     protected PlayerController playerScript;
     protected bool effectInProgress = false;
+    
     private GameObject powerUpBarObj;
     private PowerUpBar powerUpBarScript;
-
 
     protected void Start() {
         playerScript = player.GetComponent<PlayerController>();

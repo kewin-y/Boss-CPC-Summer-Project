@@ -43,7 +43,7 @@ public class ShieldController : Damageable
 
         //Subtract damage from health and update the shield "health bar"
         health -= damage;
-        shieldBoost.SetDurationLeft((float) health / maxHealth);
+        shieldBoost.SetDurationLeft(health / maxHealth);
 
         VisualEffects.SetColor(gameObject, Color.red);
         if(isActiveAndEnabled) StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
