@@ -22,13 +22,17 @@ public class Enemy : MonoBehaviour
     [SerializeField] private LayerMask whatIsPlayer;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsCamera;
+    [SerializeField] private LayerMask directionChangeLayerMask;
     [SerializeField] private LayerMask excludeColliders;
 
     [Header("Dying")]
-    public GameObject deathEffect; 
+    public GameObject deathEffect;
+    [SerializeField] private Color deathColour; 
 
     [Header("Indicator")]
-    public GameObject angerVein;
+    [SerializeField] private SpriteRenderer glasses;
+    [SerializeField] private Color glassesAngryColor;
+    [SerializeField] private Color glassesHappyColor;
 
     
     private PlayerController playerController;
@@ -54,7 +58,7 @@ public class Enemy : MonoBehaviour
 
     // Why do we need canCollide here - Kevin
     private float direction;
-    private float appearedDirection;
+    private bool isRunning;
 
     // Start is called before the first frame update
     void Start()
@@ -89,13 +93,20 @@ public class Enemy : MonoBehaviour
         RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.12f, projectileDirection, attackRadius - 0.12f, excludeColliders);
 
         obstructedLineOfSight = !raycastHit2D || raycastHit2D.collider.tag != "Player";
-         
-        if (!obstructedLineOfSight)
+
+        if(!obstructedLineOfSight)
         {
-            angerVein.SetActive(true);
+            direction = (player.transform.position.x - transform.position.x) / Mathf.Abs(player.transform.position.x - transform.position.x);
+            glasses.color = glassesAngryColor;
+
+            if(!isRunning) StartCoroutine(UntilObstructed());
         }
 
-        else angerVein.SetActive(false);
+        else
+        {
+            glasses.color = glassesHappyColor; 
+        }
+            
         
         if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight && isInCamera){
             StartCoroutine(Shoot());
@@ -111,6 +122,25 @@ public class Enemy : MonoBehaviour
                 Die();
             }
         }
+
+        Debug.DrawRay(transform.position, new Vector2(direction * -1, 0) * 0.3f);
+        transform.localScale = new(direction * 1f, 1f, 1f);
+        
+    }
+
+    IEnumerator UntilObstructed()
+    {
+        isRunning = true;
+        yield return new WaitUntil(() => obstructedLineOfSight);
+
+        isRunning = false;
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, new(direction * -1, 0), 0.3f, directionChangeLayerMask);
+        Debug.Log("Player Exit");
+
+        if(!raycastHit2D)
+        {
+            direction *= -1;
+        }        
     }
 
     void Die()
@@ -124,7 +154,7 @@ public class Enemy : MonoBehaviour
         ParticleSystem dpSystem = deathParticles.GetComponent<ParticleSystem>();
         ParticleSystem.MainModule dpMain = dpSystem.main;
 
-        dpMain.startColor = gameObject.GetComponent<SpriteRenderer>().color;
+        dpMain.startColor = deathColour;
 
         Destroy(deathParticles, 2f);
     }
@@ -139,9 +169,6 @@ public class Enemy : MonoBehaviour
 
         {
             direction *= -1;
-
-            if(obstructedLineOfSight)
-                transform.localScale = new Vector3(0.5f * direction, 0.5f, 0.5f);
         }
 
     }

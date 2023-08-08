@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 60edec36bc5d9481c83fe37d5ed101e2, type: 3}
+    - target: {fileID: 2083194853859403003, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 60edec36bc5d9481c83fe37d5ed101e2, type: 3}
     - target: {fileID: 2973076377172181009, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: m_Name
       value: Enemy (2)
@@ -15466,7 +15470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17191,7 +17195,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17435,6 +17439,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.4431373
       objectReference: {fileID: 0}
+    - target: {fileID: 2083194853859403003, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: c628d24c5c52d8341b3a89cb13ad18e6, type: 3}
     - target: {fileID: 2973076377172181009, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: m_Name
       value: Enemy (1)
@@ -17450,6 +17458,22 @@ PrefabInstance:
     - target: {fileID: 4542369360492237732, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034296391757265214, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_Size.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034296391757265214, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_Size.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034296391757265214, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9986ec15abedb674a9cbaaac5246f69a, type: 3}
+    - target: {fileID: 5034296391757265214, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5494123954077636923, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: m_RootOrder
@@ -17499,6 +17523,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 7931452577658653200, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7931452577658653200, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: player
       value: 
@@ -17534,6 +17566,10 @@ PrefabInstance:
     - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: excludeColliders.m_Bits
       value: 371
+      objectReference: {fileID: 0}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: directionChangeLayerMask.m_Bits
+      value: 4096
       objectReference: {fileID: 0}
     - target: {fileID: 9102440699394626061, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
       propertyPath: m_Layer
@@ -17876,7 +17912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18299,7 +18335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18500,7 +18536,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1970743983}
-  m_Layer: 2
+  m_Layer: 12
   m_Name: Direction Change Points
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19092,7 +19128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19589,7 +19625,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6139838445505923066, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

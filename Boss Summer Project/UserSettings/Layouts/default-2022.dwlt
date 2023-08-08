@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 997
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 371}
   m_MaxSize: {x: 10000, y: 10000}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 63752
+  controlID: 13466
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 63753
+  controlID: 13467
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 63675
+  controlID: 13390
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 63754
+  controlID: 13468
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -488,9 +488,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: ac6b0000
-      m_LastClickedID: 0
-      m_ExpandedIDs: 3a8afeffc897feff2eabfeffd8b3feff145fffffce7fffff4aabffff6aabffffccd7ffffaae0ffffeae0ffff38e6ffff42f9ffffe2f9fffff66500002266000098660000
+      m_SelectedIDs: 8a650000
+      m_LastClickedID: 25994
+      m_ExpandedIDs: 9efaffffe8faffff866500008a6500009e650000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -896,9 +896,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 75.75288, y: 214.34389, z: -0.67961174}
+    m_Target: {x: 78.153595, y: -1.7611121, z: -0.02378268}
     speed: 2
-    m_Value: {x: 75.75288, y: 214.34389, z: -0.67961174}
+    m_Value: {x: 78.153595, y: -1.7611121, z: -0.02378268}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -948,9 +948,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 120.43768
+    m_Target: 0.32064196
     speed: 2
-    m_Value: 120.43768
+    m_Value: 0.32064196
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1020,7 +1020,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets/Prefabs/Enemies
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1028,17 +1028,17 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets/Prefabs/Enemies
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Useful\Unity\My unity works\BOSS Club\Summer Project\Boss-CPC-Summer-Project\Boss
     Summer Project
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 7a690000
-    m_LastClickedID: 27002
-    m_ExpandedIDs: 0000000050680000526800005468000056680000586800005a6800005c6800005e68000060680000626800006468000000ca9a3b
+    scrollPos: {x: 0, y: 29}
+    m_SelectedIDs: 66680000
+    m_LastClickedID: 26726
+    m_ExpandedIDs: 0000000096670000986700009a6700009c6700009e670000a0670000a2670000a4670000a6670000a8670000aa6700002e68000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1066,7 +1066,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000050680000526800005468000056680000586800005a6800005c6800005e6800006068000062680000646800006668000000ca9a3b
+    m_ExpandedIDs: 0000000096670000986700009a6700009c6700009e670000a0670000a2670000a4670000a6670000a8670000aa67000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1093,8 +1093,8 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c62300001c630000ee6200005466000000000000
+    m_HadKeyboardFocusLastEvent: 0
+    m_ExpandedInstanceIDs: c62300001c630000ee6200005466000000000000a0660000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1231,7 +1231,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 178
+  m_LastVerticalScrollValue: 782
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
