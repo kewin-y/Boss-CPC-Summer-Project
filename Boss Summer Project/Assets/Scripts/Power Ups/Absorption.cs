@@ -4,21 +4,16 @@ using UnityEngine;
 
 public class Absorption : PowerUp
 {
-   //[SerializeField] private HealthBar healthBar;
     [SerializeField] private float absorptionAmount;
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private HealthBar extraHealthBar;
 
     protected override void SummonEffect() {
-        playerScript.maxHealth += absorptionAmount;
-        playerScript.health += absorptionAmount;
-        healthBar.SetHealth(playerScript.health);
+        playerScript.absorptionHealth = absorptionAmount;
+        extraHealthBar.SetHealth(absorptionAmount);
     }
 
     public override void RemoveEffect() {
-        playerScript.maxHealth -= absorptionAmount;
-        if(playerScript.health > 100){
-            playerScript.health = 100;
-        }
-        healthBar.SetHealth(playerScript.health);
+        playerScript.absorptionHealth = 0.0f;
+        extraHealthBar.SetHealth(0.0f);
     }
 }

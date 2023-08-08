@@ -12,8 +12,8 @@ public class PlayerController : Damageable
     }
     private TerrainState terrainState;
 
-    public int jumpsRemaining;
-    public int jumpsAvailable;
+    [HideInInspector] public int jumpsRemaining;
+    [HideInInspector] public int jumpsAvailable;
     [SerializeField] private float moveSpeed;
 
     public float MoveSpeed {
@@ -59,7 +59,8 @@ public class PlayerController : Damageable
     }
     private const int GROUND_LAYER = 6;
 
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private HealthBar regularHealthBar;
+    [SerializeField] private HealthBar extraHealthBar;
 
     public bool IsDashing
     {
@@ -95,7 +96,11 @@ public class PlayerController : Damageable
         jumpsRemaining = jumpsAvailable = 2;
 
         health = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+        regularHealthBar.SetMaxHealth(maxHealth);
+
+        extraHealthBar.SetMaxHealth(maxAbsorptionHealth);
+        absorptionHealth = 0.0f;
+        extraHealthBar.SetHealth(absorptionHealth);
 
         SetupRespawnEvent();
     }
@@ -291,7 +296,9 @@ public class PlayerController : Damageable
     public void Respawn() 
     {
         health = maxHealth;
-        healthBar.SetHealth(health);
+        regularHealthBar.SetHealth(health);
+        absorptionHealth = 0.0f;
+        extraHealthBar.SetHealth(absorptionHealth);
 
         spriteRenderer.enabled = true;
         gameObject.GetComponent<BoxCollider2D>().enabled = true;
@@ -315,8 +322,18 @@ public class PlayerController : Damageable
 
     //Depletes the player's health by a certain amount
     public override void TakeDamage(float damage) {
-        health -= damage;
-        healthBar.SetHealth(health);
+        if (absorptionHealth > damage) {
+            absorptionHealth -= damage;
+            extraHealthBar.SetHealth(absorptionHealth);
+        } else if (absorptionHealth > 0){
+            health -= (damage - absorptionHealth);
+            regularHealthBar.SetHealth(health);
+            absorptionHealth = 0;
+            extraHealthBar.SetHealth(absorptionHealth);
+        } else {
+            health -= damage;
+            regularHealthBar.SetHealth(health);
+        }
 
         VisualEffects.SetColor(gameObject, Color.red);
         if(isActiveAndEnabled) StartCoroutine(VisualEffects.FadeToColor(gameObject, 0.5f, Color.white));
