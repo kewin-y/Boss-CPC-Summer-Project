@@ -11,7 +11,7 @@ public class HealthBar : MonoBehaviour
 
     //Sets the max value of the health slider, then initializes the colour and length
     public void SetMaxHealth(float health) {
-        slider.maxValue = health;
+        slider.maxValue = 2 * health;
         slider.value = health;
 
         //Set the health bar to "max health" colour (rightmost colour of the health gradient)
@@ -21,6 +21,7 @@ public class HealthBar : MonoBehaviour
     //Updates the colour and length of the health bar based on the new health
     public void SetHealth(float health) {
         slider.value = health;
-        fill.color = healthGradient.Evaluate(slider.normalizedValue);
+        //Commented this out so that the health bar retains its opacity as its value changes
+        //fill.color = healthGradient.Evaluate(slider.normalizedValue);
     }
 }

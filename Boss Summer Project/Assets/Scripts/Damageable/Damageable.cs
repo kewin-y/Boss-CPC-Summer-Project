@@ -7,7 +7,7 @@ public abstract class Damageable : MonoBehaviour
 {
     [SerializeField] public float maxHealth;
 
-    protected float health;
+    public float health;
 
     public abstract void TakeDamage(float damage);
 
