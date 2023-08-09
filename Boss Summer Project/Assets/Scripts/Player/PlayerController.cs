@@ -70,7 +70,9 @@ public class PlayerController : Damageable
     private float lastFacing = 1;   //If 1, facing right. If -1, facing left.
     private float horizontalFlip = 1;    //If -1, player is upside down; must flip horizontally.
     public UnityEvent respawnEvent; //Called when the player respawns
+
     [SerializeField] private Transform powerUps;    //Parent object for all power ups
+    [SerializeField] private Transform items;       //Parent object for all items
 
     private bool isFlipped;
     public bool IsFlipped {
@@ -105,11 +107,20 @@ public class PlayerController : Damageable
         SetupRespawnEvent();
     }
 
-    //Add all power ups as listeners for the respawn event
+    //Add all power ups and items as listeners for the respawn event
+    //NOTE: This makes it unnecessary to do so in the inspector.
     private void SetupRespawnEvent() {
+
+        //Add power ups as listeners
         for (int i = 0; i < powerUps.childCount; i++) {
             PowerUp powerUpScript = powerUps.GetChild(i).GetComponent<PowerUp>();
             respawnEvent.AddListener(powerUpScript.Respawn);
+        }
+
+        //Add items as listeners
+        for (int i = 0; i < items.childCount; i++) {
+            Item itemScript = items.GetChild(i).GetComponent<Item>();
+            respawnEvent.AddListener(itemScript.Respawn);
         }
     }
 
@@ -340,6 +351,16 @@ public class PlayerController : Damageable
 
         if(health <= 0)
             Die();
+    }
+
+    public override void Heal(int healAmount) {
+        health += healAmount;
+        
+        //Health cannot overflow
+        if (health > maxHealth)
+            health = maxHealth;
+
+        regularHealthBar.SetHealth(health);
     }
 
     //Sets the player's gravity scale while taking the gravity coefficient into account

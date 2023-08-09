@@ -8,7 +8,7 @@ public class Absorption : PowerUp
     [SerializeField] private HealthBar extraHealthBar;
 
     protected override void SummonEffect() {
-        playerScript.absorptionHealth = absorptionAmount;
+        playerScript.absorptionHealth += absorptionAmount;
         extraHealthBar.SetHealth(absorptionAmount);
         StartCoroutine(RemoveOnNoHealth());
     }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SpriteRenderer))]
 
 //Abstract class from which all power up scripts inherit.
-//Every power up must have a duration (if not permanent), a reference to the player,
+//Every power up must have a duration (if not permanent), a reference to the player object,
 //and a reference to the power up "health bar"
 public abstract class PowerUp : MonoBehaviour
 {
@@ -16,6 +16,12 @@ public abstract class PowerUp : MonoBehaviour
     [SerializeField] private GameObject powerUpBar;
     [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
 
+    protected PlayerController playerScript;
+    protected bool effectInProgress = false;
+    
+    private GameObject powerUpBarObj;
+    private PowerUpBar powerUpBarScript;
+
     public bool IsInfinite {
         get { return isInfinite; }
     }
@@ -24,12 +30,6 @@ public abstract class PowerUp : MonoBehaviour
         get { return duration; }
         set { duration = value; }
     }
-
-    protected PlayerController playerScript;
-    protected bool effectInProgress = false;
-    
-    private GameObject powerUpBarObj;
-    private PowerUpBar powerUpBarScript;
 
     protected void Start() {
         playerScript = player.GetComponent<PlayerController>();

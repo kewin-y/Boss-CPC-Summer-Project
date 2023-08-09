@@ -11,11 +11,15 @@ public abstract class Damageable : MonoBehaviour
     public float maxAbsorptionHealth;
     public float absorptionHealth;
 
+    //Abstract method that removes a certain amount of the entity's health.
+    //Must be implemented by the child class so the appropriate health bar can
+    //be updated.
     public abstract void TakeDamage(float damage);
 
-    public void Heal(float healAmount) {
-        health += healAmount;
-    }
+    //Abstract method that recovers a certain amount of the entity's health. 
+    //Must be implemented by the child class so the appropriate health bar can
+    //be updated.
+    public abstract void Heal(int healAmount);
 
     public void ResetHealth() {
         health = maxHealth;

@@ -52,6 +52,16 @@ public class ShieldController : Damageable
             Die();
     }
 
+    public override void Heal(int healAmount) {
+        health += healAmount;
+        
+        //Health cannot overflow
+        if (health > maxHealth)
+            health = maxHealth;
+
+        shieldBoost.SetDurationLeft(health / maxHealth);
+    }
+
     //
     public override void Die() {
         shieldBoost.RemoveEffectFully();
