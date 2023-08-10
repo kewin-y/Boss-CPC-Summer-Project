@@ -8,7 +8,8 @@ public class PlayerController : Damageable
     private enum TerrainState
     {
         Air,
-        Water
+        Water,
+        Ice
     }
     private TerrainState terrainState;
 
@@ -27,6 +28,7 @@ public class PlayerController : Damageable
     [SerializeField] private KeyCode dashKey;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsWater;
+    [SerializeField] private LayerMask whatIsIce;
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
@@ -44,6 +46,7 @@ public class PlayerController : Damageable
     private float xInput; // Variable for the x-input (a&d or left & right)
     private bool isGrounded; // If the player is on the ground 
     private bool isInWater;
+    private bool isOnIce;
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool doubleJump;
@@ -57,7 +60,6 @@ public class PlayerController : Damageable
         get { return gravityCoefficient; }
         set { gravityCoefficient = value; }
     }
-    private const int GROUND_LAYER = 6;
 
     [SerializeField] private HealthBar regularHealthBar;
     [SerializeField] private HealthBar extraHealthBar;
@@ -81,6 +83,7 @@ public class PlayerController : Damageable
     }
 
     // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
+    // Let's do it on a call - Sean
 
     // Start is called before the first frame update
     void Start()
@@ -129,19 +132,19 @@ public class PlayerController : Damageable
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
         isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
+        isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
 
         if(isInWater)
             terrainState = TerrainState.Water;
+        else if (isOnIce)
+            terrainState = TerrainState.Ice;
         else
             terrainState = TerrainState.Air;
 
         if(!isGrounded)
             lastGrounded += Time.deltaTime;
-
         else
-        {
             lastGrounded = 0f;
-        }
         
         getInput();
 
@@ -160,15 +163,14 @@ public class PlayerController : Damageable
         }
          
 
-        if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SAPCE) is held
+        if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SPACE) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
 
         if(Input.GetKeyDown(dashKey) && canDash)
-        {
             StartCoroutine(dash());
-        }
 
-        if(terrainState == TerrainState.Air) // Lol change this to a switch statement later
+        //Jump behaviours + gravity and drag
+        if(terrainState == TerrainState.Air || terrainState == TerrainState.Ice) // Lol change this to a switch statement later
         {
             if(waterParticles.isPlaying) waterParticles.Stop();
 
@@ -204,7 +206,7 @@ public class PlayerController : Damageable
             {
                 if(waterParticles.isPlaying) waterParticles.Stop();
             }
-        }  
+        }
 
         
     }
@@ -217,7 +219,7 @@ public class PlayerController : Damageable
 
     void jump()
     {
-        if(terrainState == TerrainState.Air)
+        if(terrainState == TerrainState.Air || terrainState == TerrainState.Ice)
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
 
         else if (terrainState == TerrainState.Water)
@@ -262,7 +264,13 @@ public class PlayerController : Damageable
         if(isDashing)
             return;
         
-        rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
+        //To keep things consistent with friction, we should use AddForce even for normal movement - Sean
+        if (terrainState == TerrainState.Ice) {
+            print("ice");
+            rb2d.AddForce(new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y));
+        }
+        else
+            rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
     void OnCollisionStay2D(Collision2D col)
@@ -270,7 +278,7 @@ public class PlayerController : Damageable
         if(col.gameObject.tag == "Kill")
             Die();
 
-        else if (col.gameObject.layer == GROUND_LAYER) {
+        else if (IsInLayerMask(col.gameObject, whatIsGround)) {
             bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
             if (touchingGround) {
                 jumpsRemaining = jumpsAvailable;
@@ -279,6 +287,16 @@ public class PlayerController : Damageable
         }
     } // I jus realized why is there a touchingGround variable and an isGrounded variable - kevin
 
+    /*
+    This method checks if a GameObject belongs in a layer mask.
+    Since a layer mask in Unity is simply a binary string where each digit
+    represents a layer (e.g. 000000001 means layer 0 is included in the mask),
+    we can use bit shifting to check if the object's layer matches any of the layers
+    in the layer mask.
+    */
+    private bool IsInLayerMask(GameObject obj, LayerMask layerMask) {
+        return (layerMask.value & (1 << obj.layer)) != 0;
+    }
     
     public override void Die()
     {
