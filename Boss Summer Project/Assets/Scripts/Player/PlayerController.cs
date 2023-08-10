@@ -86,6 +86,8 @@ public class PlayerController : Damageable
     [SerializeField] private Sprite ninjaSprite;
     [SerializeField] private GameObject ninjaAttachment;
 
+    public UnityEvent playerJumped;
+    
     // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
     // Let's do it on a call - Sean
 
