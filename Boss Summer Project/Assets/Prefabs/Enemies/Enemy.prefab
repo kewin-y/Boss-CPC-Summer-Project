@@ -35,7 +35,7 @@ Transform:
   - {fileID: 8785191670985570346}
   - {fileID: 1456484958684262115}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5034296391757265214
 SpriteRenderer:
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5, y: 0.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -104,7 +104,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 16768
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -126,7 +126,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.5, y: 0.5}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -173,16 +173,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9da9171fa5ddeb849b59750f90105df3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 2
-  attackRadius: 0
-  projectileMoveSpeed: 0
+  fireRate: 1
+  attackRadius: 7
+  projectileMoveSpeed: 500
   player: {fileID: 0}
-  projectile: {fileID: 0}
+  projectile: {fileID: 7739306919037969065, guid: 0b4588df61dca42a5b84737e9009a897, type: 3}
   moveSpeed: 1
-  gravityCoefficient: 0
+  gravityCoefficient: 1
   whatIsPlayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 16640
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -357,7 +357,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 60edec36bc5d9481c83fe37d5ed101e2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c628d24c5c52d8341b3a89cb13ad18e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

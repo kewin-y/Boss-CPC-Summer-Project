@@ -82,6 +82,10 @@ public class PlayerController : Damageable
         set { isFlipped = value; }
     }
 
+    [SerializeField] private Sprite playerSprite;
+    [SerializeField] private Sprite ninjaSprite;
+    [SerializeField] private GameObject ninjaAttachment;
+
     // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
     // Let's do it on a call - Sean
 
@@ -94,20 +98,11 @@ public class PlayerController : Damageable
         cameraBounds = mainCam.GetComponent<CameraBounds>();
 
         actualPlayerSize = transform.localScale.x;
-        
         lastGrounded = 0f;
-        canJump = true;
-        canDash = true;
         jumpsRemaining = jumpsAvailable = 2;
 
-        health = maxHealth;
-        regularHealthBar.SetMaxHealth(maxHealth);
-
-        extraHealthBar.SetMaxHealth(maxAbsorptionHealth);
-        absorptionHealth = 0f;
-        extraHealthBar.SetHealth(absorptionHealth);
-
         SetupRespawnEvent();
+        Respawn();
     }
 
     //Add all power ups and items as listeners for the respawn event
@@ -338,6 +333,7 @@ public class PlayerController : Damageable
         SetGravityScale(5f);
         rb2d.velocity = Vector2.zero;
 
+        canJump = true;
         canDash = true;
         isDashing = false;
         transform.position = spawnPoint; // tp the player to the spawnpoint
@@ -346,7 +342,7 @@ public class PlayerController : Damageable
         wishJump = false;
 
         VisualEffects.SetColor(gameObject, Color.white);
-
+        SwitchToDefaultCostume();
     } 
 
     //Depletes the player's health by a certain amount
@@ -354,12 +350,14 @@ public class PlayerController : Damageable
         if (absorptionHealth > damage) {
             absorptionHealth -= damage;
             extraHealthBar.SetHealth(absorptionHealth);
-        } else if (absorptionHealth > 0){
+        } 
+        else if (absorptionHealth > 0){
             health -= damage - absorptionHealth;
             regularHealthBar.SetHealth(health);
             absorptionHealth = 0;
             extraHealthBar.SetHealth(absorptionHealth);
-        } else {
+        } 
+        else {
             health -= damage;
             regularHealthBar.SetHealth(health);
         }
@@ -384,6 +382,18 @@ public class PlayerController : Damageable
     //Sets the player's gravity scale while taking the gravity coefficient into account
     private void SetGravityScale(float newGravityScale) {
         rb2d.gravityScale = gravityCoefficient * newGravityScale;
+    }
+
+    //Switches the player's costume to the default costume
+    public void SwitchToDefaultCostume() {
+        spriteRenderer.sprite = playerSprite;
+        ninjaAttachment.SetActive(false);
+    }
+
+    //Switches the player's costume to a ninja costume
+    public void SwitchToNinjaCostume() {
+        spriteRenderer.sprite = ninjaSprite;
+        ninjaAttachment.SetActive(true);
     }
 
 }

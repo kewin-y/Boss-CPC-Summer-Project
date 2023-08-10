@@ -72,6 +72,7 @@ public class Enemy : MonoBehaviour
 
         direction = 1f;
     }
+
     // Called every fixed timestep
     // Used for physics
     void FixedUpdate()
@@ -161,15 +162,14 @@ public class Enemy : MonoBehaviour
 
 
     void OnCollisionEnter2D(Collision2D col) {
-        if(col.gameObject.layer == 9) {
+        if(col.gameObject.layer == LayerMask.NameToLayer("Shield"))
             return;
-        } else if(col.gameObject.tag == "Kill"){
-            Die();
-        } else if(col.gameObject.tag == "DirectionChange")
 
-        {
+        else if(col.gameObject.tag == "Kill")
+            Die();
+
+        else if(col.gameObject.tag == "DirectionChange")
             direction *= -1;
-        }
 
     }
 
@@ -179,6 +179,7 @@ public class Enemy : MonoBehaviour
     // }  
 
     // Commented this out since I don't think enemies should respawn - kevin
+    // I think they should since power ups respawn, and some of them help with defeating enemies; respawn = fresh restart - Sean
 
     IEnumerator Shoot()
     {
