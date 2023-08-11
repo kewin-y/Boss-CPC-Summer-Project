@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : Damageable
 {
@@ -96,6 +97,9 @@ public class PlayerController : Damageable
     [SerializeField] private GameObject ninjaAttachment;
 
     public UnityEvent playerJumped;
+
+    private GameObject statistics;
+    private StatisticsSystem statisticsScript;
     
     // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
     // Let's do it on a call - Sean
@@ -103,6 +107,18 @@ public class PlayerController : Damageable
     // Start is called before the first frame update
     void Start()
     {
+        statistics = GameObject.Find("Statistics");
+        statisticsScript = statistics.GetComponent<StatisticsSystem>();
+        playerJumped.AddListener(statisticsScript.AddJump);
+
+        GameObject[] gameObjects = FindObjectsOfType<GameObject>();
+
+        foreach (GameObject element in gameObjects) {
+            if (element.scene.name == "Statistics Menu" && element.name == "Canvas" && element.layer == 5) {
+                element.SetActive(false);
+            }
+        }
+
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -271,11 +287,12 @@ public class PlayerController : Damageable
 
     void jump()
     {
-        if(terrainState != TerrainState.Water)
+        if(terrainState != TerrainState.Water) {
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
-
-        else
+            playerJumped.Invoke();
+        } else {
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity * 0.25f);
+        }
     }
 
     IEnumerator dash()

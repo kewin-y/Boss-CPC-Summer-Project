@@ -15,6 +15,10 @@ public class HomeScreenManager : MonoBehaviour
     */
     public void ChangeScene(int sceneBuildIndex)
     {
+        if(this.gameObject.name == "Canvas" && this.gameObject.scene.name == "Statistics Menu") 
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
         SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
     }
     public void ExitApplication()
