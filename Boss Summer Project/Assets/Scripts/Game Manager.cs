@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using UnityEditor;
 
-public class HomeScreenManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     /*
     void Start()
@@ -24,5 +24,12 @@ public class HomeScreenManager : MonoBehaviour
     public void ExitApplication()
     {
         EditorApplication.ExitPlaymode();
+    }
+    public void enterPauseMenu()
+    {
+        GameObject[] allGameObjects = FindObjectsOfType<GameObject>();
+        foreach (GameObject gameObject in allGameObjects) {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }
