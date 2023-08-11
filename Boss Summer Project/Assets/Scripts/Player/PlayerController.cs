@@ -9,7 +9,8 @@ public class PlayerController : Damageable
     {
         Air,
         Water,
-        Ice
+        Ice,
+        Mud
     }
     private TerrainState terrainState;
 
@@ -26,9 +27,14 @@ public class PlayerController : Damageable
     [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     [SerializeField] private KeyCode jumpKey;
     [SerializeField] private KeyCode dashKey;
+
+    [Header("Layer Masks")]
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private LayerMask whatIsIce;
+    [SerializeField] private LayerMask whatIsMud;
+
+
     [SerializeField] private Vector3 spawnPoint;
     [SerializeField] private float dashAmount;
     [SerializeField] private float dashCooldown;
@@ -44,9 +50,12 @@ public class PlayerController : Damageable
     private Rigidbody2D rb2d;
     private SpriteRenderer spriteRenderer;
     private float xInput; // Variable for the x-input (a&d or left & right)
+
     private bool isGrounded; // If the player is on the ground 
     private bool isInWater;
     private bool isOnIce;
+    private bool isOnMud;
+
     private float lastGrounded; // Or airtime; time since the player was last grounded
     private bool canJump;
     private bool doubleJump;
@@ -128,15 +137,10 @@ public class PlayerController : Damageable
     void Update()
     {
         isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
-        isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
+        Debug.Log(isGrounded);
 
-        if(isInWater)
-            terrainState = TerrainState.Water;
-        else if (isOnIce)
-            terrainState = TerrainState.Ice;
-        else
-            terrainState = TerrainState.Air;
+        TerrainCheck();
+        SpeedControl();
 
         if(!isGrounded)
             lastGrounded += Time.deltaTime;
@@ -146,6 +150,58 @@ public class PlayerController : Damageable
         getInput();
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
+    }
+
+    void TerrainCheck()
+    {
+        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
+        isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
+        isOnMud = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsMud);
+
+        if(isInWater)
+            terrainState = TerrainState.Water;
+        else if (isOnIce)
+            terrainState = TerrainState.Ice;
+        else if (isOnMud)
+            terrainState = TerrainState.Mud;
+        else
+            terrainState = TerrainState.Air;
+    }
+
+    void SpeedControl()
+    {
+        if(isDashing)
+            return;
+
+        Vector2 flatVelocity = new(rb2d.velocity.x, 0f);
+
+        if(terrainState == TerrainState.Ice)
+        {
+            if(flatVelocity.magnitude > moveSpeed * 2f)
+            {
+                Vector2 controlledSpeed = flatVelocity.normalized * (moveSpeed * 2f);
+                rb2d.velocity = new Vector2(controlledSpeed.x, rb2d.velocity.y);
+            }
+        }
+
+        if(terrainState == TerrainState.Mud)
+        {
+            if(flatVelocity.magnitude > moveSpeed * 0.15f)
+            {
+                Vector2 controlledSpeed = flatVelocity.normalized * (moveSpeed * 0.15f);
+                rb2d.velocity = new Vector2(controlledSpeed.x, rb2d.velocity.y);
+            }
+        }
+
+        else 
+        {
+            if(flatVelocity.magnitude > moveSpeed)
+            {
+                Vector2 controlledSpeed = flatVelocity.normalized * (moveSpeed * 0.5f);
+                rb2d.velocity = new Vector2(controlledSpeed.x, rb2d.velocity.y);
+            }
+        }
+        
     }
 
     void getInput()
@@ -158,7 +214,6 @@ public class PlayerController : Damageable
                 
             lastFacing = xInput;
         }
-         
 
         if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SPACE) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
@@ -167,7 +222,7 @@ public class PlayerController : Damageable
             StartCoroutine(dash());
 
         //Jump behaviours + gravity and drag
-        if(terrainState == TerrainState.Air || terrainState == TerrainState.Ice) // Lol change this to a switch statement later
+        if(terrainState != TerrainState.Water) // Lol change this to a switch statement later
         {
             if(waterParticles.isPlaying) waterParticles.Stop();
 
@@ -186,7 +241,7 @@ public class PlayerController : Damageable
             }
         }
 
-        else if (terrainState == TerrainState.Water)
+        else
         {
 
             SetGravityScale(1f);
@@ -216,10 +271,10 @@ public class PlayerController : Damageable
 
     void jump()
     {
-        if(terrainState == TerrainState.Air || terrainState == TerrainState.Ice)
+        if(terrainState != TerrainState.Water)
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
 
-        else if (terrainState == TerrainState.Water)
+        else
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity * 0.25f);
     }
 
@@ -261,17 +316,12 @@ public class PlayerController : Damageable
         if(isDashing)
             return;
         
-        //To keep things consistent with friction, we should use AddForce even for normal movement - Sean
-        if (terrainState == TerrainState.Ice) {
-            print("ice");
-            rb2d.AddForce(new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y));
-        }
-        else
-            rb2d.velocity = new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
+        rb2d.AddForce(new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, 0f));
     }
 
     void OnCollisionStay2D(Collision2D col)
     {
+
         if(col.gameObject.tag == "Kill")
             Die();
 
