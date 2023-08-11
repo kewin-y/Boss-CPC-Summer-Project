@@ -18875,6 +18875,18 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1431990589}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: glassesHappyColor.b
+      value: 0.7830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: glassesHappyColor.g
+      value: 0.7830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 8613390868928027794, guid: 227a8b720d5b22040b39459eabd25bec, type: 3}
+      propertyPath: glassesHappyColor.r
+      value: 0.7830189
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19009,16 +19021,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  health: 0
   maxAbsorptionHealth: 100
-  absorptionHealth: 0
-  jumpsRemaining: 0
-  jumpsAvailable: 0
-  moveSpeed: 12
+  jumpKey: 32
   jumpVelocity: 14
   coyoteTime: 0.1
-  jumpKey: 32
+  moveSpeed: 12
   dashKey: 101
+  dashAmount: 4
+  dashCooldown: 0.2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 41024
@@ -19032,35 +19042,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 32768
   spawnPoint: {x: -6.5, y: -0.05, z: 0}
-  dashAmount: 4
-  dashCooldown: 0.2
-  playerColor: {r: 0.3019608, g: 0.56078434, b: 0.60784316, a: 1}
-  shield: {fileID: 2108654032}
-  mainCam: {fileID: 519420031}
-  deathEffect: {fileID: 7798169576231770195, guid: 37d127b182e9b25479fa5e8445749133, type: 3}
-  waterParticles: {fileID: 1536691587}
-  regularHealthBar: {fileID: 2009999163}
-  extraHealthBar: {fileID: 936076656}
-  respawnEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1431990595}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: Respawn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  powerUps: {fileID: 1819153779}
-  items: {fileID: 639248836}
-  playerSprite: {fileID: 21300000, guid: 5d8801049ff5d0c47bbf03049d9f0052, type: 3}
-  ninjaSprite: {fileID: 21300000, guid: ec8743cb7446c87408d8d3f7e66d04a6, type: 3}
-  ninjaAttachment: {fileID: 415112719}
   playerJumped:
     m_PersistentCalls:
       m_Calls:
@@ -19076,6 +19057,33 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  respawnEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1431990595}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Respawn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  mainCam: {fileID: 519420031}
+  deathEffect: {fileID: 7798169576231770195, guid: 37d127b182e9b25479fa5e8445749133, type: 3}
+  waterParticles: {fileID: 1536691587}
+  shield: {fileID: 2108654032}
+  playerSprite: {fileID: 21300000, guid: 5d8801049ff5d0c47bbf03049d9f0052, type: 3}
+  ninjaSprite: {fileID: 21300000, guid: ec8743cb7446c87408d8d3f7e66d04a6, type: 3}
+  ninjaAttachment: {fileID: 415112719}
+  regularHealthBar: {fileID: 2009999163}
+  extraHealthBar: {fileID: 936076656}
+  powerUps: {fileID: 1819153779}
+  items: {fileID: 639248836}
+  playerColor: {r: 0.3019608, g: 0.56078434, b: 0.60784316, a: 1}
 --- !u!61 &1431990596
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -20427,9 +20435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 50
-  health: 0
   maxAbsorptionHealth: 0
-  absorptionHealth: 0
   mainCam: {fileID: 519420031}
   player: {fileID: 1431990591}
   pivotPoint: {fileID: 233345546}
