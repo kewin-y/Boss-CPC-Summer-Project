@@ -6,118 +6,148 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : Damageable
 {
-    private enum TerrainState
-    {
-        Air,
-        Water,
-        Ice,
-        Mud
-    }
-    private TerrainState terrainState;
-
-    [HideInInspector] public int jumpsRemaining;
-    [HideInInspector] public int jumpsAvailable;
-    [SerializeField] private float moveSpeed;
-
-    public float MoveSpeed {
-        get {return moveSpeed;}
-        set {moveSpeed = value;}
-    }
-
-    [SerializeField] private float jumpVelocity;
-    [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
-    [SerializeField] private KeyCode jumpKey;
-    [SerializeField] private KeyCode dashKey;
-
-    [Header("Layer Masks")]
-    [SerializeField] private LayerMask whatIsGround;
-    [SerializeField] private LayerMask whatIsWater;
-    [SerializeField] private LayerMask whatIsIce;
-    [SerializeField] private LayerMask whatIsMud;
-
-
-    [SerializeField] private Vector3 spawnPoint;
-    [SerializeField] private float dashAmount;
-    [SerializeField] private float dashCooldown;
-    [SerializeField] private Color playerColor; // For death particles mainly
-    [SerializeField] private GameObject shield;
-
-    public Camera mainCam;
-    private CameraBounds cameraBounds;
-    public GameObject deathEffect;
-    public ParticleSystem waterParticles;
-
-    private BoxCollider2D bc2d;
-    private Rigidbody2D rb2d;
-    private SpriteRenderer spriteRenderer;
-    private float xInput; // Variable for the x-input (a&d or left & right)
-
-    private bool isGrounded; // If the player is on the ground 
-    private bool isInWater;
-    private bool isOnIce;
-    private bool isOnMud;
-
-    private float lastGrounded; // Or airtime; time since the player was last grounded
-    private bool canJump;
-    private bool doubleJump;
-    private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
-    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
-    private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
-    private bool canDash;
-    private bool isDashing;
-    private int gravityCoefficient = 1; //If 1, gravity goes down. If -1, gravity goes up.
-    public int GravityCoefficient {
-        get { return gravityCoefficient; }
-        set { gravityCoefficient = value; }
-    }
-
-    [SerializeField] private HealthBar regularHealthBar;
-    [SerializeField] private HealthBar extraHealthBar;
-
-    public bool IsDashing
-    {
-        get {return isDashing;}
-        set {isDashing = value;}
-    }
-    private float lastFacing = 1;   //If 1, facing right. If -1, facing left.
-    private float horizontalFlip = 1;    //If -1, player is upside down; must flip horizontally.
-    public UnityEvent respawnEvent; //Called when the player respawns
-
-    [SerializeField] private Transform powerUps;    //Parent object for all power ups
-    [SerializeField] private Transform items;       //Parent object for all items
-
-    private bool isFlipped;
-    public bool IsFlipped {
-        get { return isFlipped; }
-        set { isFlipped = value; }
-    }
-
-    [SerializeField] private Sprite playerSprite;
-    [SerializeField] private Sprite ninjaSprite;
-    [SerializeField] private GameObject ninjaAttachment;
-
-    public UnityEvent playerJumped;
-
-    private GameObject statistics;
-    private StatisticsSystem statisticsScript;
+    #region Inspector Values
+        [Header("Jumping")]
+        [SerializeField] private KeyCode jumpKey;
+        [SerializeField] private float jumpVelocity;
+        [SerializeField] private float coyoteTime; // Time between last grounded where the player can still jump midair; makes controller more fair and responsive
     
-    // Dawg we gotta organize these fields; w/ headers, regions, etc. - kevin
-    // Let's do it on a call - Sean
+        [Header("Movement")]
+        [SerializeField] private float moveSpeed;
+        public float MoveSpeed {
+            get {return moveSpeed;}
+            set {moveSpeed = value;}
+        }
+    
+        [Header("Dashing")]
+        [SerializeField] private KeyCode dashKey;
+        [SerializeField] private float dashAmount;
+        [SerializeField] private float dashCooldown;
+    
+        [Header("Layer Masks")]
+        [SerializeField] private LayerMask whatIsGround;
+        [SerializeField] private LayerMask whatIsWater;
+        [SerializeField] private LayerMask whatIsIce;
+        [SerializeField] private LayerMask whatIsMud;
+    
+        [Header("Locations")]
+        [SerializeField] private Vector3 spawnPoint;
+    
+        [Header("Events")]
+        public UnityEvent playerJumped;
+        public UnityEvent respawnEvent; //Called when the player respawns
+        
+        [Header("Object References")]
+        [SerializeField] private Camera mainCam;
+        [SerializeField] private GameObject deathEffect;
+        [SerializeField] private ParticleSystem waterParticles;
+        [SerializeField] private GameObject shield;
+        [SerializeField] private Sprite playerSprite;
+        [SerializeField] private Sprite ninjaSprite;
+        [SerializeField] private GameObject ninjaAttachment;
+        [SerializeField] private HealthBar regularHealthBar;
+        [SerializeField] private HealthBar extraHealthBar;
+        [SerializeField] private Transform powerUps;    //Parent object for all power ups
+        [SerializeField] private Transform items;       //Parent object for all items
+    
+        [Header("Miscellaneous")]
+        [SerializeField] private Color playerColor; // For death particles mainly
+    #endregion
+
+    #region Terrain
+        private enum TerrainState
+        {
+            Air,
+            Water,
+            Ice,
+            Mud
+        }
+        private TerrainState terrainState;
+    #endregion
+
+    #region Jumping
+        private int jumpsRemaining;
+        public int JumpsRemaining {
+            get { return jumpsRemaining; }
+            set { jumpsRemaining = value; }
+        }
+    
+        private int jumpsAvailable;
+        public int JumpsAvailable {
+            get { return jumpsAvailable; }
+            set { jumpsAvailable = value; }
+        }
+    #endregion
+    
+    #region Camera
+        private CameraBounds cameraBounds;
+    #endregion
+
+    #region Player Information
+        private BoxCollider2D bc2d;
+        private Rigidbody2D rb2d;
+        private SpriteRenderer spriteRenderer;
+        private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+        private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
+        private float lastFacing = 1;       //If 1, facing right. If -1, facing left.
+        private float horizontalFlip = 1;   //If -1, player is upside down; must flip horizontally.
+    #endregion
+
+    #region Movement
+        private float xInput; // Variable for the x-input (a&d or left & right)
+
+        private int gravityCoefficient = 1; //If 1, gravity goes down. If -1, gravity goes up.
+        public int GravityCoefficient {
+            get { return gravityCoefficient; }
+            set { gravityCoefficient = value; }
+        }
+
+        private bool isFlipped;
+        public bool IsFlipped {
+            get { return isFlipped; }
+            set { isFlipped = value; }
+        }
+    #endregion
+
+    #region Jumping
+        private bool isGrounded; // If the player is on the ground
+        private float lastGrounded; // Or airtime; time since the player was last grounded
+        private bool canJump;
+        private bool doubleJump;
+        private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
+    #endregion
+    
+    #region Dashing
+        private bool canDash;
+
+        private bool isDashing;
+        public bool IsDashing
+        {
+            get {return isDashing;}
+            set {isDashing = value;}
+        }
+    #endregion
+
+    #region Statistics
+        private GameObject statistics;
+        private StatisticsSystem statisticsScript;
+    #endregion
+
 
     // Start is called before the first frame update
     void Start()
     {
-        statistics = GameObject.Find("Statistics");
-        statisticsScript = statistics.GetComponent<StatisticsSystem>();
-        playerJumped.AddListener(statisticsScript.AddJump);
+        // statistics = GameObject.Find("Statistics");
+        // statisticsScript = statistics.GetComponent<StatisticsSystem>();
+        // playerJumped.AddListener(statisticsScript.AddJump);
 
-        GameObject[] gameObjects = FindObjectsOfType<GameObject>();
+        // GameObject[] gameObjects = FindObjectsOfType<GameObject>();
 
-        foreach (GameObject element in gameObjects) {
-            if (element.scene.name == "Statistics Menu" && element.name == "Canvas" && element.layer == 5) {
-                element.SetActive(false);
-            }
-        }
+        // foreach (GameObject element in gameObjects) {
+        //     if (element.scene.name == "Statistics Menu" && element.name == "Canvas" && element.layer == 5) {
+        //         element.SetActive(false);
+        //     }
+        // }
 
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
@@ -152,16 +182,14 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
-        Debug.Log(isGrounded);
-
         TerrainCheck();
         SpeedControl();
 
         if(!isGrounded)
             lastGrounded += Time.deltaTime;
-        else
+        else {
             lastGrounded = 0f;
+        }
         
         getInput();
 
@@ -170,9 +198,9 @@ public class PlayerController : Damageable
 
     void TerrainCheck()
     {
-        isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
-        isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
-        isOnMud = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsMud);
+        bool isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
+        bool isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
+        bool isOnMud = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsMud);
 
         if(isInWater)
             terrainState = TerrainState.Water;
@@ -229,7 +257,9 @@ public class PlayerController : Damageable
                 if(!waterParticles.isPlaying) waterParticles.Play();
                 
             lastFacing = xInput;
-        }
+        } 
+        else if (!isDashing && terrainState != TerrainState.Ice)
+            rb2d.velocity = new(0, rb2d.velocity.y);
 
         if(Input.GetKeyDown(jumpKey) && !wishJump) wishJump = true; // Player can queue a jump as long as the jump key (SPACE) is held
         if(Input.GetKeyUp(jumpKey)) wishJump = false;
@@ -333,7 +363,10 @@ public class PlayerController : Damageable
         if(isDashing)
             return;
         
-        rb2d.AddForce(new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, 0f));
+        if (terrainState == TerrainState.Ice)
+            rb2d.AddForce(new Vector2(xInput * moveSpeed * 30f * Time.fixedDeltaTime, 0f));
+        else
+            rb2d.AddForce(new Vector2(xInput * moveSpeed * 100f * Time.fixedDeltaTime, 0f));
     }
 
     void OnCollisionStay2D(Collision2D col)
@@ -343,13 +376,22 @@ public class PlayerController : Damageable
             Die();
 
         else if (IsInLayerMask(col.gameObject, whatIsGround)) {
-            bool touchingGround = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
-            if (touchingGround) {
-                jumpsRemaining = jumpsAvailable;
+            isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+            
+            if (isGrounded) {
                 doubleJump = false;
+                jumpsRemaining = jumpsAvailable;
             }
         }
     } // I jus realized why is there a touchingGround variable and an isGrounded variable - kevin
+
+    void OnCollisionExit2D(Collision2D col) {
+
+        if (IsInLayerMask(col.gameObject, whatIsGround)) {
+            isGrounded = false;
+            doubleJump = true;
+        }
+    }
 
     /*
     This method checks if a GameObject belongs in a layer mask.
@@ -368,7 +410,7 @@ public class PlayerController : Damageable
         StopAllCoroutines();
 
         spriteRenderer.enabled = false;
-        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        bc2d.enabled = false;
         shield.SetActive(false);
 
         GameObject deathParticles = Instantiate(deathEffect);
@@ -416,15 +458,15 @@ public class PlayerController : Damageable
 
     //Depletes the player's health by a certain amount
     public override void TakeDamage(float damage) {
-        if (absorptionHealth > damage) {
-            absorptionHealth -= damage;
-            extraHealthBar.SetHealth(absorptionHealth);
+        if (AbsorptionHealth > damage) {
+            AbsorptionHealth -= damage;
+            extraHealthBar.SetHealth(AbsorptionHealth);
         } 
-        else if (absorptionHealth > 0){
-            health -= damage - absorptionHealth;
+        else if (AbsorptionHealth > 0){
+            health -= damage - AbsorptionHealth;
             regularHealthBar.SetHealth(health);
-            absorptionHealth = 0;
-            extraHealthBar.SetHealth(absorptionHealth);
+            AbsorptionHealth = 0;
+            extraHealthBar.SetHealth(AbsorptionHealth);
         } 
         else {
             health -= damage;

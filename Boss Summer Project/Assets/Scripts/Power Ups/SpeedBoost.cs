@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//This power up increases the player's speed
 public class SpeedBoost : PowerUp
 {
     [SerializeField] private float boostMultiplier;

@@ -2,25 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//This power up gives the player some extra health in the second health bar
 public class Absorption : PowerUp
 {
     [SerializeField] private float absorptionAmount;
     [SerializeField] private HealthBar extraHealthBar;
 
     protected override void SummonEffect() {
-        playerScript.absorptionHealth += absorptionAmount;
-        extraHealthBar.SetHealth(absorptionAmount);
+        playerScript.AbsorptionHealth += absorptionAmount;
+
+        //Health cannot overflow
+        if (playerScript.AbsorptionHealth > playerScript.MaxAbsorptionHealth)
+            playerScript.AbsorptionHealth = playerScript.MaxAbsorptionHealth;
+
+        extraHealthBar.SetHealth(playerScript.AbsorptionHealth);
         StartCoroutine(RemoveOnNoHealth());
     }
 
     public override void RemoveEffect() {
-        playerScript.absorptionHealth = 0f;
-        extraHealthBar.SetHealth(0.0f);
+        playerScript.AbsorptionHealth -= absorptionAmount;
+
+        //Health cannot underflow
+        if (playerScript.AbsorptionHealth < 0f)
+            playerScript.AbsorptionHealth = 0f;
+
+        extraHealthBar.SetHealth(playerScript.AbsorptionHealth);
     }
 
     private IEnumerator RemoveOnNoHealth()
     {
-        yield return new WaitUntil(() => playerScript.absorptionHealth <= 0);
+        yield return new WaitUntil(() => playerScript.AbsorptionHealth <= 0);
         RemoveEffectFully();
     }
 
