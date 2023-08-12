@@ -221,14 +221,14 @@ public class PlayerController : Damageable
 
         if(terrainState == TerrainState.Ice)
         {
-            if(flatVelocity.magnitude > moveSpeed * 2f)
+            if(flatVelocity.magnitude > moveSpeed * 1.1f)
             {
-                Vector2 controlledSpeed = flatVelocity.normalized * (moveSpeed * 2f);
+                Vector2 controlledSpeed = flatVelocity.normalized * (moveSpeed * 1.1f);
                 rb2d.velocity = new Vector2(controlledSpeed.x, rb2d.velocity.y);
             }
         }
 
-        if(terrainState == TerrainState.Mud)
+        else if(terrainState == TerrainState.Mud)
         {
             if(flatVelocity.magnitude > moveSpeed * 0.15f)
             {
@@ -281,7 +281,9 @@ public class PlayerController : Damageable
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
                 doubleJump = true;
-                jumpsRemaining -= 1;
+
+                if(!(lastGrounded < coyoteTime))
+                    jumpsRemaining -= 1;
 
                 Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
@@ -390,6 +392,7 @@ public class PlayerController : Damageable
         if (IsInLayerMask(col.gameObject, whatIsGround)) {
             isGrounded = false;
             doubleJump = true;
+            jumpsRemaining -=1;
         }
     }
 
