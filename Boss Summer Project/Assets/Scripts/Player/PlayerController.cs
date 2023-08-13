@@ -390,14 +390,18 @@ public class PlayerController : Damageable
                 jumpsRemaining = jumpsAvailable;
             }
         }
-    } // I jus realized why is there a touchingGround variable and an isGrounded variable - kevin
+    } 
 
     void OnCollisionExit2D(Collision2D col) {
+
+        bool headHitter = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.up, 0.2f, whatIsGround);
 
         if (IsInLayerMask(col.gameObject, whatIsGround)) {
             isGrounded = false;
             doubleJump = true;
-            jumpsRemaining -=1;
+
+            if(!headHitter)   
+                jumpsRemaining -=1;
         }
     }
 
