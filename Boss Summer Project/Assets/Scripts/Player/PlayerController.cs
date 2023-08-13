@@ -47,6 +47,7 @@ public class PlayerController : Damageable
         [SerializeField] private GameObject ninjaAttachment;
         [SerializeField] private HealthBar regularHealthBar;
         [SerializeField] private HealthBar extraHealthBar;
+        [SerializeField] private DashMeter dashMeter;
         [SerializeField] private Transform powerUps;    //Parent object for all power ups
         [SerializeField] private Transform items;       //Parent object for all items
     
@@ -126,6 +127,8 @@ public class PlayerController : Damageable
             get {return isDashing;}
             set {isDashing = value;}
         }
+
+
     #endregion
 
     #region Statistics
@@ -329,7 +332,8 @@ public class PlayerController : Damageable
 
     IEnumerator dash()
     {
-        
+        dashMeter.StartCoroutine(dashMeter.StartSequence(dashCooldown + 0.3f));
+
         isDashing = true;
         canDash = false;
 
@@ -355,6 +359,7 @@ public class PlayerController : Damageable
         isDashing = false;
         SetGravityScale(5f);
 
+        
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
         // TODO: make a dash animation where the square turns into some sort of wind thing and follows the direction of the dash
@@ -409,6 +414,7 @@ public class PlayerController : Damageable
     
     public override void Die()
     {
+        dashMeter.SetDefaultValue();
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
 
