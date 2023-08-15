@@ -78,6 +78,11 @@ public class PlayerController : Damageable
             get { return jumpsAvailable; }
             set { jumpsAvailable = value; }
         }
+        private bool isGrounded; // If the player is on the ground
+        private float lastGrounded; // Or airtime; time since the player was last grounded
+        private bool canJump;
+        private bool doubleJump;
+        private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
     #endregion
     
     #region Camera
@@ -109,14 +114,6 @@ public class PlayerController : Damageable
             set { isFlipped = value; }
         }
     #endregion
-
-    #region Jumping
-        private bool isGrounded; // If the player is on the ground
-        private float lastGrounded; // Or airtime; time since the player was last grounded
-        private bool canJump;
-        private bool doubleJump;
-        private bool wishJump; // Jump queueing; no holding down the button to jump repeatedly, but pressing before the player is grouded will make the square jump as soon as it lands
-    #endregion
     
     #region Dashing
         private bool canDash;
@@ -136,6 +133,9 @@ public class PlayerController : Damageable
         private StatisticsSystem statisticsScript;
     #endregion
 
+    #region Inventory
+        [HideInInspector] public int ironOwned;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
