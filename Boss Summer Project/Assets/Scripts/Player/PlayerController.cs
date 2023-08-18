@@ -35,7 +35,6 @@ public class PlayerController : Damageable
     
         [Header("Events")]
         public UnityEvent playerJumped;
-        public UnityEvent respawnEvent; //Called when the player respawns
         
         [Header("Object References")]
         [SerializeField] private Camera mainCam;
@@ -48,8 +47,6 @@ public class PlayerController : Damageable
         [SerializeField] private HealthBar regularHealthBar;
         [SerializeField] private HealthBar extraHealthBar;
         [SerializeField] private DashMeter dashMeter;
-        [SerializeField] private Transform powerUps;    //Parent object for all power ups
-        [SerializeField] private Transform items;       //Parent object for all items
     
         [Header("Miscellaneous")]
         [SerializeField] private Color playerColor; // For death particles mainly
@@ -63,6 +60,7 @@ public class PlayerController : Damageable
             Ice,
             Mud
         }
+
         private TerrainState terrainState;
     #endregion
 
@@ -78,6 +76,7 @@ public class PlayerController : Damageable
             get { return jumpsAvailable; }
             set { jumpsAvailable = value; }
         }
+
         private bool isGrounded; // If the player is on the ground
         private float lastGrounded; // Or airtime; time since the player was last grounded
         private bool canJump;
@@ -161,25 +160,7 @@ public class PlayerController : Damageable
         lastGrounded = 0f;
         jumpsRemaining = jumpsAvailable = 2;
 
-        SetupRespawnEvent();
-        Respawn();
-    }
-
-    //Add all power ups and items as listeners for the respawn event
-    //NOTE: This makes it unnecessary to do so in the inspector.
-    private void SetupRespawnEvent() {
-
-        //Add power ups as listeners
-        for (int i = 0; i < powerUps.childCount; i++) {
-            PowerUp powerUpScript = powerUps.GetChild(i).GetComponent<PowerUp>();
-            respawnEvent.AddListener(powerUpScript.Respawn);
-        }
-
-        //Add items as listeners
-        for (int i = 0; i < items.childCount; i++) {
-            Item itemScript = items.GetChild(i).GetComponent<Item>();
-            respawnEvent.AddListener(itemScript.Respawn);
-        }
+        InvokeRespawnEvent();
     }
 
     // Update is called once per frame
@@ -439,7 +420,7 @@ public class PlayerController : Damageable
         Invoke("InvokeRespawnEvent", 1f);
     }
 
-    private void InvokeRespawnEvent() => respawnEvent.Invoke();
+    private void InvokeRespawnEvent() => GameManager.RespawnAll();
 
     //Called by respawn UnityEvent; resets all player settings
     public void Respawn() 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//This power up inverts the player's gravity; they will move upside down
 public class InvertedGravity : PowerUp
 {
     protected override void SummonEffect() {
