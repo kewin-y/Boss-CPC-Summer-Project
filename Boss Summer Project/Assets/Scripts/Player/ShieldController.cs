@@ -19,8 +19,10 @@ public class ShieldController : Damageable
     //For every frame that the shield is alive, follow the player and rotate towards the mouse
     private void Update()
     {
-        FollowPlayer();
-        PointToMouse();
+        if (!PauseManager.IsPaused) {
+            FollowPlayer();
+            PointToMouse();
+        }
     }
 
     //Makes the shield follow the player

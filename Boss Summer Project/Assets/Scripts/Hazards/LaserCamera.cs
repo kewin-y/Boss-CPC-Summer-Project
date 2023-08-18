@@ -8,7 +8,8 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private GameObject laser;
     [SerializeField] private float aimRadius;
     [SerializeField] private GameObject playerObj;
-    [SerializeField] private LayerMask whatIsPlayer;    //Layer mask that contains the player and shield
+    [SerializeField] private LayerMask shootableLayers;     //Layer mask that contains any layers which can be shot by the laser
+    [SerializeField] private LayerMask detectableLayers;    //Layer mask that contains any layers which can be detected by the camera
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
@@ -36,7 +37,7 @@ public class LaserCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        playerDetected = Physics2D.OverlapCircle(transform.position, aimRadius, whatIsPlayer);
+        playerDetected = Physics2D.OverlapCircle(transform.position, aimRadius, detectableLayers);
 
         if (playerDetected) {
 
@@ -89,7 +90,7 @@ public class LaserCamera : MonoBehaviour
         laserRenderer.SetPosition(0, laserStartPosition.position);
 
         Vector2 direction = (Vector2) playerObj.transform.position - (Vector2) laserStartPosition.position;
-        RaycastHit2D hit = Physics2D.Raycast(laserStartPosition.position, direction.normalized, direction.magnitude, whatIsPlayer);
+        RaycastHit2D hit = Physics2D.Raycast(laserStartPosition.position, direction.normalized, direction.magnitude, shootableLayers);
 
         if (hit) {
 
