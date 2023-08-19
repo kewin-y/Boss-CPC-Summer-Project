@@ -164,6 +164,8 @@ public class PlayerController : Damageable
         lastGrounded = 0f;
         jumpsRemaining = jumpsAvailable = 2;
 
+        shield.SetActive(false);
+
         InvokeRespawnEvent();
     }
 

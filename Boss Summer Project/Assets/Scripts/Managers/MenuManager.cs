@@ -56,7 +56,8 @@ public class MenuManager : MonoBehaviour
     }
 
     public void GoToMenu() {
+        isPaused = false;
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Home Screen");
+        SceneManager.LoadScene(0);
     }
 }
