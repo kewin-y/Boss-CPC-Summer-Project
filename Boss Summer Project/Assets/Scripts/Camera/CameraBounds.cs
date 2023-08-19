@@ -62,7 +62,7 @@ public class CameraBounds : MonoBehaviour
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
             }
                     
-            LeanTween.move(gameObject, newPos, moveTime);   
+            LeanTween.move(gameObject, newPos, moveTime);      
         }
     }
 
