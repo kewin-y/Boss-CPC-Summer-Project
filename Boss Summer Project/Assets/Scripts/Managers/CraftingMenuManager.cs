@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class CraftingMenuManager : MenuManager
 {
-    // Start is called before the first frame update
     void Start()
     {
-        
+        menuWillPauseGame = false;
     }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        GetInput();
     }
 }
