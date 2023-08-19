@@ -48,10 +48,6 @@ public class GameManager : MonoBehaviour
 
     public void ChangeScene(int sceneBuildIndex)
     {
-        if(gameObject.name == "Canvas" && gameObject.scene.name == "Statistics Menu") 
-        {
-            DontDestroyOnLoad(gameObject);
-        }
         SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
     }
 

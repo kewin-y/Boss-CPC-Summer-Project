@@ -134,6 +134,10 @@ public class PlayerController : Damageable
 
     #region Inventory
         [HideInInspector] public int ironOwned;
+        [HideInInspector] public int spikyBlocksOwned;
+        [SerializeField] private KeyCode placeSpikyBlockKey;
+        [SerializeField] private GameObject weapon;
+        [SerializeField] private float placementRange;
     #endregion
 
     // Start is called before the first frame update
@@ -179,6 +183,10 @@ public class PlayerController : Damageable
             getInput();
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
+
+        StatisticsSystem.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
+        //print(StatisticsSystem.DistanceTraveled);
+
     }
 
     void TerrainCheck()
@@ -234,7 +242,15 @@ public class PlayerController : Damageable
     }
 
     void getInput()
-    { 
+    {
+        Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
+        bool canPlaceSpikyBlock = !(Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f,0.1f), 0f)) && ((worldMousePosition - (Vector2) transform.position).magnitude <= placementRange);
+        print(canPlaceSpikyBlock);
+
+        if(Input.GetKeyDown(placeSpikyBlockKey) && canPlaceSpikyBlock) {
+            GameObject spikyBlock = Instantiate(weapon) as GameObject;
+            weapon.transform.position = worldMousePosition;
+        }
         xInput = Input.GetAxisRaw("Horizontal");
         if(xInput != 0)
         {

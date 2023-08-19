@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PauseManager : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {   
-    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject menu;
     [SerializeField] private KeyCode menuKey;
+
+    protected bool menuWillPauseGame;
 
     private static bool isPaused;
     public static bool IsPaused {
@@ -16,30 +18,39 @@ public class PauseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pauseMenu.SetActive(false);
+        menu.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+    }
+    public void GetInput()
+    {
         if (Input.GetKeyDown(menuKey)) {
-            if (isPaused)
+            if(menu.activeSelf && menuWillPauseGame) {
                 ResumeGame();
-            else
+            } else if(menu.activeSelf){
+                menu.SetActive(false);
+            } else if(menuWillPauseGame) {
                 PauseGame();
+            } else {
+                menu.SetActive(true);
+            }
         }
     }
 
     public void PauseGame() 
     {
-        pauseMenu.SetActive(true);
+        menu.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
     }
 
     public void ResumeGame() 
     {
-        pauseMenu.SetActive(false);
+        menu.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
     }
