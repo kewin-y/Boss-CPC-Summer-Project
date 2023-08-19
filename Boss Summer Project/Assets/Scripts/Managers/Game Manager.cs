@@ -4,19 +4,23 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using UnityEditor;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Transform powerUps;    //Parent object for all power ups
     [SerializeField] private Transform items;       //Parent object for all items
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject enemy;
 
     private PlayerController playerScript;
+    private Enemy enemyScript;
     private static UnityEvent respawnEvent = new();
 
     void Start()
     {
         playerScript = player.GetComponent<PlayerController>();
+        enemyScript = enemy.GetComponent<Enemy>();
 
         SetupRespawnEvent();
         // SceneManager.LoadScene(0, LoadSceneMode.Single);
@@ -40,6 +44,9 @@ public class GameManager : MonoBehaviour
 
         //Add the player as a listener
         respawnEvent.AddListener(playerScript.Respawn);
+
+        //Add the enemy as a listener
+        respawnEvent.AddListener(enemyScript.Respawn);
     }
 
     public static void RespawnAll() {

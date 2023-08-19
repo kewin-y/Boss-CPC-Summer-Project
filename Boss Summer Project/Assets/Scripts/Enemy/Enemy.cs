@@ -173,13 +173,11 @@ public class Enemy : MonoBehaviour
 
     }
 
-    // void respawn(){
-    //     gameObject.SetActive(true);
-    //     transform.position = spawnPoint;
-    // }  
-
-    // Commented this out since I don't think enemies should respawn - kevin
-    // I think they should since power ups respawn, and some of them help with defeating enemies; respawn = fresh restart - Sean
+    //KEVIN'S JOB
+    public void Respawn(){
+        gameObject.SetActive(true);
+        
+    }
 
     IEnumerator Shoot()
     {
