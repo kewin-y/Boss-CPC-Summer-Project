@@ -66,14 +66,14 @@ public class VisualEffects : MonoBehaviour
     //Change the alpha value of the object's sprite renderer
     public static void SetAlpha(GameObject obj, float alpha) {
         SpriteRenderer objRenderer = obj.GetComponent<SpriteRenderer>();
-        Color spriteColor = objRenderer.material.color;
+        Color spriteColor = objRenderer.sharedMaterial.color;
         objRenderer.color = new Color(spriteColor.r, spriteColor.g, spriteColor.b, alpha);
     }
 
     //Change the alpha value of a line renderer (used exclusively for laser)
     public static void SetAlpha(LineRenderer laser, float alpha) {
-        Color laserColor = laser.material.color;
-        laser.material.color = new Color(laserColor.r, laserColor.g, laserColor.b, alpha);
+        Color laserColor = laser.sharedMaterial.color;
+        laser.sharedMaterial.color = new Color(laserColor.r, laserColor.g, laserColor.b, alpha);
     }
 
     //Get the alpha value of an object

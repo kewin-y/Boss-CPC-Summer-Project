@@ -91,7 +91,7 @@ public class PlayerController : Damageable
     #region Player Information
         private BoxCollider2D bc2d;
         private Rigidbody2D rb2d;
-        private SpriteRenderer spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRenderer;
         private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
         private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
         private float lastFacing = 1;       //If 1, facing right. If -1, facing left.
