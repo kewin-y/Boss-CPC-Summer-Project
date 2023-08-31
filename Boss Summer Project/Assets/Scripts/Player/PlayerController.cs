@@ -91,7 +91,7 @@ public class PlayerController : Damageable
     #region Player Information
         private BoxCollider2D bc2d;
         private Rigidbody2D rb2d;
-        [SerializeField] private SpriteRenderer spriteRenderer;
+        private SpriteRenderer spriteRenderer;
         private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
         private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
         private float lastFacing = 1;       //If 1, facing right. If -1, facing left.
@@ -165,7 +165,6 @@ public class PlayerController : Damageable
         jumpsRemaining = jumpsAvailable = 2;
 
         shield.SetActive(false);
-
         InvokeRespawnEvent();
     }
 
@@ -247,7 +246,6 @@ public class PlayerController : Damageable
     {
         Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
         bool canPlaceSpikyBlock = !(Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f,0.1f), 0f)) && ((worldMousePosition - (Vector2) transform.position).magnitude <= placementRange);
-        print(canPlaceSpikyBlock);
 
         if(Input.GetKeyDown(placeSpikyBlockKey) && canPlaceSpikyBlock) {
             GameObject spikyBlock = Instantiate(weapon) as GameObject;
@@ -443,6 +441,7 @@ public class PlayerController : Damageable
     //Called by respawn UnityEvent; resets all player settings
     public void Respawn() 
     {
+        print(spriteRenderer);
         health = maxHealth;
         regularHealthBar.SetHealth(health);
         absorptionHealth = 0.0f;

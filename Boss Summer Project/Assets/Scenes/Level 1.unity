@@ -689,6 +689,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 3824406533239467457, guid: c7d4fbc3ad80a47799133351c746d566, type: 3}
+      propertyPath: ironQuantityDisplay
+      value: 
+      objectReference: {fileID: 1017394277}
+    - target: {fileID: 3824406533239467457, guid: c7d4fbc3ad80a47799133351c746d566, type: 3}
+      propertyPath: spikyBlockQuantityDisplay
+      value: 
+      objectReference: {fileID: 1017394277}
     - target: {fileID: 7343106791301004105, guid: c7d4fbc3ad80a47799133351c746d566, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -2176,6 +2184,17 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 3
   m_ColliderType: 1
+--- !u!114 &1017394277 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4843528891360259559, guid: e2098926a02fe4be48f64b65dffe4316, type: 3}
+  m_PrefabInstance: {fileID: 643217371}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1051845522
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17824,6 +17843,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7198214367282680339, guid: 38bba11dd9d5a4857b09eab9267fa80e, type: 3}
+      propertyPath: shield
+      value: 
+      objectReference: {fileID: 1610644452}
+    - target: {fileID: 7198214367282680339, guid: 38bba11dd9d5a4857b09eab9267fa80e, type: 3}
+      propertyPath: powerUpBarGrid
+      value: 
+      objectReference: {fileID: 1475822261}
     - target: {fileID: 9173458354260498656, guid: 38bba11dd9d5a4857b09eab9267fa80e, type: 3}
       propertyPath: m_Name
       value: Power Ups
@@ -17833,6 +17860,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38bba11dd9d5a4857b09eab9267fa80e, type: 3}
+--- !u!114 &1475822261 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1854102712057861002, guid: 9b7c32c7afdb148b3b24bd356bab1683, type: 3}
+  m_PrefabInstance: {fileID: 1271258346}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1492855138
 GameObject:
   m_ObjectHideFlags: 0
@@ -18093,6 +18131,11 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
+--- !u!1 &1610644452 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8376310886308644333, guid: 00fdea745c6904d68b2ada199d29dc6a, type: 3}
+  m_PrefabInstance: {fileID: 56698542}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1669776180
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18532,7 +18575,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1200452608949704615, guid: 0c7bcc97dd9e34f41b89aadce45a5568, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -104.16
+      value: -104.25
       objectReference: {fileID: 0}
     - target: {fileID: 1200452608949704615, guid: 0c7bcc97dd9e34f41b89aadce45a5568, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

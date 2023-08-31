@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class DashMeter : MonoBehaviour
 {
-    [SerializeField] private Slider slider;
+    private Slider slider;
 
     void Start()
     {
         slider = GetComponent<Slider>();
+        print(slider);
         slider.value = slider.maxValue;
     }
 
