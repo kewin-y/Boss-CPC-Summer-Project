@@ -159,7 +159,7 @@ public class PlayerController : Damageable
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         cameraBounds = mainCam.GetComponent<CameraBounds>();
-
+        
         actualPlayerSize = transform.localScale.x;
         lastGrounded = 0f;
         jumpsRemaining = jumpsAvailable = 2;
