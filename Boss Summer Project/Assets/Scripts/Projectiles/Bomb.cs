@@ -20,7 +20,6 @@ public class Bomb : Projectile
         Damageable directHitScript = target.GetComponent<Damageable>();
         if (directHitScript != null) {
             directHitScript.TakeDamage(damage);
-            print(damage);
         }
 
         //The bomb also applies damage to all entities within its 1.5 unit range depending on the distance
@@ -37,7 +36,6 @@ public class Bomb : Projectile
                     damagePercentage = 0;
                     
                 targetScript.TakeDamage(damagePercentage * damage);
-                print(damagePercentage * damage);
             }
         }
 

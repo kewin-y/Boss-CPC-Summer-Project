@@ -186,8 +186,6 @@ public class PlayerController : Damageable
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
         StatisticsSystem.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
-        //print(StatisticsSystem.DistanceTraveled);
-
     }
 
     void TerrainCheck()
@@ -441,7 +439,6 @@ public class PlayerController : Damageable
     //Called by respawn UnityEvent; resets all player settings
     public void Respawn() 
     {
-        print(spriteRenderer);
         health = maxHealth;
         regularHealthBar.SetHealth(health);
         absorptionHealth = 0.0f;

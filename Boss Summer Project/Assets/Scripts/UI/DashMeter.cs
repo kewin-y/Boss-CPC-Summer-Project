@@ -17,7 +17,6 @@ public class DashMeter : MonoBehaviour
     {
         StopAllCoroutines();
         slider.value = slider.maxValue;
-        print(slider);
     }
 
     public IEnumerator StartSequence(float cooldown)
