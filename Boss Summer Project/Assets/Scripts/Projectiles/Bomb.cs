@@ -12,8 +12,9 @@ public class Bomb : Projectile
 
     }
     protected override void OnCollisionEnter2D(Collision2D col) {
-        Destroy(gameObject);
+        GameObject explosionParticles = Instantiate(explosion, transform.position, Quaternion.identity);
 
+        Destroy(explosionParticles, 2f);
 
         target = col.gameObject;
         //If the bomb directly hits a damageable entity, it applies the full damage
@@ -41,8 +42,9 @@ public class Bomb : Projectile
             }
         }
 
-        GameObject explosionParticles = Instantiate(explosion) as GameObject;
-        explosionParticles.transform.position = transform.position;
+       
         Destroy(explosionParticles, 2f);
+
+        Destroy(gameObject);
     }
 }
