@@ -99,14 +99,17 @@ public class LaserCamera : MonoBehaviour
             GameObject target = hit.collider.gameObject;
             Damageable targetScript = target.GetComponent<Damageable>();
 
-            //Laser appears while tinting the target red, inflicting damage
+            //Laser appears while tinting the target red, inflicting damage (if target is damageable)
             VisualEffects.SetAlpha(laserRenderer, 1);
-            VisualEffects.SetColor(target, Color.red);
-            targetScript.TakeDamage(30);
+            if (targetScript != null) {
+                VisualEffects.SetColor(target, Color.red);
+                targetScript.TakeDamage(30);
+            }
 
             //Laser immediately starts fading out along with red tint (white tint = restore original colour)
-            StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
-            yield return StartCoroutine(VisualEffects.FadeToColor(target, laserFadeOutTime, Color.white));
+            if (targetScript != null)
+                StartCoroutine(VisualEffects.FadeToColor(target, laserFadeOutTime, Color.white));
+            yield return StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
 
         }
         

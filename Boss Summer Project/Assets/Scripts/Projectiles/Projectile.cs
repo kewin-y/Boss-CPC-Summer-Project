@@ -22,7 +22,6 @@ public class Projectile : MonoBehaviour
         if (target.tag == "Player" || target.tag == "Shield") {
             Damageable targetScript = target.GetComponent<Damageable>();
             targetScript.TakeDamage(damage);
-            print(damage);
         }
     }
 }

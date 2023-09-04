@@ -247,7 +247,6 @@ public class PlayerController : Damageable
     {
         Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
         bool canPlaceSpikyBlock = !(Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f,0.1f), 0f)) && ((worldMousePosition - (Vector2) transform.position).magnitude <= placementRange);
-        print(canPlaceSpikyBlock);
 
         if(Input.GetKeyDown(placeSpikyBlockKey) && canPlaceSpikyBlock) {
             GameObject spikyBlock = Instantiate(weapon) as GameObject;
