@@ -11,7 +11,6 @@ public class Projectile : MonoBehaviour
     {
     
     }
-    //MAKE ABSTRACT CLASS FOR HEALTH BAR
     protected virtual void OnCollisionEnter2D(Collision2D col) {
         target = col.gameObject;
  
