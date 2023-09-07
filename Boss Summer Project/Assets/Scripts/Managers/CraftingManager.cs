@@ -28,4 +28,13 @@ public class CraftingManager : MonoBehaviour
             playerScript.spikyBlocksOwned += 1;
         }
     }
+    public void CraftSword() {
+        if(playerScript.ironOwned >= 2) {
+            playerScript.ironOwned -= 2;
+            playerScript.swordOwned += 1;
+        }
+    }
+    public void CraftBatteryBlock() {
+
+    }
 }
