@@ -58,6 +58,7 @@ public abstract class PowerUp : MonoBehaviour
     protected IEnumerator EffectSequence() {
         SummonEffect();
         AddToUI();
+
         effectInProgress = true;
 
         if (!isInfinite) {
@@ -81,7 +82,9 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Method that allows direct changes to the state of the power up bar
-    public void SetDurationLeft(float durationLeft) => powerUpBarScript.SetDurationLeft(durationLeft);
+    public void SetDurationLeft(float durationLeft) {
+        powerUpBarScript.SetDurationLeft(durationLeft);
+    }
 
     /*
     Calls the abstract RemoveEffect() method plus common features:
@@ -123,7 +126,7 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Removes the "health bar" for this power up from the UI
-    protected void RemoveFromUI() {
+    public void RemoveFromUI() {
         Destroy(powerUpBarObj);
     }
 }

@@ -7,17 +7,25 @@ public class ShieldController : Damageable
     [SerializeField] private Camera mainCam;
     [SerializeField] private Transform player;
     [SerializeField] private Transform pivotPoint;
-    [SerializeField] private ShieldBoost shieldBoost;
+    
+    private ShieldBoost shieldBoost;
 
     //When the shield is summoned, reset to max health and restore normal colour
-    void OnEnable()
-    {
+    //Also, receive the shield boost script that is currently in effect so the
+    //shield health bar can be updated.
+    public void Initialize(ShieldBoost shieldBoost) {
+        //Before setting the new shield boost to the field, remove the current shield health bar from the UI
+        if (this.shieldBoost != null)
+            this.shieldBoost.RemoveFromUI();
+
+        //Now, set the new shield boost and reset health
+        this.shieldBoost = shieldBoost;
         ResetHealth();
         VisualEffects.SetColor(gameObject, Color.white);
     }
 
     //For every frame that the shield is alive, follow the player and rotate towards the mouse
-    private void Update()
+    void Update()
     {
         if (!PauseManager.IsPaused) {
             FollowPlayer();

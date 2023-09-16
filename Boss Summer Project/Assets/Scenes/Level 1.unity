@@ -123,11 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &55520312 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5468011625912484239, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
-  m_PrefabInstance: {fileID: 8308102574061163834}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &56698542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1301,11 +1296,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc096494a63a0498f86e27a3c1253e7a, type: 3}
---- !u!1 &743417162 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3181829852218694889, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
-  m_PrefabInstance: {fileID: 8308102574061163834}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &788511341
 GameObject:
   m_ObjectHideFlags: 0
@@ -19521,7 +19511,7 @@ PrefabInstance:
     - target: {fileID: 3032645312834007329, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: laserEye
       value: 
-      objectReference: {fileID: 743417162}
+      objectReference: {fileID: 0}
     - target: {fileID: 3032645312834007329, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: playerObj
       value: 
@@ -19529,14 +19519,18 @@ PrefabInstance:
     - target: {fileID: 3032645312834007329, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: laserStartPosition
       value: 
-      objectReference: {fileID: 55520312}
+      objectReference: {fileID: 0}
     - target: {fileID: 5639153182878963377, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: shield
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7368622725762841331, guid: b553147f79ee34a10b2bc5e74a5c3cac, type: 3}
     - target: {fileID: 5639153182878963377, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: playerObj
       value: 
+      objectReference: {fileID: 876297207}
+    - target: {fileID: 5639153182878963377, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
+      propertyPath: shootableLayers.m_Bits
+      value: 832
       objectReference: {fileID: 0}
     - target: {fileID: 6747579716334499075, guid: 3c5dd5282f119c04ca713cc3c234e672, type: 3}
       propertyPath: m_RootOrder

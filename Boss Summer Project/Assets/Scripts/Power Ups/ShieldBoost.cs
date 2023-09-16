@@ -7,8 +7,15 @@ public class ShieldBoost : PowerUp
 {
     [SerializeField] private GameObject shield;
 
+    private ShieldController shieldController;
+
     protected override void SummonEffect() {
         shield.SetActive(true);
+
+        //Initialize the shield while passing this power up as an argument, so
+        //the right shield health bar can be updated.
+        shieldController = shield.GetComponent<ShieldController>();
+        shieldController.Initialize(this);
     }
 
     public override void RemoveEffect() {
