@@ -189,6 +189,8 @@ public class PlayerController : Damageable
         StatisticsSystem.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
         //print(StatisticsSystem.DistanceTraveled);
 
+        Debug.Log(isGrounded);
+
     }
 
     void TerrainCheck()
@@ -246,7 +248,7 @@ public class PlayerController : Damageable
     void getInput()
     {
         Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
-        bool canPlaceSpikyBlock = !(Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f,0.1f), 0f)) && ((worldMousePosition - (Vector2) transform.position).magnitude <= placementRange);
+        bool canPlaceSpikyBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f,0.1f), 0f) && ((worldMousePosition - (Vector2) transform.position).magnitude <= placementRange);
 
         if(Input.GetKeyDown(placeSpikyBlockKey) && canPlaceSpikyBlock) {
             GameObject spikyBlock = Instantiate(weapon) as GameObject;
@@ -317,7 +319,7 @@ public class PlayerController : Damageable
         horizontalFlip *= -1;
     }
 
-    void resetJump() => canJump = true; // This is syntax for a one-line method
+    void resetJump() => canJump = true;
 
     void jump()
     {
