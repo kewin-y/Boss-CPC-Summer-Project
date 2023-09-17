@@ -14,7 +14,7 @@ public abstract class PowerUp : MonoBehaviour
     [SerializeField] private bool isInfinite;   //Whether the power up is permanent or not
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
     [SerializeField] private GameObject powerUpBar;
-    [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
+    private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
 
     protected PlayerController playerScript;
     protected bool effectInProgress = false;
@@ -33,6 +33,7 @@ public abstract class PowerUp : MonoBehaviour
 
     protected void Start() {
         playerScript = player.GetComponent<PlayerController>();
+        powerUpBarGrid = GameObject.FindGameObjectWithTag("PowerUpGrid").GetComponent<GridLayoutGroup>();
 
         //Size of the power up = size of the player
         transform.localScale = player.transform.localScale;
