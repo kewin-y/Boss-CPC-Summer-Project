@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Fan : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+    private GameObject player;
     [SerializeField] private float fanRange;
     [SerializeField] private float fanRangeVertical;
     [SerializeField] private Vector2 fanDirection;
@@ -18,6 +18,7 @@ public class Fan : MonoBehaviour
     void Start()
     {
         rotation = 0f;
+        player = GameObject.FindGameObjectWithTag("Player");
         playerRB = player.GetComponent<Rigidbody2D>();
     }
 
