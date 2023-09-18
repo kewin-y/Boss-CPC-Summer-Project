@@ -1405,7 +1405,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.39, y: 0.39}
+  m_Size: {x: 0.45, y: 0.38}
   m_EdgeRadius: 0.03
 --- !u!4 &1145551901564464127
 Transform:
@@ -4430,26 +4430,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 123, y: -5, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 124, y: -5, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 0
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: 153, y: -5, z: 0}
     second:
       serializedVersion: 2
@@ -4614,15 +4594,15 @@ Tilemap:
   m_TileAssetArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 24
+  - m_RefCount: 22
     m_Data: {fileID: 11400000, guid: 722428768cb403f44b41d4d78206ffad, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 23
+  - m_RefCount: 21
     m_Data: {fileID: 21300000, guid: 5b93640ba88ce094b91e6b6ba7409641, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
   m_TileMatrixArray:
-  - m_RefCount: 12
+  - m_RefCount: 10
     m_Data:
       e00: 1
       e01: 0
@@ -4659,7 +4639,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 23
+  - m_RefCount: 21
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -5303,22 +5283,6 @@ CompositeCollider2D:
         Y: -49319444
       - X: 368180544
         Y: -49333332
-    - - X: 1235486208
-        Y: -42166668
-      - X: 1234499968
-        Y: -42152776
-      - X: 1232166656
-        Y: -49319444
-      - X: 1238180480
-        Y: -49333332
-    - - X: 1245486208
-        Y: -42166668
-      - X: 1244499968
-        Y: -42152776
-      - X: 1242166656
-        Y: -49319444
-      - X: 1248180480
-        Y: -49333332
     - - X: 1535486208
         Y: -42166668
       - X: 1534499968
@@ -5421,14 +5385,6 @@ CompositeCollider2D:
       - {x: 36.54859, y: -4.216666}
       - {x: 36.449993, y: -4.2152967}
       - {x: 36.21671, y: -4.9319444}
-    - - {x: 123.818, y: -4.9333334}
-      - {x: 123.54861, y: -4.216666}
-      - {x: 123.44998, y: -4.2152967}
-      - {x: 123.216705, y: -4.9319444}
-    - - {x: 124.818, y: -4.9333334}
-      - {x: 124.54861, y: -4.216666}
-      - {x: 124.45, y: -4.2152967}
-      - {x: 124.216705, y: -4.9319444}
     - - {x: 153.818, y: -4.9333334}
       - {x: 153.54861, y: -4.216666}
       - {x: 153.44998, y: -4.2152967}

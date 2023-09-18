@@ -52,6 +52,7 @@ public class BackgroundTiler : MonoBehaviour
 
     public void ResetTiles()
     {
+        currentTile = 1;
         backgroundTiles[0].transform.position = new(-width, 0);
         backgroundTiles[1].transform.position = new(0, 0);
         backgroundTiles[2].transform.position = new(width, 0);
