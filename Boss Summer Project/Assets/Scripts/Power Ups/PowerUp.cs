@@ -14,7 +14,7 @@ public abstract class PowerUp : MonoBehaviour
     [SerializeField] private bool isInfinite;   //Whether the power up is permanent or not
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
     [SerializeField] private GameObject powerUpBar;
-    [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
+    private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
 
     protected PlayerController playerScript;
     protected bool effectInProgress = false;
@@ -31,8 +31,9 @@ public abstract class PowerUp : MonoBehaviour
         set { duration = value; }
     }
 
-    protected void Start() {
+    protected virtual void Start() {
         playerScript = player.GetComponent<PlayerController>();
+        powerUpBarGrid = GameObject.FindGameObjectWithTag("PowerUpGrid").GetComponent<GridLayoutGroup>();
 
         //Size of the power up = size of the player
         transform.localScale = player.transform.localScale;
@@ -58,6 +59,7 @@ public abstract class PowerUp : MonoBehaviour
     protected IEnumerator EffectSequence() {
         SummonEffect();
         AddToUI();
+
         effectInProgress = true;
 
         if (!isInfinite) {
@@ -81,7 +83,9 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Method that allows direct changes to the state of the power up bar
-    public void SetDurationLeft(float durationLeft) => powerUpBarScript.SetDurationLeft(durationLeft);
+    public void SetDurationLeft(float durationLeft) {
+        powerUpBarScript.SetDurationLeft(durationLeft);
+    }
 
     /*
     Calls the abstract RemoveEffect() method plus common features:
@@ -123,7 +127,7 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Removes the "health bar" for this power up from the UI
-    protected void RemoveFromUI() {
+    public void RemoveFromUI() {
         Destroy(powerUpBarObj);
     }
 }

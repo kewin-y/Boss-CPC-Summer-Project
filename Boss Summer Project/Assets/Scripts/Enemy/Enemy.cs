@@ -136,7 +136,6 @@ public class Enemy : MonoBehaviour
 
         isRunning = false;
         RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, new(direction * -1, 0), 0.3f, directionChangeLayerMask);
-        Debug.Log("Player Exit");
 
         if(!raycastHit2D)
         {

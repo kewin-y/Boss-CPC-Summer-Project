@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class Fan : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+    private GameObject player;
     [SerializeField] private float fanRange;
-    [SerializeField] private float fanSpeed;
+    [SerializeField] private float fanRangeVertical;
     [SerializeField] private Vector2 fanDirection;
-
-    [SerializeField] private GameObject particles;
+    [SerializeField] ParticleSystem particles;
 
     private float rotation;
 
-    private Rigidbody2D rb2d;
+    private Rigidbody2D playerRB;
 
     // Start is called before the first frame update
     void Start()
     {
         rotation = 0f;
-        rb2d = player.GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerRB = player.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -27,21 +27,17 @@ public class Fan : MonoBehaviour
     {
         Vector2 fanDirectionNormalized = fanDirection.normalized;
 
-        if(Mathf.Abs(player.transform.position[0] - transform.position[0]) <= fanRange) {
-            rb2d.velocity += fanDirectionNormalized * 100f * Time.deltaTime;
-            StartCoroutine(createParticles());
-            
+        if (Mathf.Abs(player.transform.position.x - transform.position.x) <= fanRange &&
+        player.transform.position.y - transform.position.y <= fanRangeVertical)
+        {
+            playerRB.velocity += fanDirectionNormalized * 75f * Time.deltaTime;
+
         }
+
     }
     void FixedUpdate()
     {
-        rotation += 360f * fanSpeed * Time.fixedDeltaTime;
-        transform.Rotate(0f, 0f, rotation, Space.Self);
+
     }
-    IEnumerator createParticles(){
-        GameObject steamParticles = Instantiate(particles) as GameObject;
-        steamParticles.transform.position = player.transform.position;
-        yield return new WaitForSeconds(2f);
-        Destroy(steamParticles);
-    }
+
 }
