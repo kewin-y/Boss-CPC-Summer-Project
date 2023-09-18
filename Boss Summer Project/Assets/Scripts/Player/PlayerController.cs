@@ -183,6 +183,12 @@ public class PlayerController : Damageable
         //         element.SetActive(false);
         //     }
         // }
+
+        health = maxHealth;
+        regularHealthBar.SetHealth(health);
+        absorptionHealth = 0.0f;
+        extraHealthBar.SetHealth(absorptionHealth);
+
         canJump = true;
         canDash = true;
         isDashing = false;

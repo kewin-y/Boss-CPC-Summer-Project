@@ -10,14 +10,11 @@ public class Fan : MonoBehaviour
     [SerializeField] private Vector2 fanDirection;
     [SerializeField] ParticleSystem particles;
 
-    private float rotation;
-
     private Rigidbody2D playerRB;
 
     // Start is called before the first frame update
     void Start()
     {
-        rotation = 0f;
         player = GameObject.FindGameObjectWithTag("Player");
         playerRB = player.GetComponent<Rigidbody2D>();
     }

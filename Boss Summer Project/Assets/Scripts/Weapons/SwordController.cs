@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class SwordController : MonoBehaviour
 {
-    [SerializeField] private Camera mainCam;
     [SerializeField] private Transform player;
-    [SerializeField] private Transform pivotPoint;
 
     private SwordItem swordItem;
 
@@ -24,26 +22,21 @@ public class SwordController : MonoBehaviour
     void Update()
     {
         if (!PauseManager.IsPaused) {
-            FollowPlayer();
             PointToMouse();
         }
-        FollowPlayer();
         PointToMouse();
     }
 
     //Makes the sword follow the player
-    private void FollowPlayer() {
-        pivotPoint.position = player.position;
-    }
-
     //Rotates the sword to face towards the mouse position
     private void PointToMouse() {
         //Get the sword position, disregarding the -10 z-axis offset of the main camera
-        Vector3 mousePosition = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
 
         //Point the sword to the mouse
-        pivotPoint.transform.right = mousePosition - pivotPoint.position;
+        transform.right = mousePosition - transform.position;
+        
     }
 
     //Implement durability for the sword
