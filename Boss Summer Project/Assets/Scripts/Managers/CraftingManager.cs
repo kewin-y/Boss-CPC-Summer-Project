@@ -36,5 +36,5 @@ public class CraftingManager : MonoBehaviour
     }
     public void CraftBatteryBlock() {
 
-    //}
+    }
 }
