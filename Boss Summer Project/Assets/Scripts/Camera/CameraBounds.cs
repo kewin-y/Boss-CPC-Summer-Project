@@ -47,14 +47,21 @@ public class CameraBounds : MonoBehaviour
     
     void OnTriggerExit2D(Collider2D other)
     {
-
         if(other.tag == "Player" && cameraCanMove)
         {
-            Vector3 newPos; 
+            Vector3 newPos;
             bool isRight = other.transform.position.x - transform.position.x > 0;
 
             if(isRight)
             {
+                RaycastHit2D raycastHit = Physics2D.BoxCast(other.transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.right, 1f);
+
+                if (raycastHit.distance > 1) {
+                    bufferValue = 1;
+                } else {
+                    bufferValue = raycastHit.distance;
+                }
+
                 newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
                 playerExitRight.Invoke();
@@ -62,6 +69,14 @@ public class CameraBounds : MonoBehaviour
 
             else
             {
+                RaycastHit2D raycastHit = Physics2D.BoxCast(other.transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.right, 1f);
+
+                if (raycastHit.distance > 1) {
+                    bufferValue = 1;
+                } else {
+                    bufferValue = raycastHit.distance;
+                }
+
                 newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
                 playerExitLeft.Invoke();
