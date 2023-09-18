@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CameraBounds : MonoBehaviour
 {
+    [SerializeField] private UnityEvent playerExitRight;
+    [SerializeField] private UnityEvent playerExitLeft;
     [SerializeField] private float moveTime; 
 
     private float bufferValue = 1f; // Moves the player this much to the left/right of the camera to fix a bug
@@ -53,13 +57,14 @@ public class CameraBounds : MonoBehaviour
             {
                 newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
-
+                playerExitRight.Invoke();
             }
 
             else
             {
                 newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
+                playerExitLeft.Invoke();
             }
                     
             LeanTween.move(gameObject, newPos, moveTime);      

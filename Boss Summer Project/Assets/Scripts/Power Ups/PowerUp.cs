@@ -31,7 +31,7 @@ public abstract class PowerUp : MonoBehaviour
         set { duration = value; }
     }
 
-    protected void Start() {
+    protected virtual void Start() {
         playerScript = player.GetComponent<PlayerController>();
         powerUpBarGrid = GameObject.FindGameObjectWithTag("PowerUpGrid").GetComponent<GridLayoutGroup>();
 

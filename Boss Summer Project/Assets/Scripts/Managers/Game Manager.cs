@@ -12,15 +12,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform items;       //Parent object for all items
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject enemy;
+    [SerializeField] private GameObject background;
 
     private PlayerController playerScript;
     private Enemy enemyScript;
+    private BackgroundTiler backgroundTiler;
     private static UnityEvent respawnEvent = new();
 
     void Start()
     {
         playerScript = player.GetComponent<PlayerController>();
         enemyScript = enemy.GetComponent<Enemy>();
+        backgroundTiler = background.GetComponent<BackgroundTiler>();
 
         SetupRespawnEvent();
         // SceneManager.LoadScene(0, LoadSceneMode.Single);
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
 
         //Add the enemy as a listener
         respawnEvent.AddListener(enemyScript.Respawn);
+        respawnEvent.AddListener(backgroundTiler.ResetTiles);
     }
 
     public static void RespawnAll() {
