@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5682680601000968291}
   - component: {fileID: 2424439434462552933}
-  - component: {fileID: 1168207978909860957}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -25,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4404663530880113954}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2424439434462552933
 SpriteRenderer:
@@ -85,31 +84,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1168207978909860957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4404663530880113954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b18af515871f734ab46f28c1d9a9f6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  laserEye: {fileID: 6297523559409147605, guid: 7c696e1ba9fcd495ab5d682ba02853df, type: 3}
-  laser: {fileID: 3780243037183219358, guid: 146a77115f2a24362894579ca86fdb69, type: 3}
-  aimRadius: 5
-  playerObj: {fileID: 4827650492621167751, guid: cc096494a63a0498f86e27a3c1253e7a, type: 3}
-  shootableLayers:
-    serializedVersion: 2
-    m_Bits: 768
-  detectableLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  laserEyeFadeInDuration: 1
-  cameraHiddenTint: 0.5
-  laserDelay: 1.5
-  laserFadeOutTime: 0.5
-  laserStartPosition: {fileID: 7423208100979901765, guid: c5424b79e6edd45c1a2a0b704ed709c4, type: 3}
-  shield: {fileID: 7368622725762841331, guid: b553147f79ee34a10b2bc5e74a5c3cac, type: 3}

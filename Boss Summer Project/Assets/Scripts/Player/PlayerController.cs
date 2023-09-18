@@ -138,8 +138,27 @@ public class PlayerController : Damageable
     #endregion
 
     #region Inventory
-    [HideInInspector] public int ironOwned;
-    [HideInInspector] public int spikyBlocksOwned;
+    private int ironOwned;
+    public int IronOwned
+    {
+        get { return ironOwned; }
+        set { ironOwned = value; }
+    }
+
+    private int spikyBlocksOwned;
+    public int SpikyBlocksOwned
+    {
+        get { return spikyBlocksOwned; }
+        set { spikyBlocksOwned = value; }
+    }
+
+    private int swordOwned;
+    public int SwordOwned
+    {
+        get { return swordOwned; }
+        set { swordOwned = value; }
+    }
+
     [SerializeField] private KeyCode placeSpikyBlockKey;
     [SerializeField] private GameObject weapon;
     [SerializeField] private float placementRange;
@@ -196,7 +215,6 @@ public class PlayerController : Damageable
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
         StatisticsSystem.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
-        //print(StatisticsSystem.DistanceTraveled);
     }
 
     void TerrainCheck()

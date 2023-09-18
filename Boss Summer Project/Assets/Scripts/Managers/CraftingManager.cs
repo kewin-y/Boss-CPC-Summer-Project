@@ -19,22 +19,22 @@ public class CraftingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ironQuantityDisplay.SetText(playerScript.ironOwned.ToString());
-        spikyBlockQuantityDisplay.SetText(playerScript.spikyBlocksOwned.ToString());
+        ironQuantityDisplay.SetText(playerScript.IronOwned.ToString());
+        spikyBlockQuantityDisplay.SetText(playerScript.SpikyBlocksOwned.ToString());
     }
     public void CraftSpikyBlock() {
-        if(playerScript.ironOwned >= 3) {
-            playerScript.ironOwned -= 3;
-            playerScript.spikyBlocksOwned += 1;
+        if(playerScript.IronOwned >= 3) {
+            playerScript.IronOwned -= 3;
+            playerScript.SpikyBlocksOwned += 1;
         }
     }
-    // public void CraftSword() {
-    //     if(playerScript.ironOwned >= 2) {
-    //         playerScript.ironOwned -= 2;
-    //         playerScript.swordOwned += 1;
-    //     }
-    // }
-    // public void CraftBatteryBlock() {
+    public void CraftSword() {
+        if(playerScript.IronOwned >= 2) {
+            playerScript.IronOwned -= 2;
+            playerScript.SwordOwned += 1;
+        }
+    }
+    public void CraftBatteryBlock() {
 
     //}
 }
