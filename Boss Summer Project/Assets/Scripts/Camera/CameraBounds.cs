@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -44,10 +45,15 @@ public class CameraBounds : MonoBehaviour
     {
         
     }
+
+    void OnDisable()
+    {
+       StopAllCoroutines();
+    }
     
     void OnTriggerExit2D(Collider2D other)
     {
-        if(other.tag == "Player" && cameraCanMove)
+        if(other.CompareTag("Player") && cameraCanMove)
         {
             Vector3 newPos;
             bool isRight = other.transform.position.x - transform.position.x > 0;
@@ -81,17 +87,33 @@ public class CameraBounds : MonoBehaviour
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
                 playerExitLeft.Invoke();
             }
-                    
-            LeanTween.move(gameObject, newPos, moveTime);      
+
+            if(isActiveAndEnabled) StartCoroutine(MoveCamera(newPos));
+                
         }
     }
+
+    IEnumerator MoveCamera(Vector3 newPos)
+    {
+        var startPos = transform.position;
+
+        float timeElapsed = 0;
+        while(timeElapsed < moveTime)
+        {
+            transform.position = Vector3.Lerp(startPos, newPos, timeElapsed/moveTime);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = newPos;
+    }
+
 
     //Adjusts the camera collider bounds to match the orthographic size
     private void AdjustBounds() {
 
         sizeY = cam.orthographicSize * 2;
-        ratio = (float) Screen.width / (float) Screen.height;
-        sizeX = sizeY * ratio;
+        sizeX = sizeY * cam.aspect;
 
         bc2d.size = new Vector2(sizeX, sizeY);
 
