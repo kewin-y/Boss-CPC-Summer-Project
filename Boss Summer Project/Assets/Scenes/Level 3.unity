@@ -17777,10 +17777,10 @@ MonoBehaviour:
   regularHealthBar: {fileID: 1158539541}
   extraHealthBar: {fileID: 404668057}
   dashMeter: {fileID: 949546562}
+  sword: {fileID: 0}
   playerColor: {r: 0.3019608, g: 0.56078434, b: 0.60784316, a: 1}
-  ironOwned: 0
-  spikyBlocksOwned: 0
   placeSpikyBlockKey: 99
+  equipSwordKey: 0
   weapon: {fileID: 3507460341414430906, guid: c965deb4ed1764d24b9ced4db376f4d6, type: 3}
   placementRange: 1000
 --- !u!61 &1431990596
@@ -19494,37 +19494,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b6670e1af464764b941f1353107c292, type: 3}
---- !u!1 &2085720031
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2085720032}
-  m_Layer: 0
-  m_Name: 
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &2085720032
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2085720031}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2085955028 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2642698895251383255, guid: ea7d9eeb31d16684f8a4465c59e9f419, type: 3}
@@ -19793,7 +19762,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2085720032}
   - {fileID: 76332771}
   - {fileID: 1955222099}
   - {fileID: 519420032}

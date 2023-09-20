@@ -50,7 +50,6 @@ public class PlayerController : Damageable
     [SerializeField] private DashMeter dashMeter;
 
     [Header("Weapons")]
-    [SerializeField] private GameObject swordItem;
     [SerializeField] private GameObject sword;
 
     [Header("Miscellaneous")]
@@ -204,7 +203,6 @@ public class PlayerController : Damageable
 
         shield.SetActive(false);
         sword.SetActive(false);
-        swordItem.SetActive(false);
 
         InvokeRespawnEvent();
         swordOwned = 1;
@@ -286,8 +284,7 @@ public class PlayerController : Damageable
     void getInput()
     {
         if (Input.GetKeyDown(equipSwordKey) && swordOwned >= 1) {
-            swordItem.SetActive(true);
-            swordItem.transform.position = transform.position;
+            sword.SetActive(true);
         }
 
         Vector2 worldMousePosition = (Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition);

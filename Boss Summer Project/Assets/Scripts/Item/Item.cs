@@ -7,11 +7,12 @@ using UnityEngine;
 //and a reference to the player object.
 public abstract class Item : MonoBehaviour
 {
-    [SerializeField] protected GameObject player;
+    protected GameObject player;
     
     protected PlayerController playerScript;
 
     protected void Start() {
+        player = GameObject.FindGameObjectWithTag("Player");
         playerScript = player.GetComponent<PlayerController>();
 
         //Size of the power up = size of the player
@@ -20,7 +21,7 @@ public abstract class Item : MonoBehaviour
     
     //When the player collides with this item, hide it and add a one-time effect
     protected void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.CompareTag("Player")) {
             gameObject.SetActive(false);
             SummonEffect();
         }
