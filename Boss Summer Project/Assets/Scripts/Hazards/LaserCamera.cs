@@ -7,7 +7,7 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private GameObject laserEye;
     [SerializeField] private GameObject laser;
     [SerializeField] private float aimRadius;
-    [SerializeField] private GameObject playerObj;
+    private GameObject playerObj;
     [SerializeField] private LayerMask shootableLayers;     //Layer mask that contains any layers which can be shot by the laser
     [SerializeField] private LayerMask detectableLayers;    //Layer mask that contains any layers which can be detected by the camera
     [SerializeField] private float laserEyeFadeInDuration;
@@ -15,20 +15,18 @@ public class LaserCamera : MonoBehaviour
     [SerializeField] private float laserDelay;
     [SerializeField] private float laserFadeOutTime;
     [SerializeField] private Transform laserStartPosition;
-    [SerializeField] private GameObject shield;
 
     private PlayerController player;
     private LineRenderer laserRenderer;
-    private ShieldController shieldScript;
     private bool playerDetected;
     private bool openFire = true;
 
     // Start is called before the first frame update
     void Start()
     {
+        playerObj = GameObject.FindGameObjectWithTag("Player");
         player = playerObj.GetComponent<PlayerController>();
         laserRenderer = laser.GetComponent<LineRenderer>();
-        shieldScript = shield.GetComponent<ShieldController>();
 
         VisualEffects.SetAlpha(laserEye, 0);
         VisualEffects.SetAlpha(laserRenderer, 0);
@@ -36,13 +34,15 @@ public class LaserCamera : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        playerDetected = Physics2D.OverlapCircle(transform.position, aimRadius, detectableLayers);
+    {               
+        playerDetected = (player.transform.position.y > transform.position.y) ? false : Physics2D.OverlapCircle(transform.position, aimRadius, detectableLayers);
 
-        if (playerDetected) {
+        if (playerDetected)
+        {
 
             //If the laser eye is hidden, reveal the camera and laser eye
-            if (VisualEffects.GetAlpha(laserEye) == 0) {
+            if (VisualEffects.GetAlpha(laserEye) == 0)
+            {
                 StartCoroutine(VisualEffects.FadeIn(laserEye, laserEyeFadeInDuration));
                 StartCoroutine(VisualEffects.FadeToColor(gameObject, laserEyeFadeInDuration, Color.white));
             }
@@ -53,25 +53,29 @@ public class LaserCamera : MonoBehaviour
 
             if (openFire)
                 StartCoroutine(ShootSequence());
-        } 
-        else {
+        }
+        else
+        {
 
             //If the laser eye is revealed, hide the camera and laser eye
-            if (VisualEffects.GetAlpha(laserEye) == 1) {
+            if (VisualEffects.GetAlpha(laserEye) == 1)
+            {
                 StartCoroutine(VisualEffects.FadeOut(laserEye, laserEyeFadeInDuration));
                 StartCoroutine(VisualEffects.FadeToColor(gameObject, laserEyeFadeInDuration, Color.black));
             }
         }
     }
 
-    private IEnumerator ShootSequence() {
+    private IEnumerator ShootSequence()
+    {
         openFire = false;
 
         //Wait, then shoot the laser
         yield return new WaitForSeconds(laserDelay);
 
         //If the player is out of range now, don't shoot
-        if (!playerDetected) {
+        if (!playerDetected)
+        {
             openFire = true;
             yield break;
         }
@@ -82,17 +86,19 @@ public class LaserCamera : MonoBehaviour
         openFire = true;
     }
 
-    private IEnumerator FireLaser() {
+    private IEnumerator FireLaser()
+    {
 
         laser.SetActive(true);
 
         //Draw the laser from the laser eye to the player
         laserRenderer.SetPosition(0, laserStartPosition.position);
 
-        Vector2 direction = (Vector2) playerObj.transform.position - (Vector2) laserStartPosition.position;
+        Vector2 direction = (Vector2)playerObj.transform.position - (Vector2)laserStartPosition.position;
         RaycastHit2D hit = Physics2D.Raycast(laserStartPosition.position, direction.normalized, direction.magnitude, shootableLayers);
 
-        if (hit) {
+        if (hit)
+        {
 
             laserRenderer.SetPosition(1, hit.point);
 
@@ -101,7 +107,8 @@ public class LaserCamera : MonoBehaviour
 
             //Laser appears while tinting the target red, inflicting damage (if target is damageable)
             VisualEffects.SetAlpha(laserRenderer, 1);
-            if (targetScript != null) {
+            if (targetScript != null)
+            {
                 VisualEffects.SetColor(target, Color.red);
                 targetScript.TakeDamage(30);
             }
@@ -112,7 +119,7 @@ public class LaserCamera : MonoBehaviour
             yield return StartCoroutine(VisualEffects.FadeOut(laserRenderer, laserFadeOutTime));
 
         }
-        
+
         laser.SetActive(false);
 
     }

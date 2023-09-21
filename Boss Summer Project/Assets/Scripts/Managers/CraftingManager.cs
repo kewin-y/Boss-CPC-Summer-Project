@@ -28,7 +28,9 @@ public class CraftingManager : MonoBehaviour
         if(playerScript.IronOwned >= 3) {
             playerScript.IronOwned -= 3;
             playerScript.SpikyBlocksOwned += 1;
+            Debug.Log("Spiky Block Crafted!");
         }
+        else Debug.Log("NOT ENOUGH IRON");
     }
     public void CraftSword() {
         if(playerScript.IronOwned >= 2) {

@@ -23,10 +23,9 @@ public class CameraBounds : MonoBehaviour
     private BoxCollider2D bc2d; // Camera's collider
 
     private float moveAmountX;
-    private float moveAmountY;
+    private float moveAmountY; // might not need this 
 
     private float sizeY;
-    private float ratio; 
     private float sizeX;
     private void Start()
     {
@@ -95,6 +94,8 @@ public class CameraBounds : MonoBehaviour
 
     IEnumerator MoveCamera(Vector3 newPos)
     {
+        cameraCanMove = false;
+
         var startPos = transform.position;
 
         float timeElapsed = 0;
@@ -106,6 +107,7 @@ public class CameraBounds : MonoBehaviour
         }
 
         transform.position = newPos;
+        cameraCanMove = true;
     }
 
 

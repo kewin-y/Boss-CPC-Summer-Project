@@ -76,7 +76,7 @@ public class PlayerController : Damageable
         set { jumpsRemaining = value; }
     }
 
-    private int jumpsAvailable;
+    private int jumpsAvailable = 2;
     public int JumpsAvailable
     {
         get { return jumpsAvailable; }
@@ -183,15 +183,6 @@ public class PlayerController : Damageable
         //     }
         // }
 
-        health = maxHealth;
-        regularHealthBar.SetHealth(health);
-        absorptionHealth = 0.0f;
-        extraHealthBar.SetHealth(absorptionHealth);
-
-        canJump = true;
-        canDash = true;
-        isDashing = false;
-
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -199,13 +190,9 @@ public class PlayerController : Damageable
 
         actualPlayerSize = transform.localScale.x;
         lastGrounded = 0f;
-        jumpsRemaining = jumpsAvailable = 2;
-
-        shield.SetActive(false);
-        sword.SetActive(false);
+        jumpsRemaining = jumpsAvailable;
 
         InvokeRespawnEvent();
-        swordOwned = 1;
     }
 
     // Update is called once per frame
@@ -487,7 +474,7 @@ public class PlayerController : Damageable
         dpMain.startColor = playerColor;
 
         Destroy(deathParticles, 2f);
-        Invoke("InvokeRespawnEvent", 1f);
+        Invoke(nameof(InvokeRespawnEvent), 1f);
     }
 
     private void InvokeRespawnEvent() => GameManager.RespawnAll();
@@ -508,6 +495,9 @@ public class PlayerController : Damageable
         transform.eulerAngles = Vector3.zero;
         SetGravityScale(5f);
         rb2d.velocity = Vector2.zero;
+        ironOwned = 0;
+        swordOwned = 0;
+        spikyBlocksOwned = 0;
 
         canJump = true;
         canDash = true;
