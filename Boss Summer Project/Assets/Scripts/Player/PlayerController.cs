@@ -162,9 +162,25 @@ public class PlayerController : Damageable
         set { swordOwned = value; }
     }
 
+    private int batteryOwned;
+    public int BatteryOwned
+    {
+        get { return batteryOwned; }
+        set { batteryOwned = value; }
+    }
+
+    private int batteryBlockOwned;
+    public int BatteryBlockOwned
+    {
+        get { return batteryBlockOwned; }
+        set { batteryBlockOwned = value; }
+    }
+
     [SerializeField] private KeyCode placeSpikyBlockKey;
+    [SerializeField] private KeyCode placeBatteryBlockKey;
     [SerializeField] private KeyCode equipSwordKey;
-    [SerializeField] private GameObject weapon;
+    [SerializeField] private GameObject spikyBlock;
+    [SerializeField] private GameObject batteryBlock;
     [SerializeField] private float placementRange;
     #endregion
 
@@ -271,17 +287,24 @@ public class PlayerController : Damageable
     void getInput()
     {
         if (Input.GetKeyDown(equipSwordKey) && swordOwned >= 1) {
+            swordOwned -= 1;
             sword.SetActive(true);
         }
 
-        Vector2 worldMousePosition = (Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition);
-        bool canPlaceSpikyBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0f) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
+        Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
+        bool canPlaceBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0f) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
 
-        if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceSpikyBlock)
+        if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock)
         {
-            GameObject spikyBlock = Instantiate(weapon) as GameObject;
-            weapon.transform.position = worldMousePosition;
+            GameObject newSpikyBlock = Instantiate(spikyBlock) as GameObject;
+            newSpikyBlock.transform.position = worldMousePosition;
+        } 
+        else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock)
+        {
+            GameObject newBatteryBlock = Instantiate(batteryBlock) as GameObject;
+            newBatteryBlock.transform.position = worldMousePosition;
         }
+
         xInput = Input.GetAxisRaw("Horizontal");
         if (xInput != 0)
         {
@@ -495,9 +518,13 @@ public class PlayerController : Damageable
         transform.eulerAngles = Vector3.zero;
         SetGravityScale(5f);
         rb2d.velocity = Vector2.zero;
+
+        //Clear inventory
         ironOwned = 0;
+        batteryOwned = 0;
         swordOwned = 0;
         spikyBlocksOwned = 0;
+        batteryBlockOwned = 0;
 
         canJump = true;
         canDash = true;

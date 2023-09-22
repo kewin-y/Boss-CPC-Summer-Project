@@ -6,7 +6,10 @@ using TMPro;
 public class CraftingManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI ironQuantityDisplay;
-    // [SerializeField] private TextMeshProUGUI spikyBlockQuantityDisplay;
+    [SerializeField] private TextMeshProUGUI batteryQuantityDisplay;
+    [SerializeField] private TextMeshProUGUI swordQuantityDisplay;
+    [SerializeField] private TextMeshProUGUI spikyBlockQuantityDisplay;
+    [SerializeField] private TextMeshProUGUI batteryBlockQuantityDisplay;
     private GameObject player;
     private PlayerController playerScript;
 
@@ -21,7 +24,10 @@ public class CraftingManager : MonoBehaviour
     void Update()
     {
         ironQuantityDisplay.SetText(playerScript.IronOwned.ToString());
-        // spikyBlockQuantityDisplay.SetText(playerScript.SpikyBlocksOwned.ToString());
+        batteryQuantityDisplay.SetText(playerScript.BatteryOwned.ToString());
+        swordQuantityDisplay.SetText(playerScript.SwordOwned.ToString());
+        spikyBlockQuantityDisplay.SetText(playerScript.SpikyBlocksOwned.ToString());
+        batteryBlockQuantityDisplay.SetText(playerScript.BatteryBlockOwned.ToString());
     }
     
     public void CraftSpikyBlock() {
@@ -43,6 +49,14 @@ public class CraftingManager : MonoBehaviour
         
     }
     public void CraftBatteryBlock() {
-
+        if(playerScript.IronOwned >= 4 && playerScript.BatteryOwned >= 1) {
+            playerScript.IronOwned -= 4;
+            playerScript.BatteryOwned -= 1;
+            playerScript.BatteryBlockOwned += 1;
+            Debug.Log("Battery Block Crafted!");
+        }
+        else 
+            Debug.Log("NOT ENOUGH INGREDIENTS");
+        
     }
 }
