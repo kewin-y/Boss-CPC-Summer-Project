@@ -13,6 +13,8 @@ public class MenuManager : MonoBehaviour
         get { return isPaused; }
     }
 
+    private static bool canShowMenu = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,10 +53,13 @@ public class MenuManager : MonoBehaviour
         }
     }
     public void OpenMenu(Menu menu) {
+        if(!canShowMenu) return;
+
         if (menu.MenuWillPauseGame) {
             PauseGame(menu.Panel);
         } else {
             menu.Panel.SetActive(true);
+            canShowMenu = false;
         }
     }
     public void CloseMenu(Menu menu) {
@@ -62,6 +67,7 @@ public class MenuManager : MonoBehaviour
             ResumeGame(menu.Panel);
         } else {
             menu.Panel.SetActive(false);
+            canShowMenu = true;
         }
     }
 
@@ -70,6 +76,7 @@ public class MenuManager : MonoBehaviour
         panel.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
+        canShowMenu = false;
     }
 
     public void ResumeGame(GameObject panel) 
@@ -77,6 +84,7 @@ public class MenuManager : MonoBehaviour
         panel.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
+        canShowMenu = true;
     }
 
     public void GoToMenu() {

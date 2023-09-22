@@ -9290,11 +9290,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 131630463}
   - {fileID: 2018175636}
   - {fileID: 807843000}
   - {fileID: 382359857732481330}
   - {fileID: 1554485763}
+  - {fileID: 131630463}
   m_Father: {fileID: 5857345293853987525}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9467,17 +9467,33 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1696157709155260368, guid: a245e426de551da4382399524784fb3d, type: 3}
+    - target: {fileID: 795730983926915767, guid: a245e426de551da4382399524784fb3d, type: 3}
+      propertyPath: m_Colors.m_NormalColor.b
+      value: 0.7725491
+      objectReference: {fileID: 0}
+    - target: {fileID: 795730983926915767, guid: a245e426de551da4382399524784fb3d, type: 3}
+      propertyPath: m_Colors.m_NormalColor.g
+      value: 0.7725491
+      objectReference: {fileID: 0}
+    - target: {fileID: 795730983926915767, guid: a245e426de551da4382399524784fb3d, type: 3}
+      propertyPath: m_Colors.m_NormalColor.r
+      value: 0.7725491
+      objectReference: {fileID: 0}
+    - target: {fileID: 3082534134267372011, guid: a245e426de551da4382399524784fb3d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4105813354728234387, guid: a245e426de551da4382399524784fb3d, type: 3}
       propertyPath: m_Color.b
-      value: 0.74509805
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1696157709155260368, guid: a245e426de551da4382399524784fb3d, type: 3}
+    - target: {fileID: 4105813354728234387, guid: a245e426de551da4382399524784fb3d, type: 3}
       propertyPath: m_Color.g
-      value: 0.74509805
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1696157709155260368, guid: a245e426de551da4382399524784fb3d, type: 3}
+    - target: {fileID: 4105813354728234387, guid: a245e426de551da4382399524784fb3d, type: 3}
       propertyPath: m_Color.r
-      value: 0.74509805
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34038,7 +34054,7 @@ MonoBehaviour:
   moveSpeed: 12
   dashKey: 101
   dashAmount: 6
-  dashCooldown: 1
+  dashCooldown: 0.75
   whatIsGround:
     serializedVersion: 2
     m_Bits: 41024
@@ -34051,6 +34067,9 @@ MonoBehaviour:
   whatIsMud:
     serializedVersion: 2
     m_Bits: 32768
+  cantPlaceBlocks:
+    serializedVersion: 2
+    m_Bits: 64
   spawnPoint: {x: -6.5, y: -0.05, z: 0}
   playerJumped:
     m_PersistentCalls:
@@ -34079,9 +34098,9 @@ MonoBehaviour:
   dashMeter: {fileID: 3665937393786601469}
   sword: {fileID: 850972503}
   playerColor: {r: 0.3019608, g: 0.56078434, b: 0.60784316, a: 1}
-  placeSpikyBlockKey: 257
-  placeBatteryBlockKey: 258
-  equipSwordKey: 259
+  placeSpikyBlockKey: 51
+  placeBatteryBlockKey: 50
+  equipSwordKey: 49
   spikyBlock: {fileID: 3507460341414430906, guid: c965deb4ed1764d24b9ced4db376f4d6, type: 3}
   batteryBlock: {fileID: 7888364441550023016, guid: e6d29915b204c48bfa2bf130bc9a15b6, type: 3}
   placementRange: 1000

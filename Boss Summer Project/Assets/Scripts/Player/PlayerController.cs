@@ -30,6 +30,7 @@ public class PlayerController : Damageable
     [SerializeField] private LayerMask whatIsWater;
     [SerializeField] private LayerMask whatIsIce;
     [SerializeField] private LayerMask whatIsMud;
+    [SerializeField] private LayerMask cantPlaceBlocks;
 
     [Header("Locations")]
     [SerializeField] private Vector3 spawnPoint;
@@ -178,7 +179,7 @@ public class PlayerController : Damageable
 
     [SerializeField] private KeyCode placeSpikyBlockKey;
     [SerializeField] private KeyCode placeBatteryBlockKey;
-    [SerializeField] private KeyCode equipSwordKey;
+    [SerializeField] private KeyCode equipSwordKey = KeyCode.Keypad1;
     [SerializeField] private GameObject spikyBlock;
     [SerializeField] private GameObject batteryBlock;
     [SerializeField] private float placementRange;
@@ -292,16 +293,17 @@ public class PlayerController : Damageable
         }
 
         Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
-        bool canPlaceBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0f) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
+        bool canPlaceBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0, cantPlaceBlocks) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
+        Debug.Log(canPlaceBlock);
 
         if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock)
         {
-            GameObject newSpikyBlock = Instantiate(spikyBlock) as GameObject;
+            GameObject newSpikyBlock = Instantiate(spikyBlock);
             newSpikyBlock.transform.position = worldMousePosition;
         } 
         else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock)
         {
-            GameObject newBatteryBlock = Instantiate(batteryBlock) as GameObject;
+            GameObject newBatteryBlock = Instantiate(batteryBlock);
             newBatteryBlock.transform.position = worldMousePosition;
         }
 
