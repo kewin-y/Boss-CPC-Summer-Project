@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {   
-    [SerializeField] private GameObject menu;
-    [SerializeField] private KeyCode menuKey;
-
-    protected bool menuWillPauseGame;
+    [SerializeField] private Menu[] menuObjects;
+    [SerializeField] private KeyCode exitMenuKey;
 
     private static bool isPaused;
     public static bool IsPaused {
@@ -18,39 +16,65 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        menu.SetActive(false);
+        foreach (Menu menu in menuObjects) {
+            menu.Panel.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        GetInput();
     }
     public void GetInput()
     {
-        if (Input.GetKeyDown(menuKey)) {
-            if(menu.activeSelf && menuWillPauseGame) {
-                ResumeGame();
-            } else if(menu.activeSelf){
-                menu.SetActive(false);
-            } else if(menuWillPauseGame) {
-                PauseGame();
-            } else {
-                menu.SetActive(true);
+        Menu[] activeMenus = new Menu[2];
+
+        int i = 0;
+        foreach (Menu menu in menuObjects) {
+            if (menu.Panel.activeSelf) {
+                activeMenus[i] = menu;
+                i++;
+            }
+        }
+
+        foreach (Menu menu in menuObjects) {
+            if (Input.GetKeyDown(exitMenuKey) && i >= 1) {
+                CloseMenu(menu);
+            } else if (Input.GetKeyDown(menu.MenuKey)) {
+                if (menu.Panel.activeSelf) {
+                    CloseMenu(menu);     
+                } else {
+                    OpenMenu(menu);
+                }
             }
         }
     }
+    public void OpenMenu(Menu menu) {
+        if (menu.MenuWillPauseGame) {
+            PauseGame(menu.Panel);
+        } else {
+            menu.Panel.SetActive(true);
+        }
+    }
+    public void CloseMenu(Menu menu) {
+        if (menu.MenuWillPauseGame) {
+            ResumeGame(menu.Panel);
+        } else {
+            menu.Panel.SetActive(false);
+        }
+    }
 
-    public void PauseGame() 
+    public void PauseGame(GameObject panel) 
     {
-        menu.SetActive(true);
+        panel.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
     }
 
-    public void ResumeGame() 
+    public void ResumeGame(GameObject panel) 
     {
-        menu.SetActive(false);
+        panel.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
     }

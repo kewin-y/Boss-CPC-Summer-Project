@@ -224,7 +224,7 @@ public class PlayerController : Damageable
             lastGrounded = 0f;
         }
 
-        if (!PauseManager.IsPaused)
+        if (!MenuManager.IsPaused)
             getInput();
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
