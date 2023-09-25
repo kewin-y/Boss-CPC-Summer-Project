@@ -296,15 +296,17 @@ public class PlayerController : Damageable
         bool canPlaceBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0, cantPlaceBlocks) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
         Debug.Log(canPlaceBlock);
 
-        if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock)
+        if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock && spikyBlocksOwned > 0)
         {
             GameObject newSpikyBlock = Instantiate(spikyBlock);
             newSpikyBlock.transform.position = worldMousePosition;
+            spikyBlocksOwned--;
         } 
-        else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock)
+        else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock && batteryBlockOwned > 0)
         {
             GameObject newBatteryBlock = Instantiate(batteryBlock);
             newBatteryBlock.transform.position = worldMousePosition;
+            batteryOwned--;
         }
 
         xInput = Input.GetAxisRaw("Horizontal");

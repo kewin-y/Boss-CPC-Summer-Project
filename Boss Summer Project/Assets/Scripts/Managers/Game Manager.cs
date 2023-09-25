@@ -55,6 +55,12 @@ public class GameManager : MonoBehaviour
 
     public static void RespawnAll() {
         respawnEvent.Invoke();
+        var existingBlocks = GameObject.FindGameObjectsWithTag("Block");
+
+        foreach(GameObject block in existingBlocks)
+        {
+            Destroy(block);
+        }
     }
 
     public void ChangeScene(int sceneBuildIndex)
