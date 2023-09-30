@@ -123,4 +123,13 @@ public class LaserCamera : MonoBehaviour
         laser.SetActive(false);
 
     }
+    void OnCollisionEnter2D(Collision2D col) {
+        if (col.gameObject.layer == 16) {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void Respawn() {
+        gameObject.SetActive(true);
+    }
 }

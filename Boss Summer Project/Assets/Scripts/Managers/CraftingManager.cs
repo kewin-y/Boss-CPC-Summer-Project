@@ -31,8 +31,8 @@ public class CraftingManager : MonoBehaviour
     }
     
     public void CraftSpikyBlock() {
-        if(playerScript.IronOwned >= 3) {
-            playerScript.IronOwned -= 3;
+        if(playerScript.IronOwned >= 4) {
+            playerScript.IronOwned -= 4;
             playerScript.SpikyBlocksOwned += 1;
             Debug.Log("Spiky Block Crafted!");
         }

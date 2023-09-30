@@ -13611,6 +13611,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6335619624384631933, guid: 56c8ae2892913454390822b2dff2bfd6, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1431990589}
+    - target: {fileID: 6335619624384631933, guid: 56c8ae2892913454390822b2dff2bfd6, type: 3}
       propertyPath: shield
       value: 
       objectReference: {fileID: 2108654032}
@@ -15831,8 +15835,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa413b9659d24ef78feba8b229cad59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 0}
-  menuKey: 27
 --- !u!1001 &787554556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17600,8 +17602,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171228e466cb847b0836c6c43e903242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 0}
-  menuKey: 113
 --- !u!1 &1431990589
 GameObject:
   m_ObjectHideFlags: 0
@@ -17751,6 +17751,9 @@ MonoBehaviour:
   whatIsMud:
     serializedVersion: 2
     m_Bits: 32768
+  cantPlaceBlocks:
+    serializedVersion: 2
+    m_Bits: 0
   spawnPoint: {x: -6.5, y: -0.05, z: 0}
   playerJumped:
     m_PersistentCalls:
@@ -17780,8 +17783,10 @@ MonoBehaviour:
   sword: {fileID: 0}
   playerColor: {r: 0.3019608, g: 0.56078434, b: 0.60784316, a: 1}
   placeSpikyBlockKey: 99
+  placeBatteryBlockKey: 0
   equipSwordKey: 0
-  weapon: {fileID: 3507460341414430906, guid: c965deb4ed1764d24b9ced4db376f4d6, type: 3}
+  spikyBlock: {fileID: 0}
+  batteryBlock: {fileID: 0}
   placementRange: 1000
 --- !u!61 &1431990596
 BoxCollider2D:

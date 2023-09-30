@@ -35,9 +35,6 @@ public class PlayerController : Damageable
     [Header("Locations")]
     [SerializeField] private Vector3 spawnPoint;
 
-    [Header("Events")]
-    public UnityEvent playerJumped;
-
     [Header("Object References")]
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject deathEffect;
@@ -139,6 +136,8 @@ public class PlayerController : Damageable
     #region Statistics
     private GameObject statistics;
     private StatisticsSystem statisticsScript;
+    private UnityEvent playerJumped;
+
     #endregion
 
     #region Inventory
@@ -183,14 +182,16 @@ public class PlayerController : Damageable
     [SerializeField] private GameObject spikyBlock;
     [SerializeField] private GameObject batteryBlock;
     [SerializeField] private float placementRange;
+
+    private List<GameObject> placedBlocks = new List<GameObject>();
     #endregion
 
     // Start is called before the first frame update
     void Start()
     {
-        // statistics = GameObject.Find("Statistics");
-        // statisticsScript = statistics.GetComponent<StatisticsSystem>();
-        // playerJumped.AddListener(statisticsScript.AddJump);
+        statistics = GameObject.Find("Statistics");
+        statisticsScript = statistics.GetComponent<StatisticsSystem>();
+        playerJumped.AddListener(statisticsScript.AddJump);
 
         // GameObject[] gameObjects = FindObjectsOfType<GameObject>();
 
@@ -230,7 +231,7 @@ public class PlayerController : Damageable
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
-        StatisticsSystem.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
+        statisticsScript.PlayerStats.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
     }
 
     void TerrainCheck()
@@ -439,7 +440,7 @@ public class PlayerController : Damageable
     void OnCollisionStay2D(Collision2D col)
     {
 
-        if (col.gameObject.tag == "Kill")
+        if (col.gameObject.tag == "Kill" && col.gameObject.layer != 16)
             Die();
 
         else if (IsInLayerMask(col.gameObject, whatIsGround))
@@ -540,6 +541,8 @@ public class PlayerController : Damageable
 
         VisualEffects.SetColor(gameObject, Color.white);
         SwitchToDefaultCostume();
+
+        placedBlocks.Clear();
     }
 
     //Depletes the player's health by a certain amount

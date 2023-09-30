@@ -34,6 +34,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Color glassesAngryColor;
     [SerializeField] private Color glassesHappyColor;
 
+    [Header("Dash Immunity")]
+    [SerializeField] private bool isImmune;
+
+    [Header("Player Weapons")]
+    [SerializeField] private GameObject playerSword;
     
     private PlayerController playerController;
     private Rigidbody2D rb2d;
@@ -49,14 +54,6 @@ public class Enemy : MonoBehaviour
     private bool obstructedLineOfSight;
 
     private bool isInCamera;
-
-    // private bool canCollide = true;
-    // public bool CanCollide {
-    //     get{return canCollide;}
-    //     set{canCollide = value;}
-    // }
-
-    // Why do we need canCollide here - Kevin
     private float direction;
     private bool isRunning;
 
@@ -118,7 +115,7 @@ public class Enemy : MonoBehaviour
 
         if(collideWithPlayer)
         {
-            if(playerController.IsDashing)
+            if(playerController.IsDashing && (!isImmune || playerSword.activeSelf))
             {
                 Die();
             }
@@ -175,7 +172,6 @@ public class Enemy : MonoBehaviour
     //KEVIN'S JOB
     public void Respawn(){
         gameObject.SetActive(true);
-        
     }
 
     IEnumerator Shoot()
@@ -234,9 +230,6 @@ public class Enemy : MonoBehaviour
 
         Quaternion orientation = Quaternion.Euler(0, 0, angle);
         projectileObject.transform.rotation = orientation;
-        
-        //projectileObject.transform.rotation = Quaternion.LookRotation(projectileDirection);
-        
         projectileObject.transform.position = (Vector2)transform.position;
         projectileRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 
 
