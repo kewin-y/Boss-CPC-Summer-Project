@@ -5102,11 +5102,11 @@ MonoBehaviour:
   maxAbsorptionHealth: 100
   jumpKey: 32
   jumpVelocity: 14
-  coyoteTime: 0.1
-  moveSpeed: 12
+  coyoteTime: 0.2
+  moveSpeed: 15
   dashKey: 101
   dashAmount: 4
-  dashCooldown: 2
+  dashCooldown: 0.75
   whatIsGround:
     serializedVersion: 2
     m_Bits: 41024
@@ -5123,21 +5123,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   spawnPoint: {x: -6.5, y: -0.05, z: 0}
-  playerJumped:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1138723718585932147, guid: f8fa227c9ec36414ea435eb47ac81507, type: 3}
-        m_TargetAssemblyTypeName: StatisticsSystem, Assembly-CSharp
-        m_MethodName: AddJump
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   mainCam: {fileID: 0}
   deathEffect: {fileID: 7798169576231770195, guid: 37d127b182e9b25479fa5e8445749133, type: 3}
   waterParticles: {fileID: 5419161697027711536}

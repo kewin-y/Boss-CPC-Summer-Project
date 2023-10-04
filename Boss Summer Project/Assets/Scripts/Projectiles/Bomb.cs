@@ -7,18 +7,24 @@ public class Bomb : Projectile
     [SerializeField] private float bombRange;
     [SerializeField] private GameObject explosion;
 
+    private GameObject bombTarget;
+
     void Start()
     {
 
     }
-    protected override void OnCollisionEnter2D(Collision2D col) {
+    protected override void Update()
+    {
+        base.Update();
+    }
+    protected override void DoCollision(Collider2D col) {
         GameObject explosionParticles = Instantiate(explosion, transform.position, Quaternion.identity);
 
         Destroy(explosionParticles, 2f);
 
-        target = col.gameObject;
+        bombTarget = col.gameObject;
         //If the bomb directly hits a damageable entity, it applies the full damage
-        Damageable directHitScript = target.GetComponent<Damageable>();
+        Damageable directHitScript = bombTarget.GetComponent<Damageable>();
         if (directHitScript != null) {
             directHitScript.TakeDamage(damage);
         }
@@ -40,9 +46,14 @@ public class Bomb : Projectile
             }
         }
 
-       
-        Destroy(explosionParticles, 2f);
-
         Destroy(gameObject);
+    }
+
+    protected override void OnCollisionEnter2D(Collision2D col)
+    {
+        base.OnCollisionEnter2D(col);
+        GameObject explosionParticles = Instantiate(explosion, transform.position, Quaternion.identity);
+
+        Destroy(explosionParticles, 2f);
     }
 }

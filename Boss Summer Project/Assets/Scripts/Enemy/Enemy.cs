@@ -11,7 +11,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float fireRate;
     [SerializeField] private float attackRadius;
     [SerializeField] private float projectileMoveSpeed;
-    public GameObject player;
+
+    [Header("Size")]
+    [SerializeField] private Vector2 enemySize;
+    private GameObject player;
     public GameObject projectile;
 
     [Header("Enemy Movement")]
@@ -27,7 +30,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Dying")]
     public GameObject deathEffect;
-    [SerializeField] private Color deathColour; 
+    [SerializeField] private Color deathColour;
 
     [Header("Indicator")]
     [SerializeField] private SpriteRenderer glasses;
@@ -39,13 +42,13 @@ public class Enemy : MonoBehaviour
 
     [Header("Player Weapons")]
     [SerializeField] private GameObject playerSword;
-    
+
     private PlayerController playerController;
     private Rigidbody2D rb2d;
     private Rigidbody2D player_rb2d;
     private bool canShoot;
     private bool isGrounded;
-    
+
     private float distanceFromPlayer;
     private float timeFromPlayer;
     private Vector2 futurePlayerPosition;
@@ -60,7 +63,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // canCollide = true;
+        player = GameObject.FindGameObjectWithTag("Player");
         rb2d = GetComponent<Rigidbody2D>();
         player_rb2d = player.GetComponent<Rigidbody2D>();
 
@@ -70,11 +73,9 @@ public class Enemy : MonoBehaviour
         direction = 1f;
     }
 
-    // Called every fixed timestep
-    // Used for physics
     void FixedUpdate()
     {
-        if(isGrounded && obstructedLineOfSight && isInCamera)
+        if (isGrounded && obstructedLineOfSight && isInCamera)
             rb2d.velocity = new Vector2(direction * moveSpeed * 100f * Time.fixedDeltaTime, rb2d.velocity.y);
     }
 
@@ -83,47 +84,56 @@ public class Enemy : MonoBehaviour
     {
         isInCamera = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsCamera);
 
+        // This is clever
         distanceFromPlayer = (transform.position - player.transform.position).magnitude;
         timeFromPlayer = distanceFromPlayer / projectileMoveSpeed;
         futurePlayerPosition = (Vector2)player.transform.position + timeFromPlayer * player_rb2d.velocity;
-        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized; // That's clever -kevin
+        projectileDirection = (futurePlayerPosition - (Vector2)transform.position).normalized;
 
         RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.12f, projectileDirection, attackRadius - 0.12f, excludeColliders);
 
-        obstructedLineOfSight = !raycastHit2D || raycastHit2D.collider.tag != "Player";
+        obstructedLineOfSight = !raycastHit2D || !raycastHit2D.collider.CompareTag("Player");
 
-        if(!obstructedLineOfSight)
+        if (!obstructedLineOfSight)
         {
             direction = (player.transform.position.x - transform.position.x) / Mathf.Abs(player.transform.position.x - transform.position.x);
             glasses.color = glassesAngryColor;
 
-            if(!isRunning) StartCoroutine(UntilObstructed());
+            if (!isRunning) StartCoroutine(UntilObstructed());
         }
 
         else
         {
-            glasses.color = glassesHappyColor; 
+            glasses.color = glassesHappyColor;
         }
-            
-        
-        if(distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight && isInCamera){
+
+
+        if (distanceFromPlayer <= attackRadius && canShoot && !obstructedLineOfSight && isInCamera)
+        {
             StartCoroutine(Shoot());
         }
 
-        bool collideWithPlayer = Physics2D.BoxCast(transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.down, 0f, whatIsPlayer);
-        isGrounded = Physics2D.BoxCast(transform.position, new Vector2(0.45f - 0.1f, 0.45f - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+        bool collideWithPlayer = Physics2D.OverlapBox(transform.position, new Vector2(0.45f, 0.45f), 0, whatIsPlayer);
+        isGrounded = Physics2D.BoxCast(transform.position, enemySize, 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
 
-        if(collideWithPlayer)
+        if (collideWithPlayer)
         {
-            if(playerController.IsDashing && (!isImmune || playerSword.activeSelf))
+            if (playerController.IsDashing && (!isImmune || playerController.SwordHeld))
             {
+                if (playerController.SwordHeld)
+                {
+                    playerController.SwordHeld = false;
+                    player.transform.Find("Sword").gameObject.SetActive(false);
+                }
+
+
                 Die();
             }
         }
 
         Debug.DrawRay(transform.position, new Vector2(direction * -1, 0) * 0.3f);
         transform.localScale = new(direction * 1f, 1f, 1f);
-        
+
     }
 
     IEnumerator UntilObstructed()
@@ -134,15 +144,15 @@ public class Enemy : MonoBehaviour
         isRunning = false;
         RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, new(direction * -1, 0), 0.3f, directionChangeLayerMask);
 
-        if(!raycastHit2D)
+        if (!raycastHit2D)
         {
             direction *= -1;
-        }        
+        }
     }
 
     void Die()
     {
-        GameObject deathParticles = Instantiate(deathEffect);   
+        GameObject deathParticles = Instantiate(deathEffect);
         deathParticles.transform.position = transform.position;
 
         StopAllCoroutines();
@@ -157,20 +167,23 @@ public class Enemy : MonoBehaviour
     }
 
 
-    void OnCollisionEnter2D(Collision2D col) {
-        if(col.gameObject.layer == LayerMask.NameToLayer("Shield"))
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Shield"))
             return;
 
-        else if(col.gameObject.tag == "Kill")
+        else if (col.gameObject.CompareTag("Kill"))
             Die();
 
-        else if(col.gameObject.tag == "DirectionChange")
+        else if (col.gameObject.tag == "DirectionChange")
             direction *= -1;
 
     }
 
     //KEVIN'S JOB
-    public void Respawn(){
+    // Thanks
+    public void Respawn()
+    {
         gameObject.SetActive(true);
     }
 
@@ -182,62 +195,63 @@ public class Enemy : MonoBehaviour
         projectileObject.SetActive(true);
 
         float angle = 0;
-        float refAngle = Mathf.Atan(projectileDirection.y/projectileDirection.x) * Mathf.Rad2Deg;            
-            
-        if(projectileDirection.y > 0 && projectileDirection.x > 0)
+        float refAngle = Mathf.Atan(projectileDirection.y / projectileDirection.x) * Mathf.Rad2Deg;
+
+        if (projectileDirection.y > 0 && projectileDirection.x > 0)
         {
             angle = refAngle;
-        } 
+        }
 
-        else if(projectileDirection.y < 0 && projectileDirection.x > 0)
+        else if (projectileDirection.y < 0 && projectileDirection.x > 0)
         {
             angle = 360 + refAngle;
-        } 
+        }
 
-        else if(projectileDirection.y > 0 && projectileDirection.x < 0)
+        else if (projectileDirection.y > 0 && projectileDirection.x < 0)
         {
             angle = 180 + refAngle;
         }
 
-        else if(projectileDirection.y < 0 && projectileDirection.x < 0)
+        else if (projectileDirection.y < 0 && projectileDirection.x < 0)
         {
             angle = 180 + refAngle;
-        } 
+        }
 
-        else if(projectileDirection.y == 0) {
+        else if (projectileDirection.y == 0)
+        {
 
-            if(projectileDirection.x > 0)
+            if (projectileDirection.x > 0)
             {
                 angle = 0;
-            } 
-            else 
+            }
+            else
             {
                 angle = 180;
             }
-        } 
-        
-        else if(projectileDirection.x == 0)
+        }
+
+        else if (projectileDirection.x == 0)
         {
-            if(projectileDirection.y > 0) 
+            if (projectileDirection.y > 0)
             {
                 angle = 90;
-            } 
-            else 
+            }
+            else
             {
                 angle = 270;
             }
         }
 
         Quaternion orientation = Quaternion.Euler(0, 0, angle);
-        projectileObject.transform.rotation = orientation;
-        projectileObject.transform.position = (Vector2)transform.position;
-        projectileRb2d.velocity = projectileDirection * projectileMoveSpeed * Time.fixedDeltaTime; 
+        projectileObject.transform.SetPositionAndRotation((Vector2)transform.position, orientation);
+        projectileRb2d.velocity = projectileMoveSpeed * Time.fixedDeltaTime * projectileDirection;
 
-        yield return new WaitForSeconds(1/fireRate);
+        yield return new WaitForSeconds(1 / fireRate);
         canShoot = true;
-        yield return new WaitForSeconds(2 - 1/fireRate);
+        yield return new WaitForSeconds(2 - 1 / fireRate);
 
-        if (projectileObject != null){
+        if (projectileObject != null)
+        {
             Destroy(projectileObject);
         }
     }

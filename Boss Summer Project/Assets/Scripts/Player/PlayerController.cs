@@ -134,9 +134,9 @@ public class PlayerController : Damageable
     #endregion
 
     #region Statistics
-    private GameObject statistics;
-    private StatisticsSystem statisticsScript;
-    private UnityEvent playerJumped;
+    // private GameObject statistics;
+    // private StatisticsSystem statisticsScript;
+    // private UnityEvent playerJumped;
 
     #endregion
 
@@ -176,6 +176,14 @@ public class PlayerController : Damageable
         set { batteryBlockOwned = value; }
     }
 
+    private bool swordHeld; // field
+
+    public bool SwordHeld   // property
+    {
+        get { return swordHeld; }   // get method
+        set { swordHeld = value; }  // set method
+    }
+
     [SerializeField] private KeyCode placeSpikyBlockKey;
     [SerializeField] private KeyCode placeBatteryBlockKey;
     [SerializeField] private KeyCode equipSwordKey = KeyCode.Keypad1;
@@ -186,12 +194,20 @@ public class PlayerController : Damageable
     private List<GameObject> placedBlocks = new List<GameObject>();
     #endregion
 
+    private StatisticsSystem statisticsSystem;
+
+    void Awake()
+    {
+        statisticsSystem = new StatisticsSystem();
+        statisticsSystem.LoadStatistics();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        statistics = GameObject.Find("Statistics");
-        statisticsScript = statistics.GetComponent<StatisticsSystem>();
-        playerJumped.AddListener(statisticsScript.AddJump);
+        // statistics = GameObject.Find("Statistics");
+        // statisticsScript = statistics.GetComponent<StatisticsSystem>();
+        // playerJumped.AddListener(statisticsScript.AddJump);
 
         // GameObject[] gameObjects = FindObjectsOfType<GameObject>();
 
@@ -201,16 +217,16 @@ public class PlayerController : Damageable
         //     }
         // }
 
+
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         cameraBounds = mainCam.GetComponent<CameraBounds>();
 
         actualPlayerSize = transform.localScale.x;
-        lastGrounded = 0f;
         jumpsRemaining = jumpsAvailable;
 
-        InvokeRespawnEvent();
+        Respawn();
     }
 
     // Update is called once per frame
@@ -231,7 +247,7 @@ public class PlayerController : Damageable
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
-        statisticsScript.PlayerStats.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
+        statisticsSystem.PlayerStats.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
     }
 
     void TerrainCheck()
@@ -288,21 +304,22 @@ public class PlayerController : Damageable
 
     void getInput()
     {
-        if (Input.GetKeyDown(equipSwordKey) && swordOwned >= 1) {
+        if (Input.GetKeyDown(equipSwordKey) && swordOwned >= 1 && !swordHeld)
+        {
+            swordHeld = true;
             swordOwned -= 1;
             sword.SetActive(true);
         }
 
-        Vector2 worldMousePosition = (Vector2) mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 worldMousePosition = (Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition);
         bool canPlaceBlock = !Physics2D.OverlapBox(worldMousePosition, new Vector2(0.1f, 0.1f), 0, cantPlaceBlocks) && ((worldMousePosition - (Vector2)transform.position).magnitude <= placementRange);
-        Debug.Log(canPlaceBlock);
 
         if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock && spikyBlocksOwned > 0)
         {
             GameObject newSpikyBlock = Instantiate(spikyBlock);
             newSpikyBlock.transform.position = worldMousePosition;
             spikyBlocksOwned--;
-        } 
+        }
         else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock && batteryBlockOwned > 0)
         {
             GameObject newBatteryBlock = Instantiate(batteryBlock);
@@ -325,10 +342,10 @@ public class PlayerController : Damageable
         if (Input.GetKeyUp(jumpKey)) wishJump = false;
 
         if (Input.GetKeyDown(dashKey) && canDash)
-            StartCoroutine(dash());
+            StartCoroutine(Dash());
 
         //Jump behaviours + gravity and drag
-        if (terrainState != TerrainState.Water) // Lol change this to a switch statement later
+        if (terrainState != TerrainState.Water)
         {
             if (waterParticles.isPlaying) waterParticles.Stop();
 
@@ -337,7 +354,7 @@ public class PlayerController : Damageable
 
             if (wishJump && canJump && (lastGrounded < coyoteTime || doubleJump) && jumpsRemaining > 0)
             {
-                jump();
+                Jump();
                 wishJump = false;
                 canJump = false; // canJump variable to prevent accidental double-jumping due to coyote time; implement a double-jumping mechanism that isn't actually a bug
                 doubleJump = true;
@@ -345,7 +362,7 @@ public class PlayerController : Damageable
                 if (!(lastGrounded < coyoteTime))
                     jumpsRemaining -= 1;
 
-                Invoke("resetJump", coyoteTime + 0.1f); // Resets the jump after the coyote time period
+                Invoke(nameof(ResetJump), coyoteTime + 0.1f); // Resets the jump after the coyote time period
             }
         }
 
@@ -357,7 +374,7 @@ public class PlayerController : Damageable
 
             if (wishJump)
             {
-                jump();
+                Jump();
 
                 if (!waterParticles.isPlaying) waterParticles.Play();
             }
@@ -371,19 +388,19 @@ public class PlayerController : Damageable
 
     }
 
-    public void flipHorizontal()
+    public void FlipHorizontal()
     {
         horizontalFlip *= -1;
     }
 
-    void resetJump() => canJump = true;
+    void ResetJump() => canJump = true;
 
-    void jump()
+    void Jump()
     {
         if (terrainState != TerrainState.Water)
         {
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
-            playerJumped.Invoke();
+            statisticsSystem.PlayerStats.Jumps++;
         }
         else
         {
@@ -391,7 +408,7 @@ public class PlayerController : Damageable
         }
     }
 
-    IEnumerator dash()
+    IEnumerator Dash()
     {
         dashMeter.StartCoroutine(dashMeter.StartSequence(dashCooldown + 0.3f));
 
@@ -484,6 +501,7 @@ public class PlayerController : Damageable
 
     public override void Die()
     {
+        statisticsSystem.SerializeJson();
         dashMeter.SetDefaultValue();
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();

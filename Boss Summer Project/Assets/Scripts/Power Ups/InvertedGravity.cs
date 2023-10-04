@@ -13,7 +13,7 @@ public class InvertedGravity : PowerUp
 
         playerScript.GravityCoefficient = -1;
         player.transform.eulerAngles = new Vector3(0, 0, 180f);
-        playerScript.flipHorizontal();
+        playerScript.FlipHorizontal();
         StartCoroutine(RemoveOnNextCollect());
 
     }
@@ -27,6 +27,6 @@ public class InvertedGravity : PowerUp
     public override void RemoveEffect() {
         playerScript.GravityCoefficient = 1;
         player.transform.eulerAngles = Vector3.zero;
-        playerScript.flipHorizontal();
+        playerScript.FlipHorizontal();
     }
 }

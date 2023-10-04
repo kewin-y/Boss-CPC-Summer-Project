@@ -119,7 +119,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0028059334, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -171,4 +171,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 969c7a228669d45cc8d216ac546ee90c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 20
+  damage: 30
+  projectileSize: {x: 0.7484791, y: 0.1377623}
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 17152
