@@ -4,30 +4,35 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 using System.IO;
+using System;
 
 public class StatisticsSystem
 {
-    Statistics playerStats;
-    public Statistics PlayerStats { get => playerStats; set => playerStats = value; }
+    public static Statistics playerStats;
 
-    private IDataService dataService = new JsonDataService();
+    public static IDataService dataService = new JsonDataService();
     private const string PATH = "/player-stats.json";
 
-    public StatisticsSystem()
-    {
-        LoadStatistics();
-    }
-
     // Loads json file
-    public void LoadStatistics()
+    public static void LoadStatistics()
     {
-        playerStats = dataService.LoadData<Statistics>(PATH);
+        
+        if(File.Exists(Application.persistentDataPath + PATH)) 
+            playerStats = dataService.LoadData<Statistics>(PATH);
+        
+        else
+        {
+            playerStats = new(0, 0, 0, 0);
+            SerializeJson();
+        }
+            
+ 
     }
 
     // Writes to json file
-    public void SerializeJson()
+    public static void SerializeJson()
     {
-        if(dataService.SaveData(PATH, playerStats))
+        if (dataService.SaveData(PATH, playerStats))
         {
             Debug.Log("What a great success!");
         }
