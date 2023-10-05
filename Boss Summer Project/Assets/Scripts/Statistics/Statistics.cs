@@ -7,22 +7,28 @@ using UnityEngine;
 public class Statistics
 {
     private int jumps;
-    public int Jumps 
+    public int Jumps
     {
         get { return jumps; }
         set { jumps = value; }
     }
 
-    private float distanceTraveled;
-    public float DistanceTraveled
+    private float distanceTravelled;
+    public float DistanceTravelled
     {
-        get { return distanceTraveled; }
-        set { distanceTraveled = value; }
+        get { return distanceTravelled; }
+        set { distanceTravelled = value; }
     }
+    private int deaths;
+    public int Deaths { get => deaths; set => deaths = value; }
 
-    public Statistics(int jumps, float distanceTraveled)
+    private int itemsCrafted;
+    public int ItemsCrafted { get => itemsCrafted; set => itemsCrafted = value; }
+    public Statistics(int jumps, float distanceTraveled, int deaths, int itemsCrafted)
     {
         this.jumps = jumps;
-        this.distanceTraveled = distanceTraveled;
+        this.distanceTravelled = distanceTraveled;
+        this.deaths = deaths;
+        this.itemsCrafted = itemsCrafted;
     }
 }

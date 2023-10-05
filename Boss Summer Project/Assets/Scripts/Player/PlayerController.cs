@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Resources;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+// WHY ARE THERE 600 LINES
+// Greatest code ever written dude...
 public class PlayerController : Damageable
 {
     #region Inspector Values
@@ -194,13 +197,7 @@ public class PlayerController : Damageable
     private List<GameObject> placedBlocks = new List<GameObject>();
     #endregion
 
-    private StatisticsSystem statisticsSystem;
-
-    void Awake()
-    {
-        statisticsSystem = new StatisticsSystem();
-        statisticsSystem.LoadStatistics();
-    }
+    private InventoryDisplay persistentInventoryDisplay;
 
     // Start is called before the first frame update
     void Start()
@@ -217,6 +214,7 @@ public class PlayerController : Damageable
         //     }
         // }
 
+        persistentInventoryDisplay = GameObject.FindGameObjectWithTag("InventoryDisplay").GetComponent<InventoryDisplay>();
 
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
@@ -225,6 +223,7 @@ public class PlayerController : Damageable
 
         actualPlayerSize = transform.localScale.x;
         jumpsRemaining = jumpsAvailable;
+        
 
         Respawn();
     }
@@ -243,11 +242,11 @@ public class PlayerController : Damageable
         }
 
         if (!MenuManager.IsPaused)
-            getInput();
+            GetInput();
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
-        statisticsSystem.PlayerStats.DistanceTraveled += (rb2d.velocity * Time.deltaTime).magnitude;
+        StatisticsSystem.playerStats.DistanceTravelled += (rb2d.velocity * Time.deltaTime).magnitude;
     }
 
     void TerrainCheck()
@@ -302,13 +301,14 @@ public class PlayerController : Damageable
 
     }
 
-    void getInput()
+    void GetInput()
     {
         if (Input.GetKeyDown(equipSwordKey) && swordOwned >= 1 && !swordHeld)
         {
             swordHeld = true;
             swordOwned -= 1;
             sword.SetActive(true);
+            persistentInventoryDisplay.UpdateText();
         }
 
         Vector2 worldMousePosition = (Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition);
@@ -318,13 +318,17 @@ public class PlayerController : Damageable
         {
             GameObject newSpikyBlock = Instantiate(spikyBlock);
             newSpikyBlock.transform.position = worldMousePosition;
+            placedBlocks.Add(newSpikyBlock);
             spikyBlocksOwned--;
+            persistentInventoryDisplay.UpdateText();
         }
         else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock && batteryBlockOwned > 0)
         {
             GameObject newBatteryBlock = Instantiate(batteryBlock);
             newBatteryBlock.transform.position = worldMousePosition;
+            placedBlocks.Add(newBatteryBlock);
             batteryOwned--;
+            persistentInventoryDisplay.UpdateText();
         }
 
         xInput = Input.GetAxisRaw("Horizontal");
@@ -400,7 +404,7 @@ public class PlayerController : Damageable
         if (terrainState != TerrainState.Water)
         {
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
-            statisticsSystem.PlayerStats.Jumps++;
+            StatisticsSystem.playerStats.Jumps++;
         }
         else
         {
@@ -457,7 +461,7 @@ public class PlayerController : Damageable
     void OnCollisionStay2D(Collision2D col)
     {
 
-        if (col.gameObject.tag == "Kill" && col.gameObject.layer != 16)
+        if (col.gameObject.CompareTag("Kill") && col.gameObject.layer != 16)
             Die();
 
         else if (IsInLayerMask(col.gameObject, whatIsGround))
@@ -501,7 +505,8 @@ public class PlayerController : Damageable
 
     public override void Die()
     {
-        statisticsSystem.SerializeJson();
+        persistentInventoryDisplay.UpdateText();
+        StatisticsSystem.playerStats.Deaths++;
         dashMeter.SetDefaultValue();
         cameraBounds.CameraCanMove = false;
         StopAllCoroutines();
@@ -560,7 +565,12 @@ public class PlayerController : Damageable
         VisualEffects.SetColor(gameObject, Color.white);
         SwitchToDefaultCostume();
 
-        placedBlocks.Clear();
+        foreach(GameObject g in placedBlocks)
+        {
+            placedBlocks.Remove(g);
+            Destroy(g);
+        }
+
     }
 
     //Depletes the player's health by a certain amount

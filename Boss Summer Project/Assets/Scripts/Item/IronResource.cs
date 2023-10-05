@@ -6,6 +6,5 @@ public class IronResource : Item
 {
     protected override void SummonEffect() {
         playerScript.IronOwned += 1;
-        Debug.Log(playerScript.IronOwned);
     }
 }

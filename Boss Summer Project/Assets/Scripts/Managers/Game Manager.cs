@@ -19,6 +19,16 @@ public class GameManager : MonoBehaviour
     private BackgroundTiler backgroundTiler;
     private static UnityEvent respawnEvent = new();
 
+    void Awake()
+    {
+        StatisticsSystem.LoadStatistics();
+    }
+
+    void OnApplicationQuit()
+    {
+        StatisticsSystem.SerializeJson();
+    }
+
     void Start()
     {
         playerScript = player.GetComponent<PlayerController>();
