@@ -23,14 +23,18 @@ public class GameManager : MonoBehaviour
     {
         StatisticsSystem.LoadStatistics();
     }
+    private void OnSceneUnloaded(Scene current)
+    {
+        StatisticsSystem.SerializeJson();
+    }
 
     void OnApplicationQuit()
     {
         StatisticsSystem.SerializeJson();
     }
-
     void Start()
     {
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
         playerScript = player.GetComponent<PlayerController>();
         enemyScript = enemy.GetComponent<Enemy>();
         backgroundTiler = background.GetComponent<BackgroundTiler>();
@@ -41,16 +45,19 @@ public class GameManager : MonoBehaviour
 
     //Add all power ups and items as listeners for the respawn event
     //NOTE: This makes it unnecessary to do so in the inspector.
-    private void SetupRespawnEvent() {
+    private void SetupRespawnEvent()
+    {
 
         //Add power ups as listeners
-        for (int i = 0; i < powerUps.childCount; i++) {
+        for (int i = 0; i < powerUps.childCount; i++)
+        {
             PowerUp powerUpScript = powerUps.GetChild(i).GetComponent<PowerUp>();
             respawnEvent.AddListener(powerUpScript.Respawn);
         }
 
         //Add items as listeners
-        for (int i = 0; i < items.childCount; i++) {
+        for (int i = 0; i < items.childCount; i++)
+        {
             Item itemScript = items.GetChild(i).GetComponent<Item>();
             respawnEvent.AddListener(itemScript.Respawn);
         }
@@ -59,15 +66,19 @@ public class GameManager : MonoBehaviour
         respawnEvent.AddListener(playerScript.Respawn);
 
         //Add the enemy as a listener
+        // WHY IS THERE ONLY ONE ENEMY 
         respawnEvent.AddListener(enemyScript.Respawn);
+
+
         respawnEvent.AddListener(backgroundTiler.ResetTiles);
     }
 
-    public static void RespawnAll() {
+    public static void RespawnAll()
+    {
         respawnEvent.Invoke();
         var existingBlocks = GameObject.FindGameObjectsWithTag("Block");
 
-        foreach(GameObject block in existingBlocks)
+        foreach (GameObject block in existingBlocks)
         {
             Destroy(block);
         }
@@ -86,7 +97,8 @@ public class GameManager : MonoBehaviour
     public void EnterPauseMenu()
     {
         GameObject[] allGameObjects = FindObjectsOfType<GameObject>();
-        foreach (GameObject gameObject in allGameObjects) {
+        foreach (GameObject gameObject in allGameObjects)
+        {
             DontDestroyOnLoad(gameObject);
         }
     }
