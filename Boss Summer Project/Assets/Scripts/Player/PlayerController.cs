@@ -194,7 +194,7 @@ public class PlayerController : Damageable
     [SerializeField] private GameObject batteryBlock;
     [SerializeField] private float placementRange;
 
-    private List<GameObject> placedBlocks = new List<GameObject>();
+    private Transform blocksParent;
     #endregion
 
     private InventoryDisplay persistentInventoryDisplay;
@@ -215,6 +215,7 @@ public class PlayerController : Damageable
         // }
 
         persistentInventoryDisplay = GameObject.FindGameObjectWithTag("InventoryDisplay").GetComponent<InventoryDisplay>();
+        blocksParent = GameObject.FindGameObjectWithTag("BlockParent").transform;
 
         bc2d = GetComponent<BoxCollider2D>();
         rb2d = GetComponent<Rigidbody2D>();
@@ -316,17 +317,15 @@ public class PlayerController : Damageable
 
         if (Input.GetKeyDown(placeSpikyBlockKey) && canPlaceBlock && spikyBlocksOwned > 0)
         {
-            GameObject newSpikyBlock = Instantiate(spikyBlock);
+            GameObject newSpikyBlock = Instantiate(spikyBlock, blocksParent);
             newSpikyBlock.transform.position = worldMousePosition;
-            placedBlocks.Add(newSpikyBlock);
             spikyBlocksOwned--;
             persistentInventoryDisplay.UpdateText();
         }
         else if (Input.GetKeyDown(placeBatteryBlockKey) && canPlaceBlock && batteryBlockOwned > 0)
         {
-            GameObject newBatteryBlock = Instantiate(batteryBlock);
+            GameObject newBatteryBlock = Instantiate(batteryBlock, blocksParent);
             newBatteryBlock.transform.position = worldMousePosition;
-            placedBlocks.Add(newBatteryBlock);
             batteryOwned--;
             persistentInventoryDisplay.UpdateText();
         }
@@ -372,7 +371,6 @@ public class PlayerController : Damageable
 
         else
         {
-
             SetGravityScale(1f);
             rb2d.drag = 1f;
 
@@ -388,7 +386,6 @@ public class PlayerController : Damageable
                 if (waterParticles.isPlaying) waterParticles.Stop();
             }
         }
-
 
     }
 
@@ -565,10 +562,9 @@ public class PlayerController : Damageable
         VisualEffects.SetColor(gameObject, Color.white);
         SwitchToDefaultCostume();
 
-        foreach(GameObject g in placedBlocks)
+        foreach(Transform block in blocksParent)
         {
-            placedBlocks.Remove(g);
-            Destroy(g);
+            Destroy(block.gameObject);
         }
 
     }

@@ -25,6 +25,7 @@ public class CraftingManager : MonoBehaviour
     // WHY IS THIS CALLED IN UPDATE
     // WHY WHY WHY WHY
     // Lol screw performance we gonna update tmpro assets every frame
+    // Acutally nvm this isnt that bad this is only called when the object is active
     void Update()
     {
         ironQuantityDisplay.SetText(playerScript.IronOwned.ToString());
