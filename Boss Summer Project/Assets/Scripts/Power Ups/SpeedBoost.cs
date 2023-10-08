@@ -5,6 +5,8 @@ using UnityEngine;
 //This power up increases the player's speed
 public class SpeedBoost : PowerUp
 {
+    private static int speedCollected;
+    private static SpeedBoost mostRecentlyCollectedPowerUp;
     [SerializeField] private float boostMultiplier;
     private CameraBounds cameraBounds;
 
@@ -14,15 +16,28 @@ public class SpeedBoost : PowerUp
         cameraBounds = Camera.main.GetComponent<CameraBounds>();
     }
 
-    protected override void SummonEffect()
-    {
-        playerScript.MoveSpeed = playerScript.MoveSpeed * boostMultiplier;
-        cameraBounds.Zoom(-0.5f, 0.5f); // Makes the camera zoom out and it seems fast
+    void Update() {
+        if (this != mostRecentlyCollectedPowerUp && mostRecentlyCollectedPowerUp != null) {
+            RemoveEffect();
+        }
     }
 
-    public override void RemoveEffect()
+    protected override void SummonEffect()
     {
-        playerScript.MoveSpeed = playerScript.MoveSpeed / boostMultiplier;
-        cameraBounds.Zoom(0.5f, 0.5f); // Lerp this camera thing somehow
+        mostRecentlyCollectedPowerUp = this;
+
+        playerScript.MoveSpeed = playerScript.MoveSpeed * boostMultiplier;
+        cameraBounds.Zoom(-0.5f, 0.5f); // Makes the camera zoom out and it seems fast
+
+        speedCollected += 1;
+    }
+
+    public override void RemoveEffect() {
+        speedCollected -= 1;
+
+        if (speedCollected == 0) {
+            playerScript.MoveSpeed = playerScript.MoveSpeed / boostMultiplier;
+            cameraBounds.Zoom(0.5f, 0.5f); // Lerp this camera thing somehow
+        }
     }
 }
