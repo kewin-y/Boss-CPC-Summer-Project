@@ -225,7 +225,6 @@ public class PlayerController : Damageable
         actualPlayerSize = transform.localScale.x;
         jumpsRemaining = jumpsAvailable;
         
-
         Respawn();
     }
 
@@ -247,7 +246,7 @@ public class PlayerController : Damageable
 
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
-        StatisticsSystem.playerStats.DistanceTravelled += (rb2d.velocity * Time.deltaTime).magnitude;
+        if (StatisticsSystem.playerStats != null) StatisticsSystem.playerStats.DistanceTravelled += (rb2d.velocity * Time.deltaTime).magnitude;
     }
 
     void TerrainCheck()
@@ -463,7 +462,7 @@ public class PlayerController : Damageable
 
         else if (IsInLayerMask(col.gameObject, whatIsGround))
         {
-            isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+            isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
 
             if (isGrounded)
             {

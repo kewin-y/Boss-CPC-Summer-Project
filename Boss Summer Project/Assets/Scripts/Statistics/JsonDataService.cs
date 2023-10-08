@@ -47,7 +47,7 @@ public class JsonDataService : IDataService
             Debug.LogError($"Cannot load file at {path}");
             throw new FileNotFoundException($"Cannot find file at {path}");
         }
-
+        
         try 
         {
             T data = JsonConvert.DeserializeObject<T>(File.ReadAllText(path));

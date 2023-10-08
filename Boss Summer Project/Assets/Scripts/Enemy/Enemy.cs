@@ -132,7 +132,7 @@ public class Enemy : MonoBehaviour
         }
 
         Debug.DrawRay(transform.position, new Vector2(direction * -1, 0) * 0.3f);
-        transform.localScale = new(direction * 1f, 1f, 1f);
+        transform.localScale = new(direction, 1f, 1f);
 
     }
 

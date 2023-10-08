@@ -9,6 +9,13 @@ public class ShieldBoost : PowerUp
 
     private ShieldController shieldController;
 
+    protected override void Start()
+    {
+        base.Start();
+        // Lol this sucks
+        shield = GameObject.FindGameObjectWithTag("ShieldPivot").transform.GetChild(0).gameObject;
+    }
+
     protected override void SummonEffect() {
         shield.SetActive(true);
 

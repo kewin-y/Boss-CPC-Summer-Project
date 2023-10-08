@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //This power up gives the player some extra health in the second health bar
@@ -7,6 +8,13 @@ public class Absorption : PowerUp
 {
     [SerializeField] private float absorptionAmount;
     [SerializeField] private HealthBar extraHealthBar;
+
+
+    protected override void Start()
+    {
+        base.Start();
+        extraHealthBar = GameObject.FindGameObjectWithTag("AbsorptionBar").GetComponent<HealthBar>();
+    }
 
     protected override void SummonEffect() {
         playerScript.AbsorptionHealth += absorptionAmount;

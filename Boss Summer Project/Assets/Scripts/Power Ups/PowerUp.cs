@@ -10,11 +10,11 @@ using UnityEngine.UI;
 //and a reference to the power up "health bar"
 public abstract class PowerUp : MonoBehaviour
 {
-    [SerializeField] protected GameObject player; //The player object
+    protected GameObject player; //The player object
     [SerializeField] private bool isInfinite;   //Whether the power up is permanent or not
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
     [SerializeField] private GameObject powerUpBar;
-    private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
+    [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
 
     protected PlayerController playerScript;
     protected bool effectInProgress = false;
@@ -32,6 +32,7 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     protected virtual void Start() {
+        player = GameObject.FindGameObjectWithTag("Player");
         playerScript = player.GetComponent<PlayerController>();
         powerUpBarGrid = GameObject.FindGameObjectWithTag("PowerUpGrid").GetComponent<GridLayoutGroup>();
 
