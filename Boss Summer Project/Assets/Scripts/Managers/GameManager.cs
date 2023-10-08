@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         StatisticsSystem.LoadStatistics();
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
     private void OnSceneUnloaded(Scene current)
     {
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
         playerScript = player.GetComponent<PlayerController>();
         enemyScript = enemy.GetComponent<Enemy>();
         backgroundTiler = background.GetComponent<BackgroundTiler>();
@@ -76,12 +76,6 @@ public class GameManager : MonoBehaviour
     public static void RespawnAll()
     {
         respawnEvent.Invoke();
-        var existingBlocks = GameObject.FindGameObjectsWithTag("Block");
-
-        foreach (GameObject block in existingBlocks)
-        {
-            Destroy(block);
-        }
     }
 
     public void ChangeScene(int sceneBuildIndex)

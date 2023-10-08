@@ -10,19 +10,21 @@ public class BackgroundTiler : MonoBehaviour
     [SerializeField] private GameObject[] backgroundTiles = new GameObject[3];
     [SerializeField] private float width;
 
+    public float Width {get => width; set => width = value;}
+
     private SpriteRenderer tileSpriteRenderer;
     private int currentTile;
     private Dictionary<int, int> Left = new Dictionary<int, int>();
     private Dictionary<int, int> Right = new Dictionary<int, int>();
 
-    void Start()
+    void Awake()
     {
         SetUpDictionaries();
         currentTile = 1; // Start at tile 1 (2nd tile in array)
 
         // Get the width of 1 tile; they are all the same
         tileSpriteRenderer = backgroundTiles[0].GetComponent<SpriteRenderer>();
-        width = tileSpriteRenderer.bounds.size.x;
+        width = tileSpriteRenderer.bounds.size.x - 0.01f;
     }
 
     private void SetUpDictionaries()
