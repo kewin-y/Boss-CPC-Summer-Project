@@ -8,7 +8,18 @@ public class Absorption : PowerUp
     [SerializeField] private float absorptionAmount;
     [SerializeField] private HealthBar extraHealthBar;
 
+    private static int absorptionCollected;
+    private static Absorption mostRecentlyCollectedPowerUp;
+    private float remainingAbsorptionHealth; //amount of absorption health the player should have according to the absorptionCollected field (does not take into account any damage)
+
+    void Update() {
+        if (this != mostRecentlyCollectedPowerUp && mostRecentlyCollectedPowerUp != null) {
+            RemoveEffect();
+        }
+    }
     protected override void SummonEffect() {
+        mostRecentlyCollectedPowerUp = this;
+
         playerScript.AbsorptionHealth += absorptionAmount;
 
         //Health cannot overflow
@@ -17,16 +28,28 @@ public class Absorption : PowerUp
 
         extraHealthBar.SetHealth(playerScript.AbsorptionHealth);
         StartCoroutine(RemoveOnNoHealth());
+
+        absorptionCollected += 1;
     }
 
     public override void RemoveEffect() {
-        playerScript.AbsorptionHealth -= absorptionAmount;
+        absorptionCollected -= 1;
 
-        //Health cannot underflow
-        if (playerScript.AbsorptionHealth < 0f)
-            playerScript.AbsorptionHealth = 0f;
+        remainingAbsorptionHealth = absorptionCollected * absorptionAmount;
 
-        extraHealthBar.SetHealth(playerScript.AbsorptionHealth);
+        //If the player's absorption health is exceeding the maximum amount that they can have under
+        //their current number of absorptionCollected, reduce their absorption health
+
+        if (playerScript.AbsorptionHealth > remainingAbsorptionHealth) {
+
+            playerScript.AbsorptionHealth = remainingAbsorptionHealth;
+
+            //Health cannot underflow
+            if (playerScript.AbsorptionHealth < 0f)
+                playerScript.AbsorptionHealth = 0f;
+
+            extraHealthBar.SetHealth(playerScript.AbsorptionHealth);
+        }
     }
 
     private IEnumerator RemoveOnNoHealth()
@@ -34,5 +57,4 @@ public class Absorption : PowerUp
         yield return new WaitUntil(() => playerScript.AbsorptionHealth <= 0);
         RemoveEffectFully();
     }
-
 }
