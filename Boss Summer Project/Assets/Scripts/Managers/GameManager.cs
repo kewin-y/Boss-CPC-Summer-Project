@@ -8,12 +8,12 @@ using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Transform powerUps;    //Parent object for all power ups
-    [SerializeField] private Transform items;       //Parent object for all items
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject enemy;
     [SerializeField] private GameObject background;
 
+    private Transform powerUps; //Parent object for all power ups
+    private Transform items; //Parent object for all items
     private PlayerController playerScript;
     private Enemy enemyScript;
     private BackgroundTiler backgroundTiler;
@@ -35,12 +35,14 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        powerUps = GameObject.Find("Power Ups").transform;
+        items = GameObject.Find("Items").transform;
+
         playerScript = player.GetComponent<PlayerController>();
         enemyScript = enemy.GetComponent<Enemy>();
         backgroundTiler = background.GetComponent<BackgroundTiler>();
 
         SetupRespawnEvent();
-        // SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     //Add all power ups and items as listeners for the respawn event
