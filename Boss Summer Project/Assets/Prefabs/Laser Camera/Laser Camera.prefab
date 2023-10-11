@@ -106,6 +106,9 @@ MonoBehaviour:
   detectableLayers:
     serializedVersion: 2
     m_Bits: 256
+  disableLayers:
+    serializedVersion: 2
+    m_Bits: 65536
   laserEyeFadeInDuration: 1
   cameraHiddenTint: 0.5
   laserDelay: 1.5
@@ -237,7 +240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6288881823056944362}
   - component: {fileID: 2336469841708893764}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Laser
   m_TagString: Untagged
   m_Icon: {fileID: 0}

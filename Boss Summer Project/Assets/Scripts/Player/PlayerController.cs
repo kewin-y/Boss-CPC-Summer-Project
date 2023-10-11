@@ -325,7 +325,7 @@ public class PlayerController : Damageable
         {
             GameObject newBatteryBlock = Instantiate(batteryBlock, blocksParent);
             newBatteryBlock.transform.position = worldMousePosition;
-            batteryOwned--;
+            batteryBlockOwned--;
             persistentInventoryDisplay.UpdateText();
         }
 

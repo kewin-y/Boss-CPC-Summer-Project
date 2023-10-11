@@ -321,19 +321,20 @@ MonoBehaviour:
   laserEye: {fileID: 5185258167649237866}
   laser: {fileID: 6641526627783078139}
   aimRadius: 5
-  playerObj: {fileID: 4827650492621167751, guid: cc096494a63a0498f86e27a3c1253e7a, type: 3}
   shootableLayers:
     serializedVersion: 2
     m_Bits: 768
   detectableLayers:
     serializedVersion: 2
     m_Bits: 256
+  disableLayers:
+    serializedVersion: 2
+    m_Bits: 65536
   laserEyeFadeInDuration: 1
   cameraHiddenTint: 0.5
   laserDelay: 1.5
   laserFadeOutTime: 0.5
   laserStartPosition: {fileID: 2323815809025975820}
-  shield: {fileID: 7368622725762841331, guid: b553147f79ee34a10b2bc5e74a5c3cac, type: 3}
 --- !u!1 &9046611038206894760
 GameObject:
   m_ObjectHideFlags: 0
