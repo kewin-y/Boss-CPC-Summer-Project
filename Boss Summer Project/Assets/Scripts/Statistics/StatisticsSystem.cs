@@ -8,7 +8,7 @@ using System;
 
 public class StatisticsSystem
 {
-    public static Statistics playerStats;
+    public static Statistics playerStats = new(0, 0, 0, 0);
 
     public static IDataService dataService = new JsonDataService();
     private const string PATH = "/player-stats.json";

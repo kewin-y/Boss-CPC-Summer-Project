@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class PowerUpBar : MonoBehaviour
 {
     [SerializeField] private Slider slider;
-
     private PowerUp powerUp;
 
     //Acts as a constructor method: receives the power up, sets the icon, sets max duration
