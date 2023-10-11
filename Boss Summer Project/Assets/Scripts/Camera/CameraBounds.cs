@@ -9,19 +9,15 @@ public class CameraBounds : MonoBehaviour
 {
     [SerializeField] private UnityEvent playerExitRight;
     [SerializeField] private UnityEvent playerExitLeft;
-    [SerializeField] private float moveTime;
-    [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private float moveTime; 
 
     private float bufferValue = 1f; // Moves the player this much to the left/right of the camera to fix a bug
-    public float BufferValue { get => bufferValue; set => bufferValue = value; }
     private bool cameraCanMove;
-    public bool CameraCanMove
+    public bool CameraCanMove 
     {
-        get { return cameraCanMove; }
-        set { cameraCanMove = value; }
+        get{return cameraCanMove;}
+        set{cameraCanMove = value;}
     }
-
-
 
     private Camera cam;
     private BoxCollider2D bc2d; // Camera's collider
@@ -31,10 +27,6 @@ public class CameraBounds : MonoBehaviour
 
     private float sizeY;
     private float sizeX;
-
-    private float defaultSize;
-    private float defaultBufferValue;
-    public float DefaultBufferValue { get => defaultBufferValue; set => defaultBufferValue = value; }
     private void Start()
     {
         cam = GetComponent<Camera>();
@@ -42,9 +34,6 @@ public class CameraBounds : MonoBehaviour
         cameraCanMove = true;
 
         AdjustBounds();
-        defaultSize = cam.orthographicSize;
-        defaultBufferValue = bufferValue;
-        print(bufferValue);
 
         moveAmountX = sizeX;
         moveAmountY = sizeY;
@@ -53,63 +42,53 @@ public class CameraBounds : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // print(bufferValue);
+        
     }
 
     void OnDisable()
     {
-        StopAllCoroutines();
+       StopAllCoroutines();
     }
-
+    
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && cameraCanMove)
+        if(other.CompareTag("Player") && cameraCanMove)
         {
             Vector3 newPos;
             bool isRight = other.transform.position.x - transform.position.x > 0;
 
-            if (isRight)
+            if(isRight)
             {
-                RaycastHit2D raycastHit = Physics2D.Raycast(other.transform.position, Vector2.right, 100f, whatIsGround);
+                RaycastHit2D raycastHit = Physics2D.BoxCast(other.transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.right, 1f);
 
-                if (raycastHit && raycastHit.distance > 1)
-                {
+                if (raycastHit.distance > 1) {
                     bufferValue = 1;
-                }
-                else
-                {
+                } else {
                     bufferValue = raycastHit.distance;
-                    print(raycastHit.collider);
                 }
 
                 newPos = new Vector3(transform.position.x + moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x + bufferValue, other.transform.position.y);
                 playerExitRight.Invoke();
-                bufferValue = defaultBufferValue;
             }
 
             else
             {
-                RaycastHit2D raycastHit = Physics2D.Raycast(other.transform.position, Vector2.left, 100f, whatIsGround);
+                RaycastHit2D raycastHit = Physics2D.BoxCast(other.transform.position, new Vector2(0.45f, 0.45f), 0f, Vector2.right, 1f);
 
-                if (raycastHit && raycastHit.distance > 1)
-                {
+                if (raycastHit.distance > 1) {
                     bufferValue = 1;
-                }
-                else
-                {
+                } else {
                     bufferValue = raycastHit.distance;
-                    print(raycastHit.collider);
                 }
 
                 newPos = new Vector3(transform.position.x - moveAmountX, transform.position.y, -10f);
                 other.transform.position = new Vector2(other.transform.position.x - bufferValue, other.transform.position.y); // Might change the 
                 playerExitLeft.Invoke();
-                bufferValue = defaultBufferValue;
             }
 
-            if (isActiveAndEnabled) StartCoroutine(MoveCamera(newPos));
-
+            if(isActiveAndEnabled) StartCoroutine(MoveCamera(newPos));
+                
         }
     }
 
@@ -120,9 +99,9 @@ public class CameraBounds : MonoBehaviour
         var startPos = transform.position;
 
         float timeElapsed = 0;
-        while (timeElapsed < moveTime)
+        while(timeElapsed < moveTime)
         {
-            transform.position = Vector3.Lerp(startPos, newPos, timeElapsed / moveTime);
+            transform.position = Vector3.Lerp(startPos, newPos, timeElapsed/moveTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
@@ -133,8 +112,7 @@ public class CameraBounds : MonoBehaviour
 
 
     //Adjusts the camera collider bounds to match the orthographic size
-    private void AdjustBounds()
-    {
+    private void AdjustBounds() {
 
         sizeY = cam.orthographicSize * 2;
         sizeX = sizeY * cam.aspect;
@@ -145,33 +123,23 @@ public class CameraBounds : MonoBehaviour
 
     public void Zoom(float zoom, float duration) => StartCoroutine(ZoomSequence(zoom, duration));
 
-    public void ZoomOut()
-    {
-        float req = 6.5f;
-        StartCoroutine(ZoomSequence(req, 0.5f));
-    }
-
-    public void ZoomIn()
-    {
-        float req = 6f;
-        StartCoroutine(ZoomSequence(req, 0.5f));
-    }
     //Changes the zoom of the camera by a certain amount over a certain number of seconds:
     //positive = zoom in, negative = zoom out
-    private IEnumerator ZoomSequence(float requiredCamSize, float duration)
-    {
+    private IEnumerator ZoomSequence(float zoom, float duration) {
         float originalCamSize = cam.orthographicSize;
+        float requiredCamSize = originalCamSize - zoom;
+
+        bufferValue -= zoom * 0.5f;
 
         float timeElapsed = 0f;
-        while (timeElapsed < duration)
-        {
+        while (timeElapsed < duration) {
             timeElapsed += Time.deltaTime;
             float newCamSize = Mathf.Lerp(originalCamSize, requiredCamSize, timeElapsed / duration);
             cam.orthographicSize = newCamSize;
 
             yield return null;  //Wait for the next frame to pass
         }
-
+        
         AdjustBounds();
     }
 

@@ -12,6 +12,7 @@ public class ShieldBoost : PowerUp
     protected override void Start()
     {
         base.Start();
+        // Lol this sucks
         shield = GameObject.FindGameObjectWithTag("ShieldPivot").transform.GetChild(0).gameObject;
     }
 
@@ -26,9 +27,5 @@ public class ShieldBoost : PowerUp
 
     public override void RemoveEffect() {
         shield.SetActive(false);
-    }
-    public override void RemoveNoVisual()
-    {
-        RemoveEffect();
     }
 }

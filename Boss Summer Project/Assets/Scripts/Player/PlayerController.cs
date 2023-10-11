@@ -99,7 +99,7 @@ public class PlayerController : Damageable
     private BoxCollider2D bc2d;
     private Rigidbody2D rb2d;
     private SpriteRenderer spriteRenderer;
-    private Vector2 playerSize; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
+    private float playerSize = 0.45f; // Appears to be 0.5 but hitbox (box collider) is slightly smaller to make it more fair
     private float actualPlayerSize; // Disregards the "slightly smaller" hitbox for playerSize
     private float lastFacing = 1;       //If 1, facing right. If -1, facing left.
     private float horizontalFlip = 1;   //If -1, player is upside down; must flip horizontally.
@@ -195,19 +195,9 @@ public class PlayerController : Damageable
     [SerializeField] private float placementRange;
 
     private Transform blocksParent;
-    
-    private InventoryDisplay persistentInventoryDisplay;
     #endregion
 
-    void Awake()
-    {
-        StatisticsSystem.LoadStatistics();
-    }
-
-    void LoadStatsFromPlayer()
-    {
-        StatisticsSystem.LoadStatistics();
-    }
+    private InventoryDisplay persistentInventoryDisplay;
 
     // Start is called before the first frame update
     void Start()
@@ -228,7 +218,6 @@ public class PlayerController : Damageable
         blocksParent = GameObject.FindGameObjectWithTag("BlockParent").transform;
 
         bc2d = GetComponent<BoxCollider2D>();
-        playerSize = new Vector2(bc2d.size.x, bc2d.size.y + bc2d.edgeRadius);
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         cameraBounds = mainCam.GetComponent<CameraBounds>();
@@ -258,14 +247,13 @@ public class PlayerController : Damageable
         transform.localScale = new Vector3(horizontalFlip * lastFacing * actualPlayerSize, actualPlayerSize, actualPlayerSize);
 
         if (StatisticsSystem.playerStats != null) StatisticsSystem.playerStats.DistanceTravelled += (rb2d.velocity * Time.deltaTime).magnitude;
-        else LoadStatsFromPlayer();
     }
 
     void TerrainCheck()
     {
-        bool isInWater = Physics2D.BoxCast(transform.position, playerSize, 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
-        bool isOnIce = Physics2D.BoxCast(transform.position, playerSize, 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
-        bool isOnMud = Physics2D.BoxCast(transform.position, playerSize, 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsMud);
+        bool isInWater = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0f, whatIsWater);
+        bool isOnIce = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsIce);
+        bool isOnMud = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsMud);
 
         if (isInWater)
             terrainState = TerrainState.Water;
@@ -412,8 +400,7 @@ public class PlayerController : Damageable
         if (terrainState != TerrainState.Water)
         {
             rb2d.velocity = new Vector2(rb2d.velocity.x, gravityCoefficient * jumpVelocity);
-            if (StatisticsSystem.playerStats != null) StatisticsSystem.playerStats.Jumps++;
-            else LoadStatsFromPlayer();
+            StatisticsSystem.playerStats.Jumps++;
         }
         else
         {
@@ -475,7 +462,7 @@ public class PlayerController : Damageable
 
         else if (IsInLayerMask(col.gameObject, whatIsGround))
         {
-            isGrounded = Physics2D.BoxCast(transform.position, playerSize, 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
+            isGrounded = Physics2D.BoxCast(transform.position, new Vector2(playerSize - 0.1f, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.down, 0.1f, whatIsGround);
 
             if (isGrounded)
             {
@@ -488,7 +475,7 @@ public class PlayerController : Damageable
     void OnCollisionExit2D(Collision2D col)
     {
 
-        bool headHitter = Physics2D.BoxCast(transform.position, playerSize, 0f, gravityCoefficient * Vector2.up, 0.2f, whatIsGround);
+        bool headHitter = Physics2D.BoxCast(transform.position, new Vector2(playerSize, playerSize - 0.1f), 0f, gravityCoefficient * Vector2.up, 0.2f, whatIsGround);
 
         if (IsInLayerMask(col.gameObject, whatIsGround))
         {

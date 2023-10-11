@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        StatisticsSystem.LoadStatistics();
         SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
     private void OnSceneUnloaded(Scene current)
@@ -84,11 +85,13 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneBuildIndex, LoadSceneMode.Single);
     }
 
+    /*
     public void ExitApplication()
     {
         EditorApplication.ExitPlaymode();
     }
-
+    */
+    
     public void EnterPauseMenu()
     {
         GameObject[] allGameObjects = FindObjectsOfType<GameObject>();
