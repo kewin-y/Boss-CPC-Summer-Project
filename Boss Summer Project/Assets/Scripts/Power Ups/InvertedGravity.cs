@@ -29,4 +29,8 @@ public class InvertedGravity : PowerUp
         player.transform.eulerAngles = Vector3.zero;
         playerScript.FlipHorizontal();
     }
+    public override void RemoveNoVisual()
+    {
+        RemoveEffect();
+    }
 }

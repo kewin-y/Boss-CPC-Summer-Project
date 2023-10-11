@@ -5,39 +5,42 @@ using UnityEngine;
 //This power up increases the player's speed
 public class SpeedBoost : PowerUp
 {
-    private static int speedCollected;
-    private static SpeedBoost mostRecentlyCollectedPowerUp;
     [SerializeField] private float boostMultiplier;
     private CameraBounds cameraBounds;
+    private float fast;
+    private float defaultSpeed;
 
     protected override void Start()
     {
         base.Start();
         cameraBounds = Camera.main.GetComponent<CameraBounds>();
+        fast = playerScript.MoveSpeed * boostMultiplier;
+        defaultSpeed = playerScript.MoveSpeed;
     }
 
-    void Update() {
-        if (this != mostRecentlyCollectedPowerUp && mostRecentlyCollectedPowerUp != null) {
-            RemoveEffect();
-        }
-    }
 
     protected override void SummonEffect()
     {
-        mostRecentlyCollectedPowerUp = this;
+        // mostRecentlyCollectedPowerUp = this;
+        playerScript.MoveSpeed = fast;
+        cameraBounds.ZoomOut(); // Makes the camera zoom out and it seems fast
+        cameraBounds.BufferValue = 1.25f;
+        print(cameraBounds.BufferValue);
 
-        playerScript.MoveSpeed = playerScript.MoveSpeed * boostMultiplier;
-        cameraBounds.Zoom(-0.5f, 0.5f); // Makes the camera zoom out and it seems fast
-
-        speedCollected += 1;
     }
 
-    public override void RemoveEffect() {
-        speedCollected -= 1;
+    public override void RemoveEffect()
+    {
+        playerScript.MoveSpeed = defaultSpeed;
+        cameraBounds.ZoomIn();
+        cameraBounds.BufferValue = cameraBounds.DefaultBufferValue;
+        print(cameraBounds.BufferValue);
+    }
 
-        if (speedCollected == 0) {
-            playerScript.MoveSpeed = playerScript.MoveSpeed / boostMultiplier;
-            cameraBounds.Zoom(0.5f, 0.5f); // Lerp this camera thing somehow
-        }
+    public override void RemoveNoVisual()
+    {
+        playerScript.MoveSpeed = defaultSpeed;
+        cameraBounds.BufferValue = cameraBounds.DefaultBufferValue;
+        print(cameraBounds.BufferValue);
     }
 }

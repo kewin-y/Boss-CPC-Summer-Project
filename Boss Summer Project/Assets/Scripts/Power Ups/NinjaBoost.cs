@@ -32,4 +32,8 @@ public class NinjaBoost : PowerUp
             playerScript.SwitchToDefaultCostume();
         }
     }
+    public override void RemoveNoVisual()
+    {
+        RemoveEffect();
+    }
 }

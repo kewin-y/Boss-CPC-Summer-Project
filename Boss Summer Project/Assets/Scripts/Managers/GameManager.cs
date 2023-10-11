@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        StatisticsSystem.LoadStatistics();
         SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
     private void OnSceneUnloaded(Scene current)

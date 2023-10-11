@@ -14,24 +14,37 @@ public abstract class PowerUp : MonoBehaviour
     [SerializeField] private bool isInfinite;   //Whether the power up is permanent or not
     [SerializeField] private float duration;    //How long the boost lasts in seconds; disregarded if isInfinite
     [SerializeField] private GameObject powerUpBar;
-    [SerializeField] private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
+    [SerializeField] protected string powerUpId;    // Name of the powerup, to track duplicates, etc.
+    private GridLayoutGroup powerUpBarGrid;    //The grid layout to which the power up "health bars" are added
 
     protected PlayerController playerScript;
     protected bool effectInProgress = false;
-    
+
     private GameObject powerUpBarObj;
     private PowerUpBar powerUpBarScript;
 
-    public bool IsInfinite {
+    public bool IsInfinite
+    {
         get { return isInfinite; }
     }
 
-    public float Duration {
+    public float Duration
+    {
         get { return duration; }
         set { duration = value; }
     }
 
-    protected virtual void Start() {
+    public delegate void CollectedDuplicate(int id, string powerUpId);
+    public static event CollectedDuplicate OnCollectedDuplicate;
+
+    protected virtual void OnEnable()
+    {
+        OnCollectedDuplicate += HandleDuplicate;
+    }
+
+    protected virtual void Start()
+    {
+        print(GetInstanceID());
         player = GameObject.FindGameObjectWithTag("Player");
         playerScript = player.GetComponent<PlayerController>();
         powerUpBarGrid = GameObject.FindGameObjectWithTag("PowerUpGrid").GetComponent<GridLayoutGroup>();
@@ -39,15 +52,30 @@ public abstract class PowerUp : MonoBehaviour
         //Size of the power up = size of the player
         transform.localScale = player.transform.localScale;
     }
-    
-    protected void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Player") {
+
+    protected void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
             Collect();
-            StartCoroutine(EffectSequence());
+
+            // Easy to handle like this since we only want 1 grid object per power up
+            var objOnGrid = powerUpBarGrid.transform.Find(powerUpId);
+            if (!objOnGrid)
+            {
+                StartCoroutine(EffectSequence());
+            }
+
+            else
+            {
+                OnCollectedDuplicate?.Invoke(GetInstanceID(), powerUpId);
+            }
+
         }
     }
 
-    protected void Collect() {
+    protected void Collect()
+    {
         //Make this power up disappear and no longer be collectable
         gameObject.GetComponent<Renderer>().enabled = false;
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -57,24 +85,48 @@ public abstract class PowerUp : MonoBehaviour
 
     //Runs when the power up is collected. Summons the effect, then removes it after the duration
     //has passed IF the effect is not infinite/permanent.
-    protected IEnumerator EffectSequence() {
+    protected IEnumerator EffectSequence()
+    {
         SummonEffect();
         AddToUI();
 
         effectInProgress = true;
 
-        if (!isInfinite) {
+        if (!isInfinite)
+        {
             yield return StartCoroutine(WaitUntilWearsOff(duration));
             RemoveEffectFully();
         }
     }
 
+    protected void HandleDuplicate(int id, string powerUpId)
+    {
+        if (GetInstanceID() != id && this.powerUpId == powerUpId)
+        {
+            // Restart the effect sequence w/o destroying the object
+            // Quick and dirty way: remove any effect that currently exists and just start it again 
+            // Don't want to affect the visuals: fixes the bug where the camera stutters 
+
+            if(powerUpId != "Absorption")
+            {
+                RemoveNoVisual();
+            }
+
+            StopAllCoroutines();
+            RemoveFromUI();
+            effectInProgress = false;
+            StartCoroutine(EffectSequence());
+        }
+    }
+
     //For timed power ups: this method waits the appropriate duration while
     //updating the state of the power up bar every 0.1 seconds.
-    protected IEnumerator WaitUntilWearsOff(float maxDuration) {
+    protected IEnumerator WaitUntilWearsOff(float maxDuration)
+    {
         float timeElapsed = 0;
 
-        while (timeElapsed < maxDuration) {
+        while (timeElapsed < maxDuration)
+        {
             powerUpBarScript.SetDurationLeft(maxDuration - timeElapsed);
 
             //Update the power up bar every tenth of a second (0.1s)
@@ -84,7 +136,8 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Method that allows direct changes to the state of the power up bar
-    public void SetDurationLeft(float durationLeft) {
+    public void SetDurationLeft(float durationLeft)
+    {
         powerUpBarScript.SetDurationLeft(durationLeft);
     }
 
@@ -94,7 +147,8 @@ public abstract class PowerUp : MonoBehaviour
     - Disable the effectInProgress flag
     - Set active to false
     */
-    public void RemoveEffectFully() {
+    public void RemoveEffectFully()
+    {
         RemoveEffect();
         RemoveFromUI();
         effectInProgress = false;
@@ -107,9 +161,15 @@ public abstract class PowerUp : MonoBehaviour
     //Abstract method that removes the effect from the player
     public abstract void RemoveEffect();
 
-    public void Respawn() {
+    // Removes the effect but w/o visuals
+    // only really matters for the speed boost 
+    public abstract void RemoveNoVisual();
+
+
+    public void Respawn()
+    {
         StopAllCoroutines();
-        
+
         if (effectInProgress)
             RemoveEffectFully();
 
@@ -120,15 +180,26 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Adds the "health bar" for this power up to the UI
-    private void AddToUI() {
+    private void AddToUI()
+    {
         powerUpBarObj = Instantiate(powerUpBar, powerUpBarGrid.transform);
+        powerUpBarObj.name = powerUpId;
         powerUpBarScript = powerUpBarObj.GetComponent<PowerUpBar>();
 
         powerUpBarScript.Setup(this);
     }
 
     //Removes the "health bar" for this power up from the UI
-    public void RemoveFromUI() {
-        Destroy(powerUpBarObj);
+    public void RemoveFromUI()
+    {
+        // Destroy every power up bar with the same power up ID
+        // Only for the gravity power up since theres only 1 instance of a bar for every power up
+        foreach(Transform t in powerUpBarGrid.transform)
+        {
+            if (string.Equals(t.name, powerUpId))
+            {
+                Destroy(t.gameObject);
+            }
+        }
     }
 }

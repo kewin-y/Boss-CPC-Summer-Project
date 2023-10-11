@@ -6,27 +6,27 @@ using UnityEngine;
 public class TripleJump : PowerUp
 {
     private static int tripleJumpCollected;
-    private static TripleJump mostRecentlyCollectedPowerUp;
 
-    void Update() {
-        if (this != mostRecentlyCollectedPowerUp && mostRecentlyCollectedPowerUp != null) {
-            RemoveEffect();
-        }
-    }
 
-    protected override void SummonEffect() {
-        mostRecentlyCollectedPowerUp = this;
-
+    protected override void SummonEffect()
+    {
         playerScript.JumpsAvailable = playerScript.JumpsRemaining = 3;
-        
+
         tripleJumpCollected += 1;
     }
 
-    public override void RemoveEffect() {
+    public override void RemoveEffect()
+    {
         tripleJumpCollected -= 1;
 
-        if (tripleJumpCollected == 0) {
+        if (tripleJumpCollected == 0)
+        {
             playerScript.JumpsAvailable = playerScript.JumpsRemaining = 2;
         }
+    }
+
+    public override void RemoveNoVisual()
+    {
+        RemoveEffect();
     }
 }
