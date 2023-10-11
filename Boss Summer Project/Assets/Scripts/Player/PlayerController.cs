@@ -195,9 +195,40 @@ public class PlayerController : Damageable
     [SerializeField] private float placementRange;
 
     private Transform blocksParent;
+<<<<<<< Updated upstream
     #endregion
 
     private InventoryDisplay persistentInventoryDisplay;
+=======
+    private InventoryDisplay persistentInventoryDisplay;
+    #endregion
+
+    #region Effects
+    private List<PowerUp> playerEffects;
+    public List<PowerUp> PlayerEffects
+    {
+        get { return playerEffects; }
+        set { playerEffects = value; }
+    }
+
+    private List<string> playerEffectNames;
+    public List<string> PlayerEffectNames
+    {
+        get { return playerEffectNames; }
+        set { playerEffectNames = value; }
+    }
+    #endregion
+
+    void Awake()
+    {
+        StatisticsSystem.LoadStatistics();
+    }
+
+    void LoadStatsFromPlayer()
+    {
+        StatisticsSystem.LoadStatistics();
+    }
+>>>>>>> Stashed changes
 
     // Start is called before the first frame update
     void Start()
@@ -213,6 +244,8 @@ public class PlayerController : Damageable
         //         element.SetActive(false);
         //     }
         // }
+        
+        playerEffects = new List<PowerUp>();
 
         persistentInventoryDisplay = GameObject.FindGameObjectWithTag("InventoryDisplay").GetComponent<InventoryDisplay>();
         blocksParent = GameObject.FindGameObjectWithTag("BlockParent").transform;
@@ -231,6 +264,10 @@ public class PlayerController : Damageable
     // Update is called once per frame
     void Update()
     {
+        foreach (PowerUp activeEffect in playerEffects) {
+            activeEffect.decreaseRemainingDuration(Time.deltaTime);
+        }
+        
         TerrainCheck();
         SpeedControl();
 
@@ -298,7 +335,6 @@ public class PlayerController : Damageable
                 rb2d.velocity = new Vector2(controlledSpeed.x, rb2d.velocity.y);
             }
         }
-
     }
 
     void GetInput()
@@ -566,6 +602,8 @@ public class PlayerController : Damageable
             Destroy(block.gameObject);
         }
 
+        playerEffects = new List<PowerUp>();
+        PowerUpBarManager.UpdatePowerUpIcons();
     }
 
     //Depletes the player's health by a certain amount
@@ -626,5 +664,4 @@ public class PlayerController : Damageable
         spriteRenderer.sprite = ninjaSprite;
         ninjaAttachment.SetActive(true);
     }
-
 }

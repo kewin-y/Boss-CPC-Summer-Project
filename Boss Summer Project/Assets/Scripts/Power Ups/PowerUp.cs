@@ -21,6 +21,7 @@ public abstract class PowerUp : MonoBehaviour
     
     private GameObject powerUpBarObj;
     private PowerUpBar powerUpBarScript;
+    private float remainingDuration;
 
     public bool IsInfinite {
         get { return isInfinite; }
@@ -59,7 +60,8 @@ public abstract class PowerUp : MonoBehaviour
     //has passed IF the effect is not infinite/permanent.
     protected IEnumerator EffectSequence() {
         SummonEffect();
-        AddToUI();
+        playerScript.PlayerEffects.Add(this);
+        PowerUpBarManager.UpdatePowerUpIcons();
 
         effectInProgress = true;
 
@@ -95,8 +97,12 @@ public abstract class PowerUp : MonoBehaviour
     - Set active to false
     */
     public void RemoveEffectFully() {
+<<<<<<< Updated upstream
+=======
+        playerScript.PlayerEffects.Remove(this);
+>>>>>>> Stashed changes
         RemoveEffect();
-        RemoveFromUI();
+        PowerUpBarManager.UpdatePowerUpIcons();
         effectInProgress = false;
         gameObject.SetActive(false);
     }
@@ -120,7 +126,11 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Adds the "health bar" for this power up to the UI
+<<<<<<< Updated upstream
     private void AddToUI() {
+=======
+    public void AddToUI() {
+>>>>>>> Stashed changes
         powerUpBarObj = Instantiate(powerUpBar, powerUpBarGrid.transform);
         powerUpBarScript = powerUpBarObj.GetComponent<PowerUpBar>();
 
@@ -128,7 +138,37 @@ public abstract class PowerUp : MonoBehaviour
     }
 
     //Removes the "health bar" for this power up from the UI
+<<<<<<< Updated upstream
     public void RemoveFromUI() {
         Destroy(powerUpBarObj);
+=======
+    public void RemoveFromUI()
+    {
+        // Destroy every power up bar with the same power up ID
+        // Only for the gravity power up since theres only 1 instance of a bar for every power up
+        foreach(Transform t in powerUpBarGrid.transform)
+        {
+            if (string.Equals(t.name, powerUpId))
+            {
+                Destroy(t.gameObject);
+            }
+        }
+        if (powerUpBarObj != null) {
+            Destroy(powerUpBarObj);
+        }
+>>>>>>> Stashed changes
+    }
+
+    public void decreaseRemainingDuration(float time) {
+        remainingDuration -= time;
+    }
+    public void UpdatePowerUpIcon() {
+        PowerUpBarManager.addedPowerUps = new List<string>();
+
+        RemoveFromUI();
+        if (playerScript.PlayerEffects.Contains(this)) {
+            AddToUI(); print(this.gameObject.name); print(PowerUpBarManager.addedPowerUps);
+            PowerUpBarManager.addedPowerUps.Add(this.gameObject.name);
+        }
     }
 }
