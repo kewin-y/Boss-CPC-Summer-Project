@@ -372,6 +372,17 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 3
   m_ColliderType: 1
+--- !u!114 &517571631 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7223078706030121953, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+  m_PrefabInstance: {fileID: 1930431652}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4df7a60401a5a1d41bd2222cfd655e09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1280454380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3014,6 +3025,54 @@ PrefabInstance:
       propertyPath: m_ColliderPaths.Array.data[0].m_ColliderPaths.Array.data[2].Array.data[131].Y
       value: -60000000
       objectReference: {fileID: 0}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 517571631}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PauseGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MenuManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 2095987748}
+    - target: {fileID: 226552311285446031, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 314488368130734279, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_Name
+      value: Pause Button
+      objectReference: {fileID: 0}
+    - target: {fileID: 1451169489204893298, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1451169489204893298, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1451169489204893298, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80.1001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1451169489204893298, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -78.270996
+      objectReference: {fileID: 0}
+    - target: {fileID: 1689289695609030237, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8dee1269ae883bb4a89203929635851d, type: 3}
     - target: {fileID: 1802501967372577265, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -8567,6 +8626,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7963553691946477775, guid: 94460ebb0d5de4d14837e35b2cc3e31b, type: 3}
   m_PrefabInstance: {fileID: 2046283913}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2095987748 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3544955276722854414, guid: 5ec5177bf6538f141913ed4131ef1097, type: 3}
+  m_PrefabInstance: {fileID: 1930431652}
   m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
