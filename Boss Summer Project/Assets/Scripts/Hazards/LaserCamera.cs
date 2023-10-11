@@ -10,6 +10,7 @@ public class LaserCamera : MonoBehaviour
     private GameObject playerObj;
     [SerializeField] private LayerMask shootableLayers;     //Layer mask that contains any layers which can be shot by the laser
     [SerializeField] private LayerMask detectableLayers;    //Layer mask that contains any layers which can be detected by the camera
+    [SerializeField] private LayerMask disableLayers;
     [SerializeField] private float laserEyeFadeInDuration;
     [SerializeField] private float cameraHiddenTint;
     [SerializeField] private float laserDelay;
@@ -34,7 +35,10 @@ public class LaserCamera : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {               
+    {
+        // Just don't do anything if le electrick block is in range
+        if (Physics2D.OverlapCircle(transform.position, aimRadius, disableLayers)) return;
+
         playerDetected = (player.transform.position.y > transform.position.y) ? false : Physics2D.OverlapCircle(transform.position, aimRadius, detectableLayers);
 
         if (playerDetected)
@@ -123,13 +127,16 @@ public class LaserCamera : MonoBehaviour
         laser.SetActive(false);
 
     }
-    void OnCollisionEnter2D(Collision2D col) {
-        if (col.gameObject.layer == 16) {
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 16)
+        {
             gameObject.SetActive(false);
         }
     }
 
-    public void Respawn() {
+    public void Respawn()
+    {
         gameObject.SetActive(true);
     }
 }
